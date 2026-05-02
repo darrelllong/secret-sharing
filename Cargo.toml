@@ -1,0 +1,11 @@
+[package]
+name = "secret-sharing"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "secret_sharing"
+path = "src/lib.rs"
+
+[dependencies]
+cryptography = { path = "../cryptography" }
