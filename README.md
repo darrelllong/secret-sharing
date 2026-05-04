@@ -136,9 +136,9 @@ component runs an independent Shamir polynomial in $\alpha_i = i$.
 
 Real secrets are byte strings (AES keys, passphrases, files), not
 single field elements. The `bytes` module chunks the secret into
-$\mathrm{block\_len} = (p.\mathrm{bits}() - 1) / 8$ byte blocks, runs
-an independent Shamir polynomial per block, and serialises each share
-with the wire format
+`block_len` = $\lfloor (\mathrm{bits}(p) - 1) / 8 \rfloor$ byte
+blocks, runs an independent Shamir polynomial per block, and
+serialises each share with the wire format
 
 ```text
 version : u8 = 0x01
@@ -147,9 +147,9 @@ length : u32 (BE) = byte-length of the original secret
 blocks : [u8; ...] = concatenated big-endian field-element blocks
 ```
 
-$\mathrm{share\_elem\_len} = \lceil p.\mathrm{bits}() / 8 \rceil$
-bytes are used to serialise each field element so that no high byte
-is ever truncated (16 bytes for $2^{127} - 1$, even though plaintext
+`share_elem_len` = $\lceil \mathrm{bits}(p) / 8 \rceil$ bytes are used
+to serialise each field element so that no high byte is ever truncated
+(16 bytes for $2^{127} - 1$, even though plaintext
 blocks are 15 bytes).
 
 ### `ramp` — McEliece–Sarwate ramp scheme
