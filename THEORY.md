@@ -22,7 +22,7 @@ For a perfect secret-sharing scheme with secret $S$ and shares $V_i$,
 an unauthorized coalition $C$ has perfect privacy when
 
 $$
-\Pr[S = s \mid V_C = v] = \Pr[S = s]
+\mathrm{Pr}[S = s \mid V_C = v] = \mathrm{Pr}[S = s]
 $$
 
 for every secret value $s$ and every possible view $v$ of that
@@ -160,7 +160,7 @@ The byte module is Shamir applied independently to field-sized blocks.
 For a modulus $p$, it chooses a plaintext block length
 
 $$
-b = \left\lfloor \frac{\operatorname{bits}(p) - 1}{8} \right\rfloor
+b = \left\lfloor \frac{\mathrm{bits}(p) - 1}{8} \right\rfloor
 $$
 
 so every block is an integer strictly below $p$. Each block becomes a
@@ -206,9 +206,7 @@ Pack $\ell \le k$ field secrets into the low coefficients of one
 degree $< k$ polynomial:
 
 $$
-q(x) =
-s_0 + s_1 x + \cdots + s_{\ell-1} x^{\ell-1}
-+ a_{\ell} x^{\ell} + \cdots + a_{k-1} x^{k-1}.
+q(x) = s_0 + s_1 x + \cdots + s_{\ell-1} x^{\ell-1} + a_{\ell} x^{\ell} + \cdots + a_{k-1} x^{k-1}.
 $$
 
 The coefficients $a_{\ell},\ldots,a_{k-1}$ are random. Player $i$
@@ -384,7 +382,7 @@ $$
 This view is independent of $s$ exactly when
 
 $$
-a_T \in \operatorname{rowspan}(B_T).
+a_T \in \mathrm{rowspan}(B_T).
 $$
 
 If this holds, changing $s$ only shifts the random vector $r$ by a
@@ -685,7 +683,7 @@ $$
 S + A m_0 \equiv r \pmod P.
 $$
 
-Because $\gcd(m_0,P)=1$, this picks exactly one residue class for
+Because $\mathrm{gcd}(m_0,P)=1$, this picks exactly one residue class for
 $A \bmod P$. Over the interval
 $0 \le A < \lfloor M_{\mathrm{bot}}/m_0 \rfloor$, the number of
 solutions in each residue class differs by at most one. Thus the
@@ -1076,7 +1074,7 @@ $$
 A coalition $C$ is qualified exactly when
 
 $$
-t \in \operatorname{span}\{v_j : j \in C\}.
+t \in \mathrm{span}\{v_j : j \in C\}.
 $$
 
 ### Correctness
@@ -1163,7 +1161,7 @@ non-zero. The implementation uses the equivalent column-span test.
 A coalition $C$ is qualified when
 
 $$
-G_0 \in \operatorname{span}\{G_j : j \in C\}.
+G_0 \in \mathrm{span}\{G_j : j \in C\}.
 $$
 
 If
@@ -1485,7 +1483,7 @@ $$
 Q(x)
 $$
 
-with $Q(0)=s$ and $\deg Q < k$. Each player samples a zero-constant
+with $Q(0)=s$ and $\mathrm{deg}\ Q < k$. Each player samples a zero-constant
 polynomial
 
 $$
@@ -1606,13 +1604,13 @@ $$
 for all supplied points, with
 
 $$
-\deg Q < k + t
+\mathrm{deg}\ Q < k + t
 $$
 
 and
 
 $$
-\deg E \le t.
+\mathrm{deg}\ E \le t.
 $$
 
 If at most $t$ shares are erroneous and the true message polynomial is
