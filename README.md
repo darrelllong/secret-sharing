@@ -543,5 +543,5 @@ via `PrimeField::new_unchecked` once you have witnesses.
  field elements). Static contract violations (e.g. $k < 2$) panic.
 
 <p align="center">
- <img src="assets/ship_of_fools.png" width="50%" alt="Ship of Fools">
+ <img src="assets/ship_of_fools.jpg" width="50%" alt="Ship of Fools">
 </p>

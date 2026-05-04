@@ -23,11 +23,10 @@
 //! magick image.png -monochrome image.pbm # PNG → PBM (1-bit)
 //! ```
 //!
-//! Note on the bundled `assets/ship_of_fools.png`: it is actually a
-//! JPEG with a `.png` extension, so it would not have round-tripped
-//! losslessly anyway. The companion `assets/ship_of_fools.pbm` was
-//! produced by the `magick … -monochrome` recipe above and IS
-//! losslessly preserved through the split / stack / decode cycle.
+//! The bundled `assets/ship_of_fools.jpg` is the lossy original.
+//! Its companion `assets/ship_of_fools.pbm` was produced by the
+//! `magick … -monochrome` recipe above and IS losslessly preserved
+//! through the split / stack / decode cycle.
 
 use std::env;
 use std::fs;

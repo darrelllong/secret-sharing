@@ -7,3 +7,7 @@ Cargo.lock
 # benchmarks/pilot_ss_latest.md is the artefact we keep; everything
 # else is recomputed by re-running scripts/bench_pilot.sh.
 /pilot_result_*
+
+# Outputs from examples/verify_ship.sh — share images for visual
+# inspection. Regenerated on every run.
+/examples/ship_output/
