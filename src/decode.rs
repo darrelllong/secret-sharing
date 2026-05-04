@@ -32,7 +32,7 @@
 use crate::field::PrimeField;
 use crate::poly::horner;
 use crate::shamir::Share;
-use cryptography::vt::BigUint;
+use crate::bigint::BigUint;
 
 /// Robust Shamir recovery against `max_errors` adversarially modified
 /// shares, plus arbitrary erasures (via simply not supplying them).
@@ -301,10 +301,10 @@ fn poly_div_exact(
 mod tests {
     use super::*;
     use crate::shamir::split;
-    use cryptography::CtrDrbgAes256;
+    use crate::csprng::ChaCha20Rng;
 
-    fn rng() -> CtrDrbgAes256 {
-        CtrDrbgAes256::new(&[1u8; 48])
+    fn rng() -> ChaCha20Rng {
+        ChaCha20Rng::from_seed(&[1u8; 32])
     }
 
     fn small_field() -> PrimeField {

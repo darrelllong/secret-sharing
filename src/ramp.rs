@@ -21,7 +21,7 @@
 use crate::field::PrimeField;
 use crate::poly::lagrange_eval;
 use crate::shamir::Share;
-use cryptography::vt::BigUint;
+use crate::bigint::BigUint;
 
 /// Distribute `n` ramp shares of a `k`-element secret. Trustee `i`
 /// receives `(k + i, P(k + i))` where `P` is the unique degree-`(k − 1)`

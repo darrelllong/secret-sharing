@@ -41,8 +41,8 @@
 
 use crate::field::PrimeField;
 use crate::poly::lagrange_eval_unchecked;
-use cryptography::vt::BigUint;
-use cryptography::Csprng;
+use crate::bigint::BigUint;
+use crate::csprng::Csprng;
 
 /// One vector share for the matrix scheme. `x` is the trustee label;
 /// `y` is `u · A_i`, a length-`m` vector in `GF(p)^m`.
@@ -174,10 +174,10 @@ pub fn reconstruct(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cryptography::CtrDrbgAes256;
+    use crate::csprng::ChaCha20Rng;
 
-    fn rng() -> CtrDrbgAes256 {
-        CtrDrbgAes256::new(&[33u8; 48])
+    fn rng() -> ChaCha20Rng {
+        ChaCha20Rng::from_seed(&[33u8; 32])
     }
 
     fn small_field() -> PrimeField {

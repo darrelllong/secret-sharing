@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="720" viewBox="0 0 640 720" role="img" aria-labelledby="title desc">
+  <title id="title">Threshold schemes: split + reconstruct (ops/sec, log scale)</title>
+  <desc id="desc">k=3, n=5; per-axis = scheme; per-polygon = secret-size (ChaCha20Rng, ARM64 release build)</desc>
+  <style>
+    .bg { fill: #fbf8f1; }
+    .grid { fill: none; stroke: #c9c2b7; stroke-width: 1; }
+    .axis { stroke: #a79d90; stroke-width: 1; }
+    .label { fill: #342f29; font: 11px ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .small { fill: #6b6257; font: 10px ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  </style>
+  <rect class="bg" x="0" y="0" width="640" height="720" rx="16" />
+  <polygon class="grid" points="320.0,253.3 351.8,271.7 351.8,308.3 320.0,326.7 288.2,308.3 288.2,271.7" />
+  <polygon class="grid" points="320.0,216.7 383.5,253.3 383.5,326.7 320.0,363.3 256.5,326.7 256.5,253.3" />
+  <polygon class="grid" points="320.0,180.0 415.3,235.0 415.3,345.0 320.0,400.0 224.7,345.0 224.7,235.0" />
+  <polygon class="grid" points="320.0,143.3 447.0,216.7 447.0,363.3 320.0,436.7 193.0,363.3 193.0,216.7" />
+  <polygon class="grid" points="320.0,106.7 478.8,198.3 478.8,381.7 320.0,473.3 161.2,381.7 161.2,198.3" />
+  <polygon class="grid" points="320.0,70.0 510.5,180.0 510.5,400.0 320.0,510.0 129.5,400.0 129.5,180.0" />
+  <line class="axis" x1="320" y1="290" x2="320.0" y2="70.0" />
+  <line class="axis" x1="320" y1="290" x2="510.5" y2="180.0" />
+  <line class="axis" x1="320" y1="290" x2="510.5" y2="400.0" />
+  <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
+  <line class="axis" x1="320" y1="290" x2="129.5" y2="400.0" />
+  <line class="axis" x1="320" y1="290" x2="129.5" y2="180.0" />
+  <polygon points="320.0,121.8 441.3,220.0 462.1,372.0 320.0,443.2 186.1,367.3 167.8,202.1" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="121.8" r="3" fill="#0f766e" />
+  <circle cx="441.3" cy="220.0" r="3" fill="#0f766e" />
+  <circle cx="462.1" cy="372.0" r="3" fill="#0f766e" />
+  <circle cx="320.0" cy="443.2" r="3" fill="#0f766e" />
+  <circle cx="186.1" cy="367.3" r="3" fill="#0f766e" />
+  <circle cx="167.8" cy="202.1" r="3" fill="#0f766e" />
+  <polygon points="320.0,142.5 411.4,237.2 443.2,361.1 320.0,423.2 204.2,356.8 187.0,213.2" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="142.5" r="3" fill="#1d4ed8" />
+  <circle cx="411.4" cy="237.2" r="3" fill="#1d4ed8" />
+  <circle cx="443.2" cy="361.1" r="3" fill="#1d4ed8" />
+  <circle cx="320.0" cy="423.2" r="3" fill="#1d4ed8" />
+  <circle cx="204.2" cy="356.8" r="3" fill="#1d4ed8" />
+  <circle cx="187.0" cy="213.2" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,170.7 367.9,262.4 417.0,346.0 320.0,393.2 228.2,343.0 210.7,226.9" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="170.7" r="3" fill="#b45309" />
+  <circle cx="367.9" cy="262.4" r="3" fill="#b45309" />
+  <circle cx="417.0" cy="346.0" r="3" fill="#b45309" />
+  <circle cx="320.0" cy="393.2" r="3" fill="#b45309" />
+  <circle cx="228.2" cy="343.0" r="3" fill="#b45309" />
+  <circle cx="210.7" cy="226.9" r="3" fill="#b45309" />
+  <polygon points="320.0,211.6 330.9,283.7 381.5,325.5 320.0,352.4 264.5,322.1 247.8,248.3" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="211.6" r="3" fill="#b91c1c" />
+  <circle cx="330.9" cy="283.7" r="3" fill="#b91c1c" />
+  <circle cx="381.5" cy="325.5" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="352.4" r="3" fill="#b91c1c" />
+  <circle cx="264.5" cy="322.1" r="3" fill="#b91c1c" />
+  <circle cx="247.8" cy="248.3" r="3" fill="#b91c1c" />
+  <text class="label" x="320.0" y="52.0" text-anchor="middle">shamir</text>
+  <text class="label" x="529.6" y="173.0" text-anchor="start">blakley</text>
+  <text class="label" x="529.6" y="415.0" text-anchor="start">kothari</text>
+  <text class="label" x="320.0" y="536.0" text-anchor="middle">karchmer_wigderson</text>
+  <text class="label" x="110.4" y="415.0" text-anchor="end">brickell</text>
+  <text class="label" x="110.4" y="173.0" text-anchor="end">massey</text>
+  <text class="small" x="324.0" y="253.3">316</text>
+  <text class="small" x="324.0" y="216.7">1k</text>
+  <text class="small" x="324.0" y="180.0">3k</text>
+  <text class="small" x="324.0" y="143.3">10k</text>
+  <text class="small" x="324.0" y="106.7">32k</text>
+  <text class="small" x="324.0" y="70.0">100k</text>
+  <text class="label" x="20" y="630" font-weight="bold">Threshold schemes: split + reconstruct (ops/sec, log scale)</text>
+  <text class="small" x="20" y="645">k=3, n=5; per-axis = scheme; per-polygon = secret-size (ChaCha20Rng, ARM64 release build)</text>
+  <rect x="20.0" y="680.0" width="14" height="14" fill="#0f766e" rx="2" />
+  <text class="small" x="40.0" y="691.0">128-bit</text>
+  <rect x="120.0" y="680.0" width="14" height="14" fill="#1d4ed8" rx="2" />
+  <text class="small" x="140.0" y="691.0">256-bit</text>
+  <rect x="220.0" y="680.0" width="14" height="14" fill="#b45309" rx="2" />
+  <text class="small" x="240.0" y="691.0">512-bit</text>
+  <rect x="320.0" y="680.0" width="14" height="14" fill="#b91c1c" rx="2" />
+  <text class="small" x="340.0" y="691.0">1024-bit</text>
+</svg>

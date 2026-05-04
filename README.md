@@ -2,13 +2,30 @@
 
 Threshold secret-sharing schemes implemented in pure, safe Rust directly
 from their published specifications. The crate covers three papers in
-`pubs/`:
+`pubs/` and an additional eight schemes catalogued in
+`bib/references.bib`:
 
 | Paper | Year | What it gives us |
 |-------|------|------------------|
 | Shamir, *How to Share a Secret* | 1979 | The classical `(k, n)` polynomial threshold scheme |
 | Karnin, Greene, Hellman, *On Secret Sharing Systems* | 1983 | Trivial `n`-of-`n` split, multi-secret extension, the matrix scheme `v_i = u·A_i` |
 | McEliece, Sarwate, *On Sharing Secrets and Reed–Solomon Codes* | 1981 | Ramp (data-compressed) variant and errors-and-erasures recovery via Berlekamp–Welch |
+| Blakley, *Safeguarding Cryptographic Keys* | 1979 | Geometric `(k, n)` threshold via random hyperplanes through a fixed point |
+| Mignotte, *How to Share a Secret* | 1983 | CRT-based `(k, n)` (reconstruction-uniqueness, not perfectly secret) |
+| Asmuth, Bloom, *A Modular Approach to Key Safeguarding* | 1983 | CRT-based `(k, n)` with information-theoretic secrecy |
+| Rabin, *Efficient Dispersal of Information…* | 1989 | Reed–Solomon-style information dispersal (erasure coding, not secret sharing) |
+| Yamamoto, *Secret Sharing System Using `(k, L, n)`* | 1986 | Generalised ramp scheme spanning Shamir (`L=1`) and McEliece–Sarwate (`L=k`) |
+| Ito, Saito, Nishizeki, *Secret Sharing Scheme Realising General Access Structure* | 1989 | Cumulative-array realisation of any monotone access structure |
+| Benaloh, Leichter, *Generalised Secret Sharing and Monotone Functions* | 1988 | Recursive distribution along a monotone Boolean formula |
+| Rabin, Ben-Or, *Verifiable Secret Sharing and Multiparty Protocols* | 1989 | Information-theoretic VSS via bivariate polynomials with cross-checks |
+| Kothari, *Generalized Linear Threshold Scheme* | 1984 | Linear `(k, n)` over any user-supplied k×n matrix with the spreading property |
+| Brickell, *Some Ideal Secret Sharing Schemes* | 1989 | Ideal vector-space SSS — one field-element per player |
+| Karchmer, Wigderson, *On Span Programs* | 1993 | Monotone span programs — captures every linear SSS |
+| Massey, *Minimal Codewords and Secret Sharing* | 1993 | Linear-code SSS — secret = column 0 of a generator matrix |
+| Naor, Shamir, *Visual Cryptography* | 1994 | `(n, n)` scheme on black/white images; reconstruction by stacking |
+| Blakley, Meadows, *Security of Ramp Schemes* | 1984 | `(k, L, n)` ramp generalisation of Blakley's hyperplane scheme |
+| Chor, Goldwasser, Micali, Awerbuch, *Verifiable Secret Sharing* | 1985 | Computational VSS via discrete-log (Feldman) commitments |
+| Herzberg, Jarecki, Krawczyk, Yung, *Proactive Secret Sharing* | 1995 | Periodic refresh of Shamir shares + lost-share recovery |
 
 All polynomial and big-integer arithmetic runs over the `BigUint` /
 `Csprng` / `mod_inverse` / `random_below` primitives from the sibling
@@ -29,14 +46,33 @@ polynomial would distribute the secret in plaintext.
 
 ```
 secret_sharing
-├── field      PrimeField over BigUint; mersenne127 / mersenne521 helpers
-├── poly       Horner evaluation, Lagrange interpolation
-├── trivial    KGH §I additive (and XOR) n-of-n split
-├── shamir     Shamir 1979 (k, n) + KGH §IV multi-secret extension
-├── bytes      Chunked byte-string Shamir with a versioned wire format
-├── kgh        KGH §II matrix scheme v_i = u·A_i for vector secrets
-├── ramp       McEliece–Sarwate ramp / data-compressed Reed–Solomon
-└── decode     McEliece–Sarwate errors-and-erasures via Berlekamp–Welch
+├── field             PrimeField over BigUint; mersenne127 / mersenne521 helpers
+├── poly              Horner evaluation, Lagrange interpolation
+├── trivial           KGH §I additive (and XOR) n-of-n split
+├── shamir            Shamir 1979 (k, n) + KGH §IV multi-secret extension
+├── bytes             Chunked byte-string Shamir with a versioned wire format
+├── kgh               KGH §II matrix scheme v_i = u·A_i for vector secrets
+├── ramp              McEliece–Sarwate ramp / data-compressed Reed–Solomon
+├── decode            McEliece–Sarwate errors-and-erasures via Berlekamp–Welch
+├── blakley           Blakley 1979 hyperplane (k, n) threshold
+├── mignotte          Mignotte 1983 CRT (k, n) — reconstruction-uniqueness
+├── asmuth_bloom      Asmuth–Bloom 1983 modular CRT (k, n) — perfectly secret
+├── ida               Rabin 1989 Information Dispersal (erasure coding, no secrecy)
+├── yamamoto          Yamamoto 1986 (k, L, n) ramp — generalises Shamir & MS-ramp
+├── ito               Ito–Saito–Nishizeki 1989 cumulative-array general access
+├── benaloh_leichter  Benaloh–Leichter 1988 monotone-formula scheme
+├── kothari           Kothari 1984 generalised linear (k, n)
+├── karchmer_wigderson Karchmer–Wigderson 1993 monotone span programs
+├── brickell          Brickell 1989 ideal vector-space SSS
+├── massey            Massey 1993 linear-code SSS via minimal codewords
+├── visual            Naor–Shamir 1994 visual cryptography (n, n)
+├── blakley_meadows   Blakley–Meadows 1984 (k, L, n) hyperplane ramp
+├── vss               Rabin–Ben-Or 1989 bivariate-polynomial VSS
+├── cgma_vss          Chor–Goldwasser–Micali–Awerbuch 1985 Feldman-style VSS
+├── proactive         Herzberg et al. 1995 share refresh + lost-share recovery
+├── bigint            Self-contained big integer (BigUint) + Montgomery
+├── csprng            Csprng trait + ChaCha20Rng (RFC 7539)
+└── primes            gcd, mod_inverse, random_below
 ```
 
 ## How each scheme works
@@ -134,6 +170,87 @@ system over `GF(p)`, polynomial-divide `Q / E` to recover the original
 message polynomial `M(x)`, and read `s = M(0)`. Erasures are handled by
 simply not supplying the lost share — the agreement bound applies to
 whatever shares remain.
+
+### `blakley` — geometric `(k, n)` threshold (Blakley 1979)
+
+Pick a random point `P = (s, r_1, …, r_{k−1}) ∈ GF(p)^k` whose first
+coordinate is the secret. Each share is a random hyperplane through `P`:
+`a_1 y_1 + … + a_{k−1} y_{k−1} + y_k = b` with `b` chosen so the
+equation holds at `P`. Any `k` shares solve a linear system for `P` and
+read off `s`; any `k − 1` shares cut a one-dimensional line of
+candidates uniformly distributed over `GF(p)`.
+
+### `mignotte` — CRT-based `(k, n)` (Mignotte 1983)
+
+A *Mignotte sequence* is `m_1 < m_2 < … < m_n` pairwise coprime with
+`α := ∏(k − 1 largest) < β := ∏(k smallest)`. The secret `S ∈ (α, β)`
+is shared as `(m_i, S mod m_i)`. Any `k` residues CRT-determine `S`
+uniquely in `[0, ∏ m_{i_j}) ⊇ [0, β) ∋ S`. Mignotte gives reconstruction
+uniqueness, *not* perfect secrecy: `k − 1` residues narrow the
+candidates to roughly `(β − α) / ∏(those k − 1 moduli)` values.
+
+### `asmuth_bloom` — modular CRT `(k, n)` (Asmuth–Bloom 1983)
+
+Strengthens Mignotte with a public secret-modulus `m_0` (coprime with
+each `m_i`) and the inequality `m_0 · M_top < M_bot`. The secret
+`S < m_0` is masked as `y = S + A · m_0` for uniform `A ∈ [0, ⌊M_bot /
+m_0⌋)` and shared as `(m_i, y mod m_i)`. CRT-recover `y`, then return
+`y mod m_0`. The mask makes secrecy *information-theoretic*:
+`k − 1` shares leave `S` uniformly distributed over `[0, m_0)`.
+
+### `ida` — Rabin Information Dispersal (Rabin 1989)
+
+**Not** a secret-sharing scheme. Encode a file `F` as Reed–Solomon
+codewords (each polynomial coefficient = `bl` bytes of `F`) and
+distribute one evaluation per `(k − 1)`-degree polynomial per trustee.
+Per-share storage is `|F|/k` bytes; any `k` shares reconstruct `F`;
+fewer than `k` reveal nothing useful, but `k` *of any provenance* will
+reconstruct, including a colluding majority that holds no secret. Use
+when load-balancing or erasure tolerance is the goal and secrecy isn't.
+
+### `yamamoto` — `(k, L, n)` ramp (Yamamoto 1986)
+
+The secret is `(s_1, …, s_L) ∈ GF(p)^L` with `1 ≤ L ≤ k`. Pick the
+unique degree-`(k − 1)` polynomial `P` such that `P(j) = s_j` for
+`j = 1..L` and `P(j) = u_j` (uniform random) for `j = L+1..k`.
+Distribute `P(k + 1), …, P(k + n)`. Any `k` shares interpolate `P`
+and read every `s_j`; any `k − L` shares reveal nothing; intermediate
+counts leak proportional information by Yamamoto's analysis. The
+`L = 1` case is Shamir; `L = k` is McEliece–Sarwate ramp.
+
+### `ito` — general access structure (Ito–Saito–Nishizeki 1989)
+
+Realise *any* monotone access structure `A`. The user supplies the
+maximal forbidden coalitions `F_1, …, F_t` (`Q ∈ A ⇔ ∀i, Q ⊄ F_i`).
+Choose `r_1, …, r_{t−1}` uniform with `r_t = s − Σ r_i (mod p)`;
+player `j` holds `{(i, r_i) : j ∉ F_i}`. A qualified coalition covers
+every `i`, so summing the `r_i` recovers `s`. Per-player share size is
+the number of `F_i` not containing `j` — exponential in the worst case
+but appropriate for arbitrary monotone structures.
+
+### `benaloh_leichter` — monotone-formula scheme (Benaloh–Leichter 1988)
+
+Distribute the secret along a monotone Boolean formula tree:
+
+- AND nodes additively split the value among children (random shares
+  summing to the value).
+- OR nodes hand each child the same value.
+- Leaves go to the labelled party.
+
+Reconstruction walks the formula bottom-up: AND requires every child to
+recover (sum); OR succeeds as soon as any child recovers. Per-party
+share size is the number of leaves labelled with that party — small
+when the formula is succinct.
+
+### `vss` — bivariate-polynomial VSS (Rabin–Ben-Or 1989)
+
+Information-theoretic verifiable secret sharing. Sample a bivariate
+polynomial `F(x, y)` of degree `≤ k − 1` in each variable with
+`F(0, 0) = s`. Player `i` receives `g_i(y) = F(i, y)` and
+`h_i(x) = F(x, i)`. Pairwise cross-checks
+`g_i(j) ?= h_j(i)` (in both directions) catch any tampered slice with
+probability 1. Reconstruction Lagrange-interpolates `Φ(x) = F(x, 0)`
+from `g_i(0)` for `k` consistent players, then reads `s = Φ(0)`.
 
 ## Usage
 
@@ -248,7 +365,7 @@ assert_eq!(recovered, secret);
 ## Testing and lints
 
 ```sh
-cargo test                                       # 53 tests
+cargo test                                       # 136 tests
 cargo clippy --all-targets -- -D warnings        # clean
 ```
 

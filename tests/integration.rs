@@ -1,19 +1,16 @@
 //! End-to-end exercise: real Mersenne-127 field, byte secrets, every
 //! scheme in the crate.
 
-use cryptography::vt::BigUint;
-use cryptography::CtrDrbgAes256;
-
 use secret_sharing::{
     decode::reconstruct_with_errors,
     field::{mersenne127, PrimeField},
     poly,
     ramp, shamir, trivial,
-    Share,
+    BigUint, ChaCha20Rng, Share,
 };
 
-fn rng(seed: u8) -> CtrDrbgAes256 {
-    CtrDrbgAes256::new(&[seed; 48])
+fn rng(seed: u8) -> ChaCha20Rng {
+    ChaCha20Rng::from_seed(&[seed; 32])
 }
 
 fn pick_field() -> PrimeField {

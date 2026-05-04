@@ -6,9 +6,9 @@
 //! manipulations in the rest of the crate go through this wrapper so the
 //! modulus is fixed once and the operations read directly off the papers.
 
-use cryptography::public_key::primes::{mod_inverse, random_below};
-use cryptography::vt::BigUint;
-use cryptography::Csprng;
+use crate::primes::{mod_inverse, random_below};
+use crate::bigint::BigUint;
+use crate::csprng::Csprng;
 
 /// Prime modulus and the four finite-field operations needed by Shamir,
 /// the KGH matrix scheme, and the McEliece–Sarwate decoder.

@@ -6,7 +6,7 @@
 //! `c_0 + c_1 x + c_2 x^2 + … + c_d x^d`.
 
 use crate::field::PrimeField;
-use cryptography::vt::BigUint;
+use crate::bigint::BigUint;
 
 /// Evaluate `f(x) = c_0 + c_1 x + … + c_{d} x^d` by Horner's rule.
 #[must_use]

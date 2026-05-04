@@ -26,8 +26,8 @@
 
 use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
-use cryptography::vt::BigUint;
-use cryptography::Csprng;
+use crate::bigint::BigUint;
+use crate::csprng::Csprng;
 
 const SHARE_VERSION: u8 = 0x01;
 const HEADER_LEN: usize = 1 + 1 + 4;
@@ -237,10 +237,10 @@ fn field_element_to_bytes(value: &BigUint, width: usize) -> Vec<u8> {
 mod tests {
     use super::*;
     use crate::field::mersenne127;
-    use cryptography::CtrDrbgAes256;
+    use crate::csprng::ChaCha20Rng;
 
-    fn rng() -> CtrDrbgAes256 {
-        CtrDrbgAes256::new(&[9u8; 48])
+    fn rng() -> ChaCha20Rng {
+        ChaCha20Rng::from_seed(&[9u8; 32])
     }
 
     #[test]

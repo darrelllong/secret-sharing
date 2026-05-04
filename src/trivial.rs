@@ -14,8 +14,8 @@
 //!   immediately useful application to bit strings.
 
 use crate::field::PrimeField;
-use cryptography::vt::BigUint;
-use cryptography::Csprng;
+use crate::bigint::BigUint;
+use crate::csprng::Csprng;
 
 /// Split a `GF(p)` element into `n` additive shares whose sum is the
 /// secret.
@@ -101,10 +101,10 @@ pub fn reconstruct_xor(shares: &[Vec<u8>]) -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cryptography::CtrDrbgAes256;
+    use crate::csprng::ChaCha20Rng;
 
-    fn rng() -> CtrDrbgAes256 {
-        CtrDrbgAes256::new(&[7u8; 48])
+    fn rng() -> ChaCha20Rng {
+        ChaCha20Rng::from_seed(&[7u8; 32])
     }
 
     #[test]

@@ -18,14 +18,83 @@
   year      = {1979}
 }
 
-@article{beimel2011secret,
-  title   = {Secret-sharing schemes: A survey},
-  author  = {Beimel, Amos},
-  journal = {International Conference on Coding and Cryptology},
-  pages   = {11--46},
-  year    = {2011},
+@inproceedings{kothari1984generalized,
+  author    = {Kothari, Suresh C.},
+  title     = {Generalized Linear Threshold Scheme},
+  booktitle = {Advances in Cryptology -- CRYPTO '84},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {196},
+  pages     = {231--241},
+  year      = {1985},
   publisher = {Springer}
 }
+
+@inproceedings{brickell1989ideal,
+  author    = {Brickell, Ernest F.},
+  title     = {Some Ideal Secret Sharing Schemes},
+  booktitle = {Advances in Cryptology -- EUROCRYPT '89},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {434},
+  pages     = {468--475},
+  year      = {1990},
+  publisher = {Springer},
+  doi       = {10.1007/3-540-46885-4_45}
+}
+
+@inproceedings{karchmer1993span,
+  author    = {Karchmer, Mauricio and Wigderson, Avi},
+  title     = {On Span Programs},
+  booktitle = {Proceedings of the Eighth Annual Structure in Complexity Theory Conference},
+  pages     = {102--111},
+  year      = {1993},
+  publisher = {IEEE}
+}
+
+@inproceedings{vandijk1994linear,
+  author    = {van Dijk, Marten},
+  title     = {A Linear Construction of Perfect Secret Sharing Schemes},
+  booktitle = {Advances in Cryptology -- EUROCRYPT '94},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {950},
+  pages     = {23--34},
+  year      = {1995},
+  publisher = {Springer},
+  doi       = {10.1007/BFb0053421}
+}
+
+@inproceedings{massey1993minimal,
+  author    = {Massey, James L.},
+  title     = {Minimal Codewords and Secret Sharing},
+  booktitle = {Proceedings of the 6th Joint Swedish-Russian Workshop on Information Theory},
+  pages     = {276--279},
+  year      = {1993},
+  address   = {M{\"o}lle, Sweden}
+}
+
+@inproceedings{naor1994visual,
+  author    = {Naor, Moni and Shamir, Adi},
+  title     = {Visual Cryptography},
+  booktitle = {Advances in Cryptology -- EUROCRYPT '94},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {950},
+  pages     = {1--12},
+  year      = {1995},
+  publisher = {Springer}
+}
+
+@inproceedings{blakley1984ramp,
+  author    = {Blakley, George R. and Meadows, Catherine},
+  title     = {Security of Ramp Schemes},
+  booktitle = {Advances in Cryptology -- CRYPTO '84},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {196},
+  pages     = {242--268},
+  year      = {1985},
+  publisher = {Springer},
+  doi       = {10.1007/3-540-39568-7_20}
+}
+
+
 
 @article{ito1989secret,
   title   = {Secret sharing scheme realizing general access structure},
@@ -35,6 +104,28 @@
   number  = {9},
   pages   = {56--64},
   year    = {1989}
+}
+
+@article{karnin1983secret,
+  author  = {Karnin, Ehud D. and Greene, Jonathan W. and Hellman, Martin E.},
+  title   = {On Secret Sharing Systems},
+  journal = {IEEE Transactions on Information Theory},
+  volume  = {29},
+  number  = {1},
+  pages   = {35--41},
+  year    = {1983},
+  doi     = {10.1109/TIT.1983.1056621}
+}
+
+@article{mceliece1981sharing,
+  author  = {McEliece, Robert J. and Sarwate, Dilip V.},
+  title   = {On Sharing Secrets and Reed-Solomon Codes},
+  journal = {Communications of the ACM},
+  volume  = {24},
+  number  = {9},
+  pages   = {583--584},
+  year    = {1981},
+  doi     = {10.1145/358746.358762}
 }
 
 @inproceedings{benaloh1990generalized,
@@ -83,12 +174,36 @@
   year    = {1986}
 }
 
-@inproceedings{franklin1992communication,
-  title     = {Communication complexity of secure computation},
-  author    = {Franklin, Matthew and Yung, Moti},
-  booktitle = {STOC},
-  pages     = {699--710},
-  year      = {1992}
+@inproceedings{chor1985vss,
+  author    = {Chor, Benny and Goldwasser, Shafi and Micali, Silvio and Awerbuch, Baruch},
+  title     = {Verifiable Secret Sharing and Achieving Simultaneity in the Presence of Faults},
+  booktitle = {Proceedings of the 26th Annual Symposium on Foundations of Computer Science},
+  pages     = {383--395},
+  year      = {1985},
+  publisher = {IEEE},
+  doi       = {10.1109/SFCS.1985.64}
+}
+
+@inproceedings{feldman1987practical,
+  author    = {Feldman, Paul},
+  title     = {A Practical Scheme for Non-Interactive Verifiable Secret Sharing},
+  booktitle = {Proceedings of the 28th Annual Symposium on Foundations of Computer Science},
+  pages     = {427--437},
+  year      = {1987},
+  publisher = {IEEE},
+  doi       = {10.1109/SFCS.1987.4}
+}
+
+@inproceedings{herzberg1995proactive,
+  author    = {Herzberg, Amir and Jarecki, Stanislaw and Krawczyk, Hugo and Yung, Moti},
+  title     = {Proactive Secret Sharing Or: How to Cope With Perpetual Leakage},
+  booktitle = {Advances in Cryptology -- CRYPTO '95},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {963},
+  pages     = {339--352},
+  year      = {1995},
+  publisher = {Springer},
+  doi       = {10.1007/3-540-44750-4_27}
 }
 
 @inproceedings{rabin1989vss,
@@ -98,19 +213,3 @@
   pages     = {73--85},
   year      = {1989}
 }
-
-@article{watanabe2014timed,
-  title   = {Timed-release secret sharing with information-theoretic security},
-  author  = {Watanabe, Yohei and Shikata, Junji},
-  journal = {IEICE Transactions},
-  year    = {2014}
-}
-
-@article{zou2014information,
-  title   = {An information theoretic approach to secret sharing},
-  author  = {Zou, Shaofeng and Liang, Yingbin and Lai, Lifeng and Shamai, Shlomo},
-  journal = {IEEE Transactions on Information Theory},
-  year    = {2014}
-}
-
-

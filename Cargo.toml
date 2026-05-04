@@ -8,4 +8,4 @@ name = "secret_sharing"
 path = "src/lib.rs"
 
 [dependencies]
-cryptography = { path = "../cryptography" }
+
