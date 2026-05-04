@@ -27,15 +27,15 @@
   <text class="small" x="433.3" y="344.0" text-anchor="middle">n=4</text>
   <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
   <text class="small" x="610.0" y="344.0" text-anchor="middle">n=5</text>
-  <path d="M 80.0 207.6 L 256.7 174.6 L 433.3 144.3 L 610.0 114.6" stroke="#0f766e" stroke-width="2" fill="none" />
+  <path d="M 80.0 207.6 L 256.7 175.5 L 433.3 143.6 L 610.0 114.5" stroke="#0f766e" stroke-width="2" fill="none" />
   <circle cx="80.0" cy="207.6" r="3.5" fill="#0f766e" />
-  <circle cx="256.7" cy="174.6" r="3.5" fill="#0f766e" />
-  <circle cx="433.3" cy="144.3" r="3.5" fill="#0f766e" />
-  <circle cx="610.0" cy="114.6" r="3.5" fill="#0f766e" />
-  <path d="M 80.0 274.2 L 256.7 249.1 L 433.3 224.2 L 610.0 195.5" stroke="#1d4ed8" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="274.2" r="3.5" fill="#1d4ed8" />
-  <circle cx="256.7" cy="249.1" r="3.5" fill="#1d4ed8" />
-  <circle cx="433.3" cy="224.2" r="3.5" fill="#1d4ed8" />
+  <circle cx="256.7" cy="175.5" r="3.5" fill="#0f766e" />
+  <circle cx="433.3" cy="143.6" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="114.5" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 270.5 L 256.7 249.2 L 433.3 223.1 L 610.0 195.5" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="270.5" r="3.5" fill="#1d4ed8" />
+  <circle cx="256.7" cy="249.2" r="3.5" fill="#1d4ed8" />
+  <circle cx="433.3" cy="223.1" r="3.5" fill="#1d4ed8" />
   <circle cx="610.0" cy="195.5" r="3.5" fill="#1d4ed8" />
   <text class="title" x="80.0" y="30.0">Visual cryptography (n, n): latency vs n</text>
   <text class="small" x="80.0" y="46.0">8×8 secret image; per-pixel expansion = 2^(n-1)</text>

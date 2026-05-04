@@ -21,46 +21,46 @@
   <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
   <line class="axis" x1="320" y1="290" x2="129.5" y2="400.0" />
   <line class="axis" x1="320" y1="290" x2="129.5" y2="180.0" />
-  <polygon points="320.0,107.8 441.6,219.8 474.4,379.2 320.0,461.2 171.1,376.0 157.4,196.1" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="107.8" r="3" fill="#0f766e" />
-  <circle cx="441.6" cy="219.8" r="3" fill="#0f766e" />
-  <circle cx="474.4" cy="379.2" r="3" fill="#0f766e" />
-  <circle cx="320.0" cy="461.2" r="3" fill="#0f766e" />
-  <circle cx="171.1" cy="376.0" r="3" fill="#0f766e" />
-  <circle cx="157.4" cy="196.1" r="3" fill="#0f766e" />
-  <polygon points="320.0,123.5 416.3,234.4 460.4,371.1 320.0,445.5 184.8,368.1 171.9,204.5" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
-  <circle cx="320.0" cy="123.5" r="3" fill="#1d4ed8" />
-  <circle cx="416.3" cy="234.4" r="3" fill="#1d4ed8" />
-  <circle cx="460.4" cy="371.1" r="3" fill="#1d4ed8" />
-  <circle cx="320.0" cy="445.5" r="3" fill="#1d4ed8" />
-  <circle cx="184.8" cy="368.1" r="3" fill="#1d4ed8" />
-  <circle cx="171.9" cy="204.5" r="3" fill="#1d4ed8" />
-  <polygon points="320.0,143.9 387.0,251.3 442.1,360.5 320.0,424.8 203.1,357.5 189.4,214.6" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
-  <circle cx="320.0" cy="143.9" r="3" fill="#b45309" />
-  <circle cx="387.0" cy="251.3" r="3" fill="#b45309" />
-  <circle cx="442.1" cy="360.5" r="3" fill="#b45309" />
-  <circle cx="320.0" cy="424.8" r="3" fill="#b45309" />
-  <circle cx="203.1" cy="357.5" r="3" fill="#b45309" />
-  <circle cx="189.4" cy="214.6" r="3" fill="#b45309" />
-  <polygon points="320.0,173.6 357.3,268.5 416.1,345.5 320.0,394.4 229.2,342.4 216.0,230.0" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="173.6" r="3" fill="#b91c1c" />
-  <circle cx="357.3" cy="268.5" r="3" fill="#b91c1c" />
-  <circle cx="416.1" cy="345.5" r="3" fill="#b91c1c" />
-  <circle cx="320.0" cy="394.4" r="3" fill="#b91c1c" />
-  <circle cx="229.2" cy="342.4" r="3" fill="#b91c1c" />
-  <circle cx="216.0" cy="230.0" r="3" fill="#b91c1c" />
+  <polygon points="320.0,116.7 421.3,231.5 471.7,377.6 320.0,456.5 173.4,374.6 161.7,198.6" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="116.7" r="3" fill="#0f766e" />
+  <circle cx="421.3" cy="231.5" r="3" fill="#0f766e" />
+  <circle cx="471.7" cy="377.6" r="3" fill="#0f766e" />
+  <circle cx="320.0" cy="456.5" r="3" fill="#0f766e" />
+  <circle cx="173.4" cy="374.6" r="3" fill="#0f766e" />
+  <circle cx="161.7" cy="198.6" r="3" fill="#0f766e" />
+  <polygon points="320.0,156.5 396.7,245.7 432.5,355.0 320.0,414.7 211.8,352.5 200.8,221.2" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="156.5" r="3" fill="#1d4ed8" />
+  <circle cx="396.7" cy="245.7" r="3" fill="#1d4ed8" />
+  <circle cx="432.5" cy="355.0" r="3" fill="#1d4ed8" />
+  <circle cx="320.0" cy="414.7" r="3" fill="#1d4ed8" />
+  <circle cx="211.8" cy="352.5" r="3" fill="#1d4ed8" />
+  <circle cx="200.8" cy="221.2" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,173.1 372.9,259.5 417.4,346.2 320.0,397.9 226.4,344.0 215.5,229.7" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="173.1" r="3" fill="#b45309" />
+  <circle cx="372.9" cy="259.5" r="3" fill="#b45309" />
+  <circle cx="417.4" cy="346.2" r="3" fill="#b45309" />
+  <circle cx="320.0" cy="397.9" r="3" fill="#b45309" />
+  <circle cx="226.4" cy="344.0" r="3" fill="#b45309" />
+  <circle cx="215.5" cy="229.7" r="3" fill="#b45309" />
+  <polygon points="320.0,197.3 349.5,272.9 396.8,334.4 320.0,373.4 247.5,331.9 236.9,242.0" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="197.3" r="3" fill="#b91c1c" />
+  <circle cx="349.5" cy="272.9" r="3" fill="#b91c1c" />
+  <circle cx="396.8" cy="334.4" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="373.4" r="3" fill="#b91c1c" />
+  <circle cx="247.5" cy="331.9" r="3" fill="#b91c1c" />
+  <circle cx="236.9" cy="242.0" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">shamir</text>
   <text class="label" x="529.6" y="173.0" text-anchor="start">blakley</text>
   <text class="label" x="529.6" y="415.0" text-anchor="start">kothari</text>
   <text class="label" x="320.0" y="536.0" text-anchor="middle">karchmer_wigderson</text>
   <text class="label" x="110.4" y="415.0" text-anchor="end">brickell</text>
   <text class="label" x="110.4" y="173.0" text-anchor="end">massey</text>
-  <text class="small" x="324.0" y="253.3">46</text>
-  <text class="small" x="324.0" y="216.7">215</text>
-  <text class="small" x="324.0" y="180.0">1k</text>
-  <text class="small" x="324.0" y="143.3">5k</text>
-  <text class="small" x="324.0" y="106.7">22k</text>
-  <text class="small" x="324.0" y="70.0">100k</text>
+  <text class="small" x="324.0" y="253.3">68</text>
+  <text class="small" x="324.0" y="216.7">464</text>
+  <text class="small" x="324.0" y="180.0">3k</text>
+  <text class="small" x="324.0" y="143.3">22k</text>
+  <text class="small" x="324.0" y="106.7">147k</text>
+  <text class="small" x="324.0" y="70.0">1.0M</text>
   <text class="label" x="20" y="630" font-weight="bold">Threshold schemes: split + reconstruct (ops/sec, log scale)</text>
   <text class="small" x="20" y="645">k=3, n=5; per-axis = scheme; per-polygon = secret-size (ChaCha20Rng, ARM64 release build)</text>
   <rect x="20.0" y="680.0" width="14" height="14" fill="#0f766e" rx="2" />

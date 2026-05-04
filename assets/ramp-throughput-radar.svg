@@ -19,36 +19,36 @@
   <line class="axis" x1="320" y1="290" x2="540.0" y2="290.0" />
   <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
   <line class="axis" x1="320" y1="290" x2="100.0" y2="290.0" />
-  <polygon points="320.0,93.9 516.0,290.0 320.0,477.3 122.1,290.0" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="93.9" r="3" fill="#0f766e" />
-  <circle cx="516.0" cy="290.0" r="3" fill="#0f766e" />
-  <circle cx="320.0" cy="477.3" r="3" fill="#0f766e" />
-  <circle cx="122.1" cy="290.0" r="3" fill="#0f766e" />
-  <polygon points="320.0,114.6 495.3,290.0 320.0,437.8 143.7,290.0" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
-  <circle cx="320.0" cy="114.6" r="3" fill="#1d4ed8" />
-  <circle cx="495.3" cy="290.0" r="3" fill="#1d4ed8" />
-  <circle cx="320.0" cy="437.8" r="3" fill="#1d4ed8" />
-  <circle cx="143.7" cy="290.0" r="3" fill="#1d4ed8" />
-  <polygon points="320.0,141.9 467.7,290.0 320.0,391.5 170.9,290.0" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
-  <circle cx="320.0" cy="141.9" r="3" fill="#b45309" />
-  <circle cx="467.7" cy="290.0" r="3" fill="#b45309" />
-  <circle cx="320.0" cy="391.5" r="3" fill="#b45309" />
-  <circle cx="170.9" cy="290.0" r="3" fill="#b45309" />
-  <polygon points="320.0,181.7 428.3,290.0 320.0,346.8 211.9,290.0" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="181.7" r="3" fill="#b91c1c" />
-  <circle cx="428.3" cy="290.0" r="3" fill="#b91c1c" />
-  <circle cx="320.0" cy="346.8" r="3" fill="#b91c1c" />
-  <circle cx="211.9" cy="290.0" r="3" fill="#b91c1c" />
+  <polygon points="320.0,107.4 502.3,290.0 320.0,437.1 131.8,290.0" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="107.4" r="3" fill="#0f766e" />
+  <circle cx="502.3" cy="290.0" r="3" fill="#0f766e" />
+  <circle cx="320.0" cy="437.1" r="3" fill="#0f766e" />
+  <circle cx="131.8" cy="290.0" r="3" fill="#0f766e" />
+  <polygon points="320.0,157.9 451.8,290.0 320.0,400.3 187.4,290.0" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="157.9" r="3" fill="#1d4ed8" />
+  <circle cx="451.8" cy="290.0" r="3" fill="#1d4ed8" />
+  <circle cx="320.0" cy="400.3" r="3" fill="#1d4ed8" />
+  <circle cx="187.4" cy="290.0" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,178.7 431.2,290.0 320.0,366.2 208.4,290.0" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="178.7" r="3" fill="#b45309" />
+  <circle cx="431.2" cy="290.0" r="3" fill="#b45309" />
+  <circle cx="320.0" cy="366.2" r="3" fill="#b45309" />
+  <circle cx="208.4" cy="290.0" r="3" fill="#b45309" />
+  <polygon points="320.0,208.9 401.1,290.0 320.0,332.4 238.9,290.0" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="208.9" r="3" fill="#b91c1c" />
+  <circle cx="401.1" cy="290.0" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="332.4" r="3" fill="#b91c1c" />
+  <circle cx="238.9" cy="290.0" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">ramp</text>
   <text class="label" x="562.0" y="294.0" text-anchor="start">yamamoto</text>
   <text class="label" x="320.0" y="536.0" text-anchor="middle">blakley_meadows</text>
   <text class="label" x="78.0" y="294.0" text-anchor="end">kgh (matrix)</text>
-  <text class="small" x="324.0" y="253.3">32</text>
-  <text class="small" x="324.0" y="216.7">100</text>
-  <text class="small" x="324.0" y="180.0">316</text>
-  <text class="small" x="324.0" y="143.3">1k</text>
-  <text class="small" x="324.0" y="106.7">3k</text>
-  <text class="small" x="324.0" y="70.0">10k</text>
+  <text class="small" x="324.0" y="253.3">46</text>
+  <text class="small" x="324.0" y="216.7">215</text>
+  <text class="small" x="324.0" y="180.0">1k</text>
+  <text class="small" x="324.0" y="143.3">5k</text>
+  <text class="small" x="324.0" y="106.7">22k</text>
+  <text class="small" x="324.0" y="70.0">100k</text>
   <text class="label" x="20" y="630" font-weight="bold">Ramp / vector schemes: split + reconstruct (ops/sec, log scale)</text>
   <text class="small" x="20" y="645">k=3, n=5; per-axis = scheme; per-polygon = secret-size (ChaCha20Rng, ARM64 release build)</text>
   <rect x="20.0" y="680.0" width="14" height="14" fill="#0f766e" rx="2" />

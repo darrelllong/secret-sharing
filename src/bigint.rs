@@ -356,6 +356,17 @@ impl BigUint {
         out
     }
 
+    /// Return the low 128 bits as a `u128`. Used by hot-path field
+    /// implementations that have already pinned their operand range
+    /// (e.g. Mersenne-127 reduction). Bits beyond position 127 are
+    /// silently dropped.
+    #[must_use]
+    pub fn low_u128(&self) -> u128 {
+        let lo = self.limbs.first().copied().unwrap_or(0);
+        let hi = self.limbs.get(1).copied().unwrap_or(0);
+        u128::from(lo) | (u128::from(hi) << 64)
+    }
+
     /// Return whether the value is zero.
     #[must_use]
     pub fn is_zero(&self) -> bool {

@@ -21,32 +21,32 @@
   <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
   <line class="axis" x1="320" y1="290" x2="129.5" y2="400.0" />
   <line class="axis" x1="320" y1="290" x2="129.5" y2="180.0" />
-  <polygon points="320.0,152.0 345.8,275.1 439.1,358.8 320.0,427.3 201.3,358.5 189.7,214.8" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="152.0" r="3" fill="#0f766e" />
-  <circle cx="345.8" cy="275.1" r="3" fill="#0f766e" />
-  <circle cx="439.1" cy="358.8" r="3" fill="#0f766e" />
-  <circle cx="320.0" cy="427.3" r="3" fill="#0f766e" />
-  <circle cx="201.3" cy="358.5" r="3" fill="#0f766e" />
-  <circle cx="189.7" cy="214.8" r="3" fill="#0f766e" />
-  <polygon points="320.0,165.2 366.5,263.2 415.6,345.2 320.0,381.3 241.2,335.5 205.3,223.8" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="165.2" r="3" fill="#b91c1c" />
-  <circle cx="366.5" cy="263.2" r="3" fill="#b91c1c" />
-  <circle cx="415.6" cy="345.2" r="3" fill="#b91c1c" />
-  <circle cx="320.0" cy="381.3" r="3" fill="#b91c1c" />
-  <circle cx="241.2" cy="335.5" r="3" fill="#b91c1c" />
-  <circle cx="205.3" cy="223.8" r="3" fill="#b91c1c" />
+  <polygon points="320.0,143.4 343.7,276.3 447.6,363.7 320.0,436.0 193.4,363.1 178.1,208.1" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="143.4" r="3" fill="#0f766e" />
+  <circle cx="343.7" cy="276.3" r="3" fill="#0f766e" />
+  <circle cx="447.6" cy="363.7" r="3" fill="#0f766e" />
+  <circle cx="320.0" cy="436.0" r="3" fill="#0f766e" />
+  <circle cx="193.4" cy="363.1" r="3" fill="#0f766e" />
+  <circle cx="178.1" cy="208.1" r="3" fill="#0f766e" />
+  <polygon points="320.0,160.7 359.8,267.0 434.4,356.0 320.0,404.1 221.5,346.9 200.1,220.8" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="160.7" r="3" fill="#b91c1c" />
+  <circle cx="359.8" cy="267.0" r="3" fill="#b91c1c" />
+  <circle cx="434.4" cy="356.0" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="404.1" r="3" fill="#b91c1c" />
+  <circle cx="221.5" cy="346.9" r="3" fill="#b91c1c" />
+  <circle cx="200.1" cy="220.8" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">shamir</text>
   <text class="label" x="529.6" y="173.0" text-anchor="start">blakley</text>
   <text class="label" x="529.6" y="415.0" text-anchor="start">kothari</text>
   <text class="label" x="320.0" y="536.0" text-anchor="middle">karchmer_wigderson</text>
   <text class="label" x="110.4" y="415.0" text-anchor="end">brickell</text>
   <text class="label" x="110.4" y="173.0" text-anchor="end">massey</text>
-  <text class="small" x="324.0" y="253.3">22</text>
-  <text class="small" x="324.0" y="216.7">46</text>
-  <text class="small" x="324.0" y="180.0">100</text>
-  <text class="small" x="324.0" y="143.3">215</text>
-  <text class="small" x="324.0" y="106.7">464</text>
-  <text class="small" x="324.0" y="70.0">1k</text>
+  <text class="small" x="324.0" y="253.3">32</text>
+  <text class="small" x="324.0" y="216.7">100</text>
+  <text class="small" x="324.0" y="180.0">316</text>
+  <text class="small" x="324.0" y="143.3">1k</text>
+  <text class="small" x="324.0" y="106.7">3k</text>
+  <text class="small" x="324.0" y="70.0">10k</text>
   <text class="label" x="20" y="630" font-weight="bold">4 KiB block: split vs reconstruct (ops/sec, log scale)</text>
   <text class="small" x="20" y="645">k=3, n=5, GF(2^127 − 1); 4096 B chunked into 274 × 15-byte field elements</text>
   <rect x="20.0" y="680.0" width="14" height="14" fill="#0f766e" rx="2" />
