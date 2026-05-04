@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img">
+  <title>Visual cryptography (n, n): latency vs n</title>
+  <style>
+    .bg { fill: #fbf8f1; }
+    .grid { stroke: #c9c2b7; stroke-width: 1; fill: none; }
+    .axis { stroke: #6b6257; stroke-width: 1.5; fill: none; }
+    .label { fill: #342f29; font: 11px ui-sans-serif, -apple-system, sans-serif; }
+    .small { fill: #6b6257; font: 10px ui-sans-serif, -apple-system, sans-serif; }
+    .title { fill: #342f29; font: bold 13px ui-sans-serif, -apple-system, sans-serif; }
+  </style>
+  <rect class="bg" x="0" y="0" width="640" height="420" rx="12" />
+  <line class="axis" x1="80.0" y1="330.0" x2="610.0" y2="330.0" />
+  <line class="axis" x1="80.0" y1="60.0" x2="80.0" y2="330.0" />
+  <line class="grid" x1="80.0" y1="330.0" x2="610.0" y2="330.0" />
+  <text class="small" x="74.0" y="333.0" text-anchor="end">100 ns</text>
+  <line class="grid" x1="80.0" y1="240.0" x2="610.0" y2="240.0" />
+  <text class="small" x="74.0" y="243.0" text-anchor="end">1.0 µs</text>
+  <line class="grid" x1="80.0" y1="150.0" x2="610.0" y2="150.0" />
+  <text class="small" x="74.0" y="153.0" text-anchor="end">10.0 µs</text>
+  <line class="grid" x1="80.0" y1="60.0" x2="610.0" y2="60.0" />
+  <text class="small" x="74.0" y="63.0" text-anchor="end">100.0 µs</text>
+  <line class="grid" x1="80.0" y1="60.0" x2="80.0" y2="330.0" />
+  <text class="small" x="80.0" y="344.0" text-anchor="middle">n=2</text>
+  <line class="grid" x1="256.7" y1="60.0" x2="256.7" y2="330.0" />
+  <text class="small" x="256.7" y="344.0" text-anchor="middle">n=3</text>
+  <line class="grid" x1="433.3" y1="60.0" x2="433.3" y2="330.0" />
+  <text class="small" x="433.3" y="344.0" text-anchor="middle">n=4</text>
+  <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
+  <text class="small" x="610.0" y="344.0" text-anchor="middle">n=5</text>
+  <path d="M 80.0 196.0 L 256.7 159.5 L 433.3 129.9 L 610.0 101.9" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="196.0" r="3.5" fill="#0f766e" />
+  <circle cx="256.7" cy="159.5" r="3.5" fill="#0f766e" />
+  <circle cx="433.3" cy="129.9" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="101.9" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 267.1 L 256.7 245.2 L 433.3 221.0 L 610.0 193.9" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="267.1" r="3.5" fill="#1d4ed8" />
+  <circle cx="256.7" cy="245.2" r="3.5" fill="#1d4ed8" />
+  <circle cx="433.3" cy="221.0" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="193.9" r="3.5" fill="#1d4ed8" />
+  <text class="title" x="80.0" y="30.0">Visual cryptography (n, n): latency vs n</text>
+  <text class="small" x="80.0" y="46.0">8×8 secret image; per-pixel expansion = 2^(n-1)</text>
+  <text class="small" x="345.0" y="362.0" text-anchor="middle">n (number of shares = threshold)</text>
+  <text class="small" x="20" y="195.0" transform="rotate(-90 20 195.0)" text-anchor="middle">latency (log scale)</text>
+  <rect x="80.0" y="398.0" width="12" height="12" fill="#0f766e" rx="2" />
+  <text class="small" x="98.0" y="408.0">split</text>
+  <rect x="148.0" y="398.0" width="12" height="12" fill="#1d4ed8" rx="2" />
+  <text class="small" x="166.0" y="408.0">reconstruct</text>
+</svg>

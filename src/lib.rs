@@ -114,6 +114,7 @@ pub mod poly;
 pub mod primes;
 pub mod proactive;
 pub mod ramp;
+pub mod secure;
 pub mod shamir;
 pub mod trivial;
 pub mod visual;

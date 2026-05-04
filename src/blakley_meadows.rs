@@ -40,14 +40,22 @@
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 use crate::field::PrimeField;
+use crate::secure::ct_eq_biguint;
 
 /// One trustee's hyperplane equation
 /// `a_1 y_1 + … + a_{k−1} y_{k−1} + y_k = b`. The `y_k` coefficient is
 /// fixed at 1 by construction and is not stored.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     pub a: Vec<BigUint>,
     pub b: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 /// Distribute `n` `(k, L, n)`-Blakley–Meadows shares of a length-`L`
@@ -87,21 +95,96 @@ pub fn split<R: Csprng>(
         point.push(field.random(rng));
     }
 
-    (0..n)
-        .map(|_| {
+    // Singularity guard on the first k shares — see `crate::blakley`
+    // for the same pattern. The paper-level "any k shares
+    // reconstruct" claim demands a non-singular leading-k block.
+    const MAX_RESAMPLE: usize = 64;
+    let mut shares: Vec<Share> = Vec::with_capacity(n);
+    for share_idx in 0..n {
+        let mut attempt = 0usize;
+        loop {
             let mut a: Vec<BigUint> = Vec::with_capacity(k - 1);
             for _ in 0..(k - 1) {
                 a.push(field.random(rng));
             }
-            // b = a · point[0..k-1] + point[k-1].
             let mut b = point[k - 1].clone();
             for j in 0..(k - 1) {
                 let term = field.mul(&a[j], &point[j]);
                 b = field.add(&b, &term);
             }
-            Share { a, b }
-        })
-        .collect()
+            let candidate = Share { a, b };
+            if share_idx < k {
+                shares.push(candidate);
+                if first_k_full_rank(field, &shares) {
+                    break;
+                }
+                shares.pop();
+                attempt += 1;
+                assert!(
+                    attempt < MAX_RESAMPLE,
+                    "Blakley–Meadows split could not find a non-singular \
+                     share within {MAX_RESAMPLE} resamples — field is too \
+                     small for k = {k}",
+                );
+            } else {
+                shares.push(candidate);
+                break;
+            }
+        }
+    }
+    shares
+}
+
+/// Same first-k full-rank check as in `crate::blakley`, copied
+/// locally so each module can be read independently.
+#[allow(clippy::needless_range_loop)]
+fn first_k_full_rank(field: &PrimeField, shares: &[Share]) -> bool {
+    let k = shares.len();
+    if k == 0 {
+        return true;
+    }
+    let mut mat: Vec<Vec<BigUint>> = Vec::with_capacity(k);
+    for s in shares {
+        let mut row = Vec::with_capacity(k);
+        for c in &s.a {
+            row.push(field.reduce(c));
+        }
+        row.push(BigUint::one());
+        mat.push(row);
+    }
+    for col in 0..k {
+        let mut pivot_row = None;
+        for r in col..k {
+            if !mat[r][col].is_zero() {
+                pivot_row = Some(r);
+                break;
+            }
+        }
+        let Some(pr) = pivot_row else {
+            return false;
+        };
+        if pr != col {
+            mat.swap(pr, col);
+        }
+        let inv = match field.inv(&mat[col][col]) {
+            Some(v) => v,
+            None => return false,
+        };
+        for c in col..k {
+            mat[col][c] = field.mul(&mat[col][c], &inv);
+        }
+        for r in 0..k {
+            if r == col || mat[r][col].is_zero() {
+                continue;
+            }
+            let factor = mat[r][col].clone();
+            for c in col..k {
+                let term = field.mul(&factor, &mat[col][c]);
+                mat[r][c] = field.sub(&mat[r][c], &term);
+            }
+        }
+    }
+    true
 }
 
 /// Recover the length-`L` secret from `k` (or more) shares by solving
@@ -173,7 +256,8 @@ pub fn reconstruct(
             let term = field.mul(&s.a[j], &point[j]);
             lhs = field.add(&lhs, &term);
         }
-        if lhs != field.reduce(&s.b) {
+        let rhs = field.reduce(&s.b);
+        if !ct_eq_biguint(&lhs, &rhs) {
             return None;
         }
     }

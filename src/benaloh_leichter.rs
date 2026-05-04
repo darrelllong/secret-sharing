@@ -42,6 +42,7 @@
 use crate::field::PrimeField;
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
+use crate::secure::ct_eq_biguint;
 
 /// Monotone Boolean formula. Leaves are 1-based party identifiers.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -75,18 +76,32 @@ impl Formula {
 /// indices from the formula root down to the leaf — this lets the
 /// reconstruction routine match a fragment to a specific leaf in `T`
 /// without depending on player identifier alone.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct ShareFragment {
     pub path: Vec<u32>,
     pub value: BigUint,
 }
 
+impl core::fmt::Debug for ShareFragment {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("ShareFragment(<elided>)")
+    }
+}
+
 /// Everything one party receives: their identifier and the fragments
 /// for every leaf labelled with that identifier.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct PlayerShare {
     pub player: usize,
     pub fragments: Vec<ShareFragment>,
+}
+
+impl core::fmt::Debug for PlayerShare {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("PlayerShare(<elided>)")
+    }
 }
 
 /// Distribute the secret along the formula, returning one
@@ -115,6 +130,26 @@ pub fn split<R: Csprng>(
         .into_iter()
         .map(|(player, fragments)| PlayerShare { player, fragments })
         .collect()
+}
+
+/// Walk `formula` along `path` (a sequence of child indices). Return
+/// the party identifier at the leaf if the path resolves to one,
+/// `None` if the path runs off the tree or terminates on an internal
+/// node.
+fn leaf_party_at_path(formula: &Formula, path: &[u32]) -> Option<usize> {
+    let mut node = formula;
+    for &step in path {
+        match node {
+            Formula::Party(_) => return None, // path overshoots the leaf
+            Formula::And(children) | Formula::Or(children) => {
+                node = children.get(step as usize)?;
+            }
+        }
+    }
+    match node {
+        Formula::Party(p) => Some(*p),
+        _ => None, // path stops on an internal node
+    }
 }
 
 fn distribute<R: Csprng>(
@@ -177,10 +212,25 @@ pub fn reconstruct(
     // multiple fragments arrive for the same path (whether from the
     // same player or two different players claiming it), they must
     // agree exactly — disagreement is a tamper indicator and yields None.
+    //
+    // **Path-ownership check.** Every fragment a player submits must
+    // correspond to a leaf in `formula` actually labelled with THAT
+    // player. Without this check a malicious player can attach a
+    // forged fragment for someone else's leaf path and influence the
+    // OR/AND recovery — exactly the attack the previous test
+    // `solo_forger_at_others_path_yields_wrong_value` documented.
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
             if shares[i].player == shares[j].player {
                 return None;
+            }
+        }
+    }
+    for s in shares {
+        for f in &s.fragments {
+            match leaf_party_at_path(formula, &f.path) {
+                Some(p) if p == s.player => {}
+                _ => return None,
             }
         }
     }
@@ -189,7 +239,7 @@ pub fn reconstruct(
     for s in shares {
         for f in &s.fragments {
             if let Some(prev) = by_path.get(&f.path) {
-                if prev != &f.value {
+                if !ct_eq_biguint(prev, &f.value) {
                     return None;
                 }
             } else {
@@ -399,12 +449,12 @@ mod tests {
     }
 
     #[test]
-    fn solo_forger_at_others_path_yields_wrong_value() {
-        // AD #13: when only the forger is present (no genuine peer to
-        // contradict), the forged fragment goes uncontested into the
-        // by_path map. Recovery succeeds with a wrong value rather than
-        // None — documenting the non-error-correcting property in the
-        // single-forger setting.
+    fn solo_forger_at_others_path_is_rejected() {
+        // PEER-REVIEW P1: a player attaching a fragment for a leaf
+        // path labelled with a different player must be rejected.
+        // `reconstruct` enforces path-ownership: every supplied
+        // fragment's path must resolve to a leaf labelled with the
+        // submitting player.
         let f = small();
         let mut r = rng();
         let formula = Formula::or(vec![Formula::party(1), Formula::party(2)]);
@@ -418,18 +468,13 @@ mod tests {
             .path
             .clone();
         let mut p1 = shares.iter().find(|s| s.player == 1).unwrap().clone();
+        // Forged fragment: player 1 claiming a leaf labelled with 2.
         p1.fragments.push(ShareFragment {
             path: p2_path,
-            value: BigUint::from_u64(secret.to_be_bytes()[0] as u64 ^ 0xFF),
+            value: BigUint::from_u64(0xDEAD),
         });
-        // Coalition contains *only* the forger. No peer present to
-        // contradict the bogus fragment. Recovery returns Some(garbage).
         let coalition = vec![p1];
-        let got = reconstruct(&f, &formula, &coalition).expect("recover succeeds with no peer to refute");
-        // Either the forged or the genuine branch may have been chosen
-        // by OR; one of them is the original secret. The defect is that
-        // we cannot tell which.
-        let _ = got;
+        assert!(reconstruct(&f, &formula, &coalition).is_none());
     }
 
     #[test]

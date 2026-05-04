@@ -30,6 +30,7 @@
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 use crate::field::PrimeField;
+use crate::secure::ct_eq_biguint;
 
 /// A Massey scheme: a `k × (n + 1)` generator matrix over `GF(p)`.
 #[derive(Clone, Debug)]
@@ -61,11 +62,21 @@ impl CodeScheme {
         }
         let k = g.len();
         let n = width - 1;
-        // Column 0 must have at least one nonzero entry — otherwise the
-        // codeword's secret coordinate is identically zero.
+        // Reduce every entry modulo p so downstream comparisons and
+        // inversions operate on canonical representatives. Without
+        // this, a non-canonical matrix can pass `is_zero()` while
+        // being a multiple of p (causing `field.inv` to panic in
+        // `split`), or break the qualification check by comparing a
+        // reduced accumulator against a raw entry.
+        let g: Vec<Vec<BigUint>> = g
+            .into_iter()
+            .map(|row| row.into_iter().map(|x| field.reduce(&x)).collect())
+            .collect();
+        // Column 0 must have at least one nonzero entry — checked AFTER
+        // reduction so `0 mod p` cannot sneak past as "raw nonzero".
         assert!(
             (0..k).any(|r| !g[r][0].is_zero()),
-            "column 0 (secret column) must have a nonzero entry",
+            "column 0 (secret column) must have a nonzero entry mod p",
         );
         Self { field, g, k, n }
     }
@@ -127,7 +138,7 @@ impl CodeScheme {
                 let term = self.field.mul(&coeffs[k], &self.g[r][j]);
                 acc = self.field.add(&acc, &term);
             }
-            if acc != self.g[r][0] {
+            if !ct_eq_biguint(&acc, &self.g[r][0]) {
                 return None;
             }
         }
@@ -137,10 +148,17 @@ impl CodeScheme {
 
 /// One trustee's share: 1-based column index and the codeword value at
 /// that column.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     pub player: usize,
     pub value: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 /// Distribute the secret across all `n` players.

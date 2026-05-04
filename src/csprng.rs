@@ -38,13 +38,52 @@ pub trait Csprng {
 /// ChaCha20-based CSPRNG, RFC 7539 conformant. Seeded from a 32-byte
 /// key; the nonce and counter both start at zero, so the deterministic
 /// stream is fully determined by the seed.
-#[derive(Clone, Debug)]
+///
+/// On `Drop` the key, nonce, counter, and the 64-byte keystream buffer
+/// are all volatile-zeroed so the secret seed material cannot persist
+/// in freed memory. See [`crate::secure`] for the `Zeroize` machinery.
+///
+/// `ChaCha20Rng` deliberately does **not** implement `Clone`. Cloning a
+/// CSPRNG would byte-copy the secret key and the buffered keystream
+/// into a fresh allocation outside of the original's `Drop` reach,
+/// silently doubling the residue surface. If you need two independent
+/// streams, seed two separate generators from the same `OsRng`.
 pub struct ChaCha20Rng {
     key: [u32; 8],
     nonce: [u32; 3],
     counter: u32,
     buf: [u8; 64],
     buf_pos: usize,
+}
+
+impl core::fmt::Debug for ChaCha20Rng {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Don't print the key or buffered keystream — both are
+        // secret-derived. Just identify the type and the position.
+        f.debug_struct("ChaCha20Rng")
+            .field("buf_pos", &self.buf_pos)
+            .field("counter", &self.counter)
+            .finish_non_exhaustive()
+    }
+}
+
+impl Drop for ChaCha20Rng {
+    fn drop(&mut self) {
+        // Volatile-zero every field that derives from the seed.
+        for w in self.key.iter_mut() {
+            // SAFETY: `w` is a valid `&mut u32` for the duration.
+            unsafe { core::ptr::write_volatile(w, 0u32) };
+        }
+        for w in self.nonce.iter_mut() {
+            unsafe { core::ptr::write_volatile(w, 0u32) };
+        }
+        unsafe { core::ptr::write_volatile(&mut self.counter, 0u32) };
+        for b in self.buf.iter_mut() {
+            unsafe { core::ptr::write_volatile(b, 0u8) };
+        }
+        unsafe { core::ptr::write_volatile(&mut self.buf_pos, 0usize) };
+        core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
+    }
 }
 
 impl ChaCha20Rng {
@@ -108,7 +147,7 @@ impl ChaCha20Rng {
             self.nonce[1],
             self.nonce[2],
         ];
-        let init = state;
+        let mut init = state;
 
         for _ in 0..10 {
             // Column rounds.
@@ -129,10 +168,50 @@ impl ChaCha20Rng {
         for (i, word) in state.iter().enumerate() {
             self.buf[i * 4..(i + 1) * 4].copy_from_slice(&word.to_le_bytes());
         }
-        // Increment block counter; on overflow we wrap (a 2^32-block
-        // stream is 256 GiB, far past any test's needs).
-        self.counter = self.counter.wrapping_add(1);
+        // Increment the 32-bit block counter, then carry into the
+        // 96-bit nonce on overflow. This treats (counter, nonce) as a
+        // single 128-bit block index, so the keystream period is
+        // 2^128 64-byte blocks — vastly beyond any practical use, and
+        // free of the 256 GiB key/nonce-reuse footgun that pure 32-bit
+        // counter wrap would create.
+        let (next, carry) = self.counter.overflowing_add(1);
+        self.counter = next;
+        if carry {
+            for slot in self.nonce.iter_mut() {
+                let (v, c) = slot.overflowing_add(1);
+                *slot = v;
+                if !c {
+                    break;
+                }
+            }
+            // If every nonce word overflowed we have exhausted the
+            // entire 128-bit space. Refuse to continue — keystream
+            // reuse from this point would silently leak the secret.
+            assert!(
+                !(self.nonce[0] == 0 && self.nonce[1] == 0 && self.nonce[2] == 0
+                    && self.counter == 0),
+                "ChaCha20Rng exhausted: 2^128 blocks generated under one key",
+            );
+        }
         self.buf_pos = 0;
+
+        // Stack residue scrub. `state` and `init` carry both the key
+        // (rows 4..12 of the initial block) and the keystream (rows
+        // 0..16 of the post-round state). Volatile-zero them before
+        // returning so the optimiser cannot leave the secret in the
+        // freed stack frame.
+        for w in state.iter_mut() {
+            // SAFETY: `w` is a valid `&mut u32`.
+            unsafe { core::ptr::write_volatile(w, 0u32) };
+        }
+        // Scrub `init` THROUGH ITS LIVE BINDING — not a copy. A
+        // value-copy `let mut init_scrub = init;` would zero the copy
+        // and leave the original `init` slot untouched in the stack
+        // frame.
+        for w in init.iter_mut() {
+            unsafe { core::ptr::write_volatile(w, 0u32) };
+        }
+        core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::SeqCst);
     }
 }
 
@@ -186,9 +265,18 @@ impl Csprng for ChaCha20Rng {
 /// let mut os = OsRng::new().unwrap();
 /// let mut rng = ChaCha20Rng::from_os_entropy(&mut os);
 /// ```
-#[derive(Debug)]
+///
+/// `Debug` is implemented manually to avoid leaking the file
+/// descriptor number through `{:?}` — the formatted output identifies
+/// only the type.
 pub struct OsRng {
     file: std::fs::File,
+}
+
+impl core::fmt::Debug for OsRng {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("OsRng(<entropy source, fd elided>)")
+    }
 }
 
 impl OsRng {
@@ -290,6 +378,19 @@ mod tests {
         let mut buf = [0u8; 64];
         rng.fill_bytes(&mut buf);
         assert!(buf.iter().any(|&v| v != 0));
+    }
+
+    #[test]
+    fn chacha20_drop_does_not_panic() {
+        // Smoke: ChaCha20Rng's Drop performs many volatile writes. This
+        // test exists so any regression that breaks Drop (e.g. UB
+        // introduced by a refactor) trips on `cargo test`.
+        for _ in 0..10 {
+            let mut rng = ChaCha20Rng::from_seed(&[0xA7u8; 32]);
+            let mut buf = [0u8; 32];
+            rng.fill_bytes(&mut buf);
+            // rng dropped here.
+        }
     }
 
     #[test]

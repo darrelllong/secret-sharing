@@ -31,6 +31,7 @@
 
 use crate::field::PrimeField;
 use crate::poly::horner;
+use crate::secure::ct_eq_biguint;
 use crate::shamir::Share;
 use crate::bigint::BigUint;
 
@@ -47,6 +48,17 @@ use crate::bigint::BigUint;
 ///   `max_errors` shares are actually corrupted), or
 /// - the resulting message polynomial fails the McEliece–Sarwate
 ///   agreement bound (defence-in-depth check).
+///
+/// **Beyond the decoding radius.** When the *actual* number of
+/// tampered shares exceeds `max_errors`, multiple degree-`< k`
+/// polynomials may simultaneously satisfy the agreement threshold
+/// `≥ k + max_errors`. In that regime this function may return
+/// `Some(wrong_secret)` rather than `None` — the routine returns the
+/// first kernel-basis solution that passes the agreement check, not
+/// the *unique* decoding (which does not exist beyond the radius).
+/// Callers who need a fail-closed guarantee against unknown-error-
+/// count adversarial inputs must layer authentication over the
+/// shares (e.g. wrap with `crate::vss`).
 #[must_use]
 pub fn reconstruct_with_errors(
     field: &PrimeField,
@@ -83,7 +95,7 @@ pub fn reconstruct_with_errors(
         // Validate against extras (defence-in-depth).
         for s in &shares[k..] {
             let pred = crate::poly::lagrange_eval_unchecked(field, &pts, &s.x);
-            if pred != s.y {
+            if !ct_eq_biguint(&pred, &s.y) {
                 return None;
             }
         }
@@ -138,9 +150,12 @@ pub fn reconstruct_with_errors(
             continue;
         };
         // Sanity-check: polynomial agrees with at least k + t shares.
+        // Use ct_eq so the agreement count's per-share branch latency
+        // does not leak which shares lie on the recovered codeword.
         let mut agree = 0usize;
         for s in shares {
-            if horner(field, &m_coeffs, &s.x) == s.y {
+            let pred = horner(field, &m_coeffs, &s.x);
+            if ct_eq_biguint(&pred, &s.y) {
                 agree += 1;
             }
         }

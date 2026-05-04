@@ -30,9 +30,20 @@ pub fn lagrange_eval(
     x_eval: &BigUint,
 ) -> Option<BigUint> {
     let n = points.len();
+    // Reduce every label modulo p before checking pairwise distinctness
+    // — otherwise `x = 1` and `x = p + 1` look distinct but collide
+    // inside the field, producing a zero denominator and a panic in
+    // `lagrange_eval_unchecked`.
+    let reduced: Vec<BigUint> = points.iter().map(|(x, _)| field.reduce(x)).collect();
+    for r in &reduced {
+        if r.is_zero() {
+            // x = 0 is reserved for the secret; refuse honestly.
+            return None;
+        }
+    }
     for i in 0..n {
         for j in (i + 1)..n {
-            if points[i].0 == points[j].0 {
+            if reduced[i] == reduced[j] {
                 return None;
             }
         }

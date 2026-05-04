@@ -41,15 +41,23 @@
 
 use crate::field::PrimeField;
 use crate::poly::lagrange_eval_unchecked;
+use crate::secure::ct_eq_biguint;
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 
 /// One vector share for the matrix scheme. `x` is the trustee label;
 /// `y` is `u · A_i`, a length-`m` vector in `GF(p)^m`.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct VectorShare {
     pub x: BigUint,
     pub y: Vec<BigUint>,
+}
+
+impl core::fmt::Debug for VectorShare {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("VectorShare(<elided>)")
+    }
 }
 
 /// KGH (k, n) split of a vector secret `s ∈ GF(p)^m`.
@@ -162,7 +170,7 @@ pub fn reconstruct(
         secret.push(lagrange_eval_unchecked(field, &pts, &BigUint::zero()));
         for s in &shares[k..] {
             let pred = lagrange_eval_unchecked(field, &pts, &s.x);
-            if pred != s.y[c] {
+            if !ct_eq_biguint(&pred, &s.y[c]) {
                 return None;
             }
         }

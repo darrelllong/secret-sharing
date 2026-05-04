@@ -46,7 +46,8 @@ use crate::bigint::{BigUint, MontgomeryCtx};
 use crate::csprng::Csprng;
 use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
-use crate::primes::random_below;
+use crate::primes::{is_probable_prime, random_below};
+use crate::secure::Zeroizing;
 
 /// A Schnorr-style discrete-log group: prime `p`, subgroup order `q`
 /// (also prime), generator `g` of the subgroup.
@@ -61,18 +62,20 @@ pub struct DlogGroup {
 }
 
 impl DlogGroup {
-    /// Wrap `(p, q, g)` after sanity-checking the basic relations. We
-    /// do *not* run a primality test on `p` or `q` (the bundled
-    /// primes module is intentionally lean); the caller is responsible
-    /// for supplying actual primes.
+    /// Wrap `(p, q, g)` after fully validating the Schnorr-group
+    /// relations. Checks performed:
     ///
-    /// Checks:
     /// - `p ≥ 3` and odd,
-    /// - `1 < q < p`,
-    /// - `q · 2 ≤ p − 1` (i.e. `q | (p − 1)` is plausible — we don't
-    ///   verify by trial division for arbitrary `q`),
+    /// - `p` is prime (Miller–Rabin via [`crate::primes::is_probable_prime`]),
+    /// - `1 < q < p` and `q` is prime,
+    /// - `q | (p − 1)`,
     /// - `g ≠ 0, 1 mod p`,
-    /// - `g^q ≡ 1 mod p` (verifies `g` has order dividing `q`).
+    /// - `g^q ≡ 1 mod p` — combined with `q` prime and `g ≠ 1`, this
+    ///   pins the order of `g` to exactly `q`.
+    ///
+    /// Returns `None` if any check fails. The Miller–Rabin test is
+    /// deterministic for `p, q < ~2^81` and probabilistic with
+    /// false-positive rate `≤ 4^{-12}` above that.
     #[must_use]
     pub fn new(p: BigUint, q: BigUint, g: BigUint) -> Option<Self> {
         if p < BigUint::from_u64(3) {
@@ -81,20 +84,33 @@ impl DlogGroup {
         if !p.is_odd() {
             return None;
         }
+        if !is_probable_prime(&p) {
+            return None;
+        }
         if q <= BigUint::one() || q >= p {
             return None;
         }
-        // 2q ≤ p − 1 ⇒ q ≤ (p − 1) / 2.
-        let p_minus_1 = p.sub_ref(&BigUint::one());
-        let two_q = q.add_ref(&q);
-        if two_q > p_minus_1 {
+        if !is_probable_prime(&q) {
             return None;
         }
+        // q | (p − 1) — verify by exact division, not by the weaker
+        // 2q ≤ p − 1 plausibility test.
+        let p_minus_1 = p.sub_ref(&BigUint::one());
+        let (_, rem) = p_minus_1.div_rem(&q);
+        if !rem.is_zero() {
+            return None;
+        }
+        // Reduce g mod p BEFORE the identity check — `g = p + 1`
+        // is not raw-one but reduces to 1 in (Z/pZ)*; accepting it
+        // would let the dealer collapse every commitment to 1, killing
+        // binding. The check must therefore be against the reduced
+        // representative, not the raw input.
+        let g = g.modulo(&p);
         if g.is_zero() || g == BigUint::one() {
             return None;
         }
         let mont = MontgomeryCtx::new(&p)?;
-        // Check g has order dividing q: g^q ≡ 1 mod p.
+        // g^q ≡ 1 mod p AND q prime AND g ≠ 1 ⇒ ord(g) = q exactly.
         let one = mont.pow(&g, &q);
         if one != BigUint::one() {
             return None;
@@ -131,17 +147,31 @@ impl DlogGroup {
 }
 
 /// One trustee's share: `(player_index, f(player_index) mod q)`.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct VssShare {
     pub player: usize,
     pub value: BigUint,
 }
 
+impl core::fmt::Debug for VssShare {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("VssShare(<elided>)")
+    }
+}
+
 /// Public commitment vector `c = (g^{a_0}, g^{a_1}, …, g^{a_{k-1}})`
 /// broadcast by the dealer.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Commitments {
     pub c: Vec<BigUint>,
+}
+
+impl core::fmt::Debug for Commitments {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Commitments(<elided>)")
+    }
 }
 
 /// Deal `n` Shamir shares of `secret` over `GF(q)` together with
@@ -168,10 +198,11 @@ pub fn deal<R: Csprng>(
     );
     assert!(secret < group.q(), "secret must be < q");
 
-    let q_field = PrimeField::new(group.q().clone());
+    let q_field = PrimeField::new_unchecked(group.q().clone());
     // Polynomial f(x) = a_0 + a_1 x + … + a_{k-1} x^{k-1} over GF(q),
-    // with a_0 = secret.
-    let mut coeffs: Vec<BigUint> = Vec::with_capacity(k);
+    // with a_0 = secret. Wrap in `Zeroizing` so the secret coefficient
+    // and the random pad are volatile-zeroed on function exit.
+    let mut coeffs = Zeroizing::new(Vec::<BigUint>::with_capacity(k));
     coeffs.push(secret.clone());
     for _ in 1..k {
         let v = random_below(rng, group.q()).expect("q > 0");
@@ -247,7 +278,7 @@ pub fn reconstruct(group: &DlogGroup, shares: &[VssShare], k: usize) -> Option<B
     if k < 2 || shares.len() < k {
         return None;
     }
-    let q_field = PrimeField::new(group.q().clone());
+    let q_field = PrimeField::new_unchecked(group.q().clone());
     for s in shares {
         if s.player == 0 {
             return None;
@@ -417,6 +448,19 @@ mod tests {
             assert!(verify_share(&group, &commits, s));
         }
         assert_eq!(reconstruct(&group, &shares[..4], 4), Some(secret));
+    }
+
+    #[test]
+    fn rejects_identity_generator_after_reduction() {
+        // PEER-REVIEW (P0, second pass): `g = p + 1` reduces to 1 in
+        // (Z/pZ)*; accepting it would let the dealer collapse every
+        // commitment to 1 and break Feldman binding.
+        let bad = DlogGroup::new(
+            BigUint::from_u64(23),
+            BigUint::from_u64(11),
+            BigUint::from_u64(24), // 24 mod 23 == 1
+        );
+        assert!(bad.is_none());
     }
 
     #[test]

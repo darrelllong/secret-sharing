@@ -36,6 +36,7 @@ use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
+use crate::secure::{ct_eq_biguint, Zeroizing};
 use crate::shamir::Share;
 
 /// Refresh a set of Shamir shares: produce a fresh share vector for
@@ -80,10 +81,12 @@ pub fn refresh<R: Csprng>(
     }
 
     // Each contributor `i` samples r_i(x) = sum_{d=1..k-1} a_{i,d} x^d.
-    // We materialise the coefficient list with a leading zero so we can
-    // call `horner` directly.
+    // The contribution polynomials are the *new* secret-bearing
+    // material introduced by this refresh — a record of them is
+    // exactly enough to undo the refresh and re-link old to new
+    // shares. Wrap in Zeroizing so volatile-zero on function exit.
     let n = shares.len();
-    let mut contributions: Vec<Vec<BigUint>> = Vec::with_capacity(n);
+    let mut contributions = Zeroizing::new(Vec::<Vec<BigUint>>::with_capacity(n));
     for _ in 0..n {
         let mut coeffs = Vec::with_capacity(k);
         coeffs.push(BigUint::zero()); // r_i(0) = 0
@@ -98,7 +101,7 @@ pub fn refresh<R: Csprng>(
         .iter()
         .map(|recipient| {
             let mut new_y = recipient.y.clone();
-            for r_i in &contributions {
+            for r_i in contributions.iter() {
                 let delta = horner(field, r_i, &recipient.x);
                 new_y = field.add(&new_y, &delta);
             }
@@ -157,7 +160,7 @@ pub fn recover_share(
     // Validate every extra against the polynomial fit to the first k.
     for s in live.iter().skip(k) {
         let pred = lagrange_eval(field, &pts, &s.x)?;
-        if pred != s.y {
+        if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
     }

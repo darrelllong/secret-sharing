@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img">
+  <title>Mignotte: latency vs legal-range bit width</title>
+  <style>
+    .bg { fill: #fbf8f1; }
+    .grid { stroke: #c9c2b7; stroke-width: 1; fill: none; }
+    .axis { stroke: #6b6257; stroke-width: 1.5; fill: none; }
+    .label { fill: #342f29; font: 11px ui-sans-serif, -apple-system, sans-serif; }
+    .small { fill: #6b6257; font: 10px ui-sans-serif, -apple-system, sans-serif; }
+    .title { fill: #342f29; font: bold 13px ui-sans-serif, -apple-system, sans-serif; }
+  </style>
+  <rect class="bg" x="0" y="0" width="640" height="420" rx="12" />
+  <line class="axis" x1="80.0" y1="330.0" x2="610.0" y2="330.0" />
+  <line class="axis" x1="80.0" y1="60.0" x2="80.0" y2="330.0" />
+  <line class="grid" x1="80.0" y1="330.0" x2="610.0" y2="330.0" />
+  <text class="small" x="74.0" y="333.0" text-anchor="end">100 ns</text>
+  <line class="grid" x1="80.0" y1="195.0" x2="610.0" y2="195.0" />
+  <text class="small" x="74.0" y="198.0" text-anchor="end">1.0 µs</text>
+  <line class="grid" x1="80.0" y1="60.0" x2="610.0" y2="60.0" />
+  <text class="small" x="74.0" y="63.0" text-anchor="end">10.0 µs</text>
+  <line class="grid" x1="80.0" y1="60.0" x2="80.0" y2="330.0" />
+  <text class="small" x="80.0" y="344.0" text-anchor="middle">≈2^16</text>
+  <line class="grid" x1="307.1" y1="60.0" x2="307.1" y2="330.0" />
+  <text class="small" x="307.1" y="344.0" text-anchor="middle">≈2^64</text>
+  <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
+  <text class="small" x="610.0" y="344.0" text-anchor="middle">≈2^128</text>
+  <path d="M 80.0 259.5 L 307.1 208.7 L 610.0 176.3" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="259.5" r="3.5" fill="#0f766e" />
+  <circle cx="307.1" cy="208.7" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="176.3" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 133.1 L 307.1 118.2 L 610.0 104.7" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="133.1" r="3.5" fill="#1d4ed8" />
+  <circle cx="307.1" cy="118.2" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="104.7" r="3.5" fill="#1d4ed8" />
+  <text class="title" x="80.0" y="30.0">Mignotte: latency vs legal-range bit width</text>
+  <text class="small" x="80.0" y="46.0">k=3, n=5; secret picked just inside (α, β); log y, linear x in bits</text>
+  <text class="small" x="345.0" y="362.0" text-anchor="middle">approximate β bit width</text>
+  <text class="small" x="20" y="195.0" transform="rotate(-90 20 195.0)" text-anchor="middle">latency (log scale)</text>
+  <rect x="80.0" y="398.0" width="12" height="12" fill="#0f766e" rx="2" />
+  <text class="small" x="98.0" y="408.0">split</text>
+  <rect x="148.0" y="398.0" width="12" height="12" fill="#1d4ed8" rx="2" />
+  <text class="small" x="166.0" y="408.0">reconstruct</text>
+</svg>

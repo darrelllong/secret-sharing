@@ -28,6 +28,7 @@
 
 use crate::field::PrimeField;
 use crate::poly::lagrange_eval;
+use crate::secure::ct_eq_biguint;
 use crate::shamir::Share;
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
@@ -95,8 +96,14 @@ pub fn reconstruct(
     if shares.is_empty() || k < 2 || l == 0 || l > k || shares.len() < k {
         return None;
     }
+    // Labels `1..=k` are reserved for the secret/padding anchors.
+    // Refuse any share whose label collides with one of those anchors —
+    // otherwise a caller could feed anchor-labelled "shares" and force
+    // the reconstructed output rather than recovering from real shares.
+    let k_big = BigUint::from_u64(k as u64);
     for s in shares {
-        if s.x.is_zero() {
+        let xr = field.reduce(&s.x);
+        if xr.is_zero() || xr <= k_big {
             return None;
         }
     }
@@ -116,7 +123,7 @@ pub fn reconstruct(
     // Validate extras against the polynomial fit.
     for s in &shares[k..] {
         let pred = lagrange_eval(field, &pts, &s.x)?;
-        if pred != s.y {
+        if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
     }

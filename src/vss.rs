@@ -37,9 +37,10 @@ use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
+use crate::secure::{ct_eq_biguint, Zeroizing};
 
 /// One player's bivariate-polynomial slice.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct VssShare {
     /// 1-based player index.
     pub player: usize,
@@ -47,6 +48,13 @@ pub struct VssShare {
     pub g: Vec<BigUint>,
     /// Coefficients of `h_i(x) = F(x, i)`, low-degree first.
     pub h: Vec<BigUint>,
+}
+
+impl core::fmt::Debug for VssShare {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("VssShare(<elided>)")
+    }
 }
 
 impl VssShare {
@@ -86,10 +94,14 @@ pub fn deal<R: Csprng>(
     );
 
     // Sample F as a k × k coefficient matrix (rows index x-degree, cols y-degree).
-    // F[0][0] = secret; everything else uniform random.
-    let mut coeffs: Vec<Vec<BigUint>> = (0..k)
-        .map(|_| (0..k).map(|_| field.random(rng)).collect())
-        .collect();
+    // F[0][0] = secret; everything else uniform random. Wrap in
+    // `Zeroizing` so the entire bivariate polynomial — including the
+    // secret coefficient — is volatile-zeroed on function exit.
+    let mut coeffs = Zeroizing::new(
+        (0..k)
+            .map(|_| (0..k).map(|_| field.random(rng)).collect::<Vec<BigUint>>())
+            .collect::<Vec<Vec<BigUint>>>(),
+    );
     coeffs[0][0] = field.reduce(secret);
 
     // Player i's g_i(y) coefficients: g_i[b] = sum_a F[a][b] * i^a.
@@ -129,7 +141,9 @@ pub fn cross_check(field: &PrimeField, share_i: &VssShare, share_j: &VssShare) -
     }
     let i_val = BigUint::from_u64(share_i.player as u64);
     let j_val = BigUint::from_u64(share_j.player as u64);
-    share_i.eval_g(field, &j_val) == share_j.eval_h(field, &i_val)
+    let lhs = share_i.eval_g(field, &j_val);
+    let rhs = share_j.eval_h(field, &i_val);
+    ct_eq_biguint(&lhs, &rhs)
 }
 
 /// Whether `(k, n)` satisfies the Rabin–Ben-Or honest-majority bound
@@ -140,6 +154,25 @@ pub fn cross_check(field: &PrimeField, share_i: &VssShare, share_j: &VssShare) -
 #[must_use]
 pub fn is_honest_majority(k: usize, n: usize) -> bool {
     k >= 2 && 2 * (k - 1) < n
+}
+
+/// Like [`deal`] but **enforces** the Rabin–Ben-Or honest-majority
+/// bound `2(k − 1) < n` at the API boundary. Panics if violated.
+/// Use this constructor when the caller cannot guarantee a protocol
+/// harness will check the bound itself; use [`deal`] for raw use.
+#[must_use]
+pub fn deal_validated<R: Csprng>(
+    field: &PrimeField,
+    rng: &mut R,
+    secret: &BigUint,
+    k: usize,
+    n: usize,
+) -> Vec<VssShare> {
+    assert!(
+        is_honest_majority(k, n),
+        "Rabin–Ben-Or VSS requires honest majority: 2(k − 1) < n",
+    );
+    deal(field, rng, secret, k, n)
 }
 
 /// Run [`cross_check`] in both directions for every distinct pair in

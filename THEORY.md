@@ -37,7 +37,7 @@ schemes, computational VSS schemes, visual-cryptography schemes,
 proactive refresh layers, reconstruction-uniqueness schemes, or
 erasure-coding helpers. Those sections say so explicitly.
 
-## `trivial`: Karnin-Greene-Hellman Additive `n`-of-`n`
+## `trivial`: Karnin-Greene-Hellman Additive $n$-of-$n$
 
 Reference: `karnin1983secret`.
 
@@ -79,11 +79,11 @@ any strict subset of the players has zero information about the secret.
 
 ### Caveats
 
-This is only an `n`-of-`n` scheme. It cannot express a threshold
-$k < n$. Supplying `n = 1` would publish the secret, so the
+This is only an $n$-of-$n$ scheme. It cannot express a threshold
+$k < n$. Supplying $n = 1$ would publish the secret, so the
 implementation rejects it.
 
-## `shamir`: Shamir Polynomial `(k, n)`
+## `shamir`: Shamir Polynomial $(k, n)$
 
 Reference: `shamir1979share`.
 
@@ -144,11 +144,11 @@ perfect privacy.
 The field must contain at least $n + 1$ distinct elements: zero for the
 secret point and $n$ non-zero share labels. If the caller wants to
 recover an integer secret exactly, rather than its residue class, the
-secret must satisfy `secret < p`; otherwise the module reconstructs
-`secret mod p`. The implementation also rejects duplicate labels and
-validates extra shares, but exactly $k$ tampered shares can still
-interpolate to a wrong secret. Use `vss` or an authentication layer
-when shareholders may be malicious.
+secret must satisfy $\texttt{secret} < p$; otherwise the module
+reconstructs $\texttt{secret} \bmod p$. The implementation also rejects
+duplicate labels and validates extra shares, but exactly $k$ tampered
+shares can still interpolate to a wrong secret. Use `vss` or an
+authentication layer when shareholders may be malicious.
 
 ## `bytes`: Chunked Byte-String Shamir
 
@@ -465,7 +465,7 @@ for that set having full row rank. These failures occur with small
 probability for large $p$, but they are not impossible. Use Shamir or
 KGH when deterministic MDS-style threshold guarantees are required.
 
-## `blakley_meadows`: Geometric `(k, L, n)` Ramp Scheme
+## `blakley_meadows`: Geometric $(k, L, n)$ Ramp Scheme
 
 Reference: `blakley1984ramp`.
 
@@ -764,7 +764,7 @@ extra shares. If an untrusted caller supplies forged points at
 positions $1,\ldots,k$, reconstruction can read attacker-chosen anchor
 values. Validate labels and share authenticity outside this module.
 
-## `yamamoto`: `(k, L, n)` Ramp Scheme
+## `yamamoto`: $(k, L, n)$ Ramp Scheme
 
 Reference: `yamamoto1986secret`.
 
@@ -890,7 +890,7 @@ is independent of $s$.
 ### Caveats
 
 The cumulative-array representation can be exponentially large. For a
-threshold `(k, n)` access structure it uses one component for every
+threshold $(k, n)$ access structure it uses one component for every
 $(k - 1)$-subset of players. The scheme is not error-correcting:
 minimal qualified coalitions often have no duplicate copy of a
 sub-share, so tampering can produce a wrong secret.
@@ -1217,7 +1217,7 @@ Reference: `naor1994visual`.
 
 ### Construction
 
-The implemented visual scheme is the canonical `(n, n)` construction
+The implemented visual scheme is the canonical $(n, n)$ construction
 for black-and-white images. Each secret pixel expands to
 
 $$
@@ -1270,8 +1270,8 @@ privacy for every secret pixel.
 
 ### Caveats
 
-This module implements `(n, n)` visual cryptography only, not the full
-general `(k, n)` family. The pixel expansion is exponential in $n$.
+This module implements $(n, n)$ visual cryptography only, not the full
+general $(k, n)$ family. The pixel expansion is exponential in $n$.
 It protects binary pixel values in the visual stacking model; it is not
 a compact general-purpose byte secret-sharing format.
 
@@ -1462,7 +1462,7 @@ protocol.
 
 Do not use the bundled `small_test_group` for security. The constructor
 performs sanity checks, not primality proofs or full parameter
-generation; in particular, `g^q = 1` only proves that the order of `g`
+generation; in particular, $g^q = 1$ only proves that the order of $g$
 divides $q$. If $q$ is composite or the generator has smaller order,
 the field and binding statements above can fail. This scheme is useful
 when computational assumptions and a private authenticated channel

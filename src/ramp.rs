@@ -38,7 +38,10 @@ pub fn split(field: &PrimeField, secret: &[BigUint], n: usize) -> Vec<Share> {
         k >= 2,
         "secret must have ≥ 2 components (k = 1 makes every share equal to the secret)"
     );
-    assert!(n >= 1, "n must be at least 1");
+    assert!(
+        n >= k,
+        "n must be ≥ k = secret.len() — otherwise no subset of the n shares can reconstruct the k-element secret",
+    );
     assert!(
         BigUint::from_u64((k + n) as u64) < *field.modulus(),
         "prime modulus must exceed k + n",
@@ -72,6 +75,16 @@ pub fn split(field: &PrimeField, secret: &[BigUint], n: usize) -> Vec<Share> {
 pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Vec<BigUint>> {
     if shares.is_empty() || k == 0 || shares.len() < k {
         return None;
+    }
+    // Labels `1..=k` are reserved for the secret slots (anchors). A
+    // share whose label collides with a secret slot would let the
+    // caller force the output instead of reconstructing — refuse.
+    let k_big = BigUint::from_u64(k as u64);
+    for s in shares {
+        let xr = field.reduce(&s.x);
+        if xr.is_zero() || xr <= k_big {
+            return None;
+        }
     }
     let pts: Vec<(BigUint, BigUint)> = shares
         .iter()
@@ -118,6 +131,27 @@ mod tests {
             let _ = s.y.clone();
         }
         assert_eq!(reconstruct(&f, &shares[..10], 10).unwrap(), secret);
+    }
+
+    #[test]
+    #[should_panic(expected = "n must be ≥ k")]
+    fn ramp_split_rejects_n_below_k() {
+        // PEER-REVIEW P0: ramp::split must reject n < k = secret.len().
+        let f = small_field();
+        let secret: Vec<BigUint> = (1..=4).map(BigUint::from_u64).collect();
+        let _ = split(&f, &secret, 3);
+    }
+
+    #[test]
+    fn ramp_split_rejects_secret_anchor_labels() {
+        // PEER-REVIEW P1: reconstruct must reject shares whose label
+        // collides with one of the secret-anchor abscissae 1..=k.
+        let f = small_field();
+        let secret: Vec<BigUint> = (1..=3).map(BigUint::from_u64).collect();
+        let mut shares = split(&f, &secret, 5);
+        // Force shares[0].x to land on a secret-anchor abscissa.
+        shares[0].x = BigUint::from_u64(2);
+        assert!(reconstruct(&f, &shares[..3], 3).is_none());
     }
 
     #[test]

@@ -164,6 +164,17 @@ pub fn split_n_of_n<R: Csprng>(
 /// Stack `shares` by bitwise OR — the physical "place transparencies
 /// on top of each other" operation. All shares must have identical
 /// dimensions; returns `None` otherwise.
+///
+/// **Below-threshold caveat.** This function does NOT enforce that
+/// the share count equals the `n` used at split. If you stack only
+/// `n′ < n` shares of an `(n, n)` scheme and pass the result to
+/// [`decode`] with the original `n`, every per-pixel block will have
+/// Hamming weight `< m − 1` (or sometimes `m − 1` by chance), so
+/// `decode` will refuse with `None` for the typical case and may
+/// occasionally classify a white pixel correctly by coincidence —
+/// either way the resulting image is not a faithful decode of the
+/// secret. Callers are responsible for tracking how many shares were
+/// stacked and only invoking `decode` when all `n` are present.
 #[must_use]
 pub fn stack(shares: &[Vec<Vec<bool>>]) -> Option<Vec<Vec<bool>>> {
     if shares.is_empty() {

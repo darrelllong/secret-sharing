@@ -122,12 +122,19 @@ fn is_subset(small: &[usize], large: &[usize]) -> bool {
 
 /// One player's share: a list of `(forbidden_index, r_i)` pairs for
 /// every forbidden coalition that does NOT contain this player.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct PlayerShare {
     /// Player ID, 1-based.
     pub player: usize,
-    /// `(i, r_i)` for every `i ∈ {0..t}` such that `player ∉ F_i`.
+    /// `(i, r_i)` for every `i ∈ 0..t` such that `player ∉ F_i`.
     pub parts: Vec<(usize, BigUint)>,
+}
+
+impl core::fmt::Debug for PlayerShare {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("PlayerShare(<elided>)")
+    }
 }
 
 /// Distribute `n` shares of the secret across the access structure.

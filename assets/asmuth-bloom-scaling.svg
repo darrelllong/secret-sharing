@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img">
+  <title>Asmuth-Bloom: latency vs m_0 bit width</title>
+  <style>
+    .bg { fill: #fbf8f1; }
+    .grid { stroke: #c9c2b7; stroke-width: 1; fill: none; }
+    .axis { stroke: #6b6257; stroke-width: 1.5; fill: none; }
+    .label { fill: #342f29; font: 11px ui-sans-serif, -apple-system, sans-serif; }
+    .small { fill: #6b6257; font: 10px ui-sans-serif, -apple-system, sans-serif; }
+    .title { fill: #342f29; font: bold 13px ui-sans-serif, -apple-system, sans-serif; }
+  </style>
+  <rect class="bg" x="0" y="0" width="640" height="420" rx="12" />
+  <line class="axis" x1="80.0" y1="330.0" x2="610.0" y2="330.0" />
+  <line class="axis" x1="80.0" y1="60.0" x2="80.0" y2="330.0" />
+  <line class="grid" x1="80.0" y1="330.0" x2="610.0" y2="330.0" />
+  <text class="small" x="74.0" y="333.0" text-anchor="end">100 ns</text>
+  <line class="grid" x1="80.0" y1="195.0" x2="610.0" y2="195.0" />
+  <text class="small" x="74.0" y="198.0" text-anchor="end">1.0 µs</text>
+  <line class="grid" x1="80.0" y1="60.0" x2="610.0" y2="60.0" />
+  <text class="small" x="74.0" y="63.0" text-anchor="end">10.0 µs</text>
+  <line class="grid" x1="80.0" y1="60.0" x2="80.0" y2="330.0" />
+  <text class="small" x="80.0" y="344.0" text-anchor="middle">m_0≈2^12</text>
+  <line class="grid" x1="186.0" y1="60.0" x2="186.0" y2="330.0" />
+  <text class="small" x="186.0" y="344.0" text-anchor="middle">m_0≈2^16</text>
+  <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
+  <text class="small" x="610.0" y="344.0" text-anchor="middle">m_0≈2^32</text>
+  <path d="M 80.0 226.6 L 186.0 148.6 L 610.0 113.7" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="226.6" r="3.5" fill="#0f766e" />
+  <circle cx="186.0" cy="148.6" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="113.7" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 133.9 L 186.0 117.5 L 610.0 99.2" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="133.9" r="3.5" fill="#1d4ed8" />
+  <circle cx="186.0" cy="117.5" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="99.2" r="3.5" fill="#1d4ed8" />
+  <text class="title" x="80.0" y="30.0">Asmuth-Bloom: latency vs m_0 bit width</text>
+  <text class="small" x="80.0" y="46.0">k=3, n=5; secret = 1 mod m_0; log y, linear x in bits</text>
+  <text class="small" x="345.0" y="362.0" text-anchor="middle">m_0 bit width</text>
+  <text class="small" x="20" y="195.0" transform="rotate(-90 20 195.0)" text-anchor="middle">latency (log scale)</text>
+  <rect x="80.0" y="398.0" width="12" height="12" fill="#0f766e" rx="2" />
+  <text class="small" x="98.0" y="408.0">split</text>
+  <rect x="148.0" y="398.0" width="12" height="12" fill="#1d4ed8" rx="2" />
+  <text class="small" x="166.0" y="408.0">reconstruct</text>
+</svg>

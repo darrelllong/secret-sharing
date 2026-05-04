@@ -83,10 +83,17 @@ impl Scheme {
 
 /// One trustee's piece: 1-based player ID + the inner-product value.
 /// Per-player payload is one field element regardless of `m`.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     pub player: usize,
     pub value: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 /// Distribute the secret across all `n` players. Returns one `Share`

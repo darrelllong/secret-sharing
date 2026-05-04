@@ -28,6 +28,7 @@ use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
+use crate::secure::ct_eq_biguint;
 
 const SHARE_VERSION: u8 = 0x01;
 const HEADER_LEN: usize = 1 + 1 + 4;
@@ -75,6 +76,12 @@ pub fn split<R: Csprng>(
     assert!(
         BigUint::from_u64(n as u64) < *field.modulus(),
         "prime modulus must exceed n",
+    );
+    // The wire format encodes secret.len() in a 4-byte length header;
+    // refuse anything that would silently truncate.
+    assert!(
+        secret.len() <= u32::MAX as usize,
+        "secret length must fit in u32 (wire-format length header is 4 bytes)",
     );
     let bl = block_len(field);
     let sl = share_elem_len(field);
@@ -180,33 +187,65 @@ pub fn reconstruct(field: &PrimeField, shares: &[&[u8]], k: usize) -> Option<Vec
     // the remaining `len − k` shares agree.
     let mut out = Vec::with_capacity(padded_len);
     for block_idx in 0..num_blocks {
-        let pts: Vec<(BigUint, BigUint)> = parsed
-            .iter()
-            .take(k)
-            .map(|(label, payload)| {
-                let x = BigUint::from_u64(*label as u64);
-                let y =
-                    BigUint::from_be_bytes(&payload[block_idx * sl..(block_idx + 1) * sl]);
-                (x, y)
-            })
-            .collect();
+        let mut pts: Vec<(BigUint, BigUint)> = Vec::with_capacity(k);
+        for (label, payload) in parsed.iter().take(k) {
+            let x = BigUint::from_u64(*label as u64);
+            let y = BigUint::from_be_bytes(&payload[block_idx * sl..(block_idx + 1) * sl]);
+            // Reject non-canonical encodings — `y` MUST be `< p`.
+            // Without this check a tampered share carrying y' = y + k·p
+            // (still fitting in `sl` bytes when `sl > p.bits()/8`)
+            // would reduce internally to the legitimate y and pass.
+            if y >= *field.modulus() {
+                return None;
+            }
+            pts.push((x, y));
+        }
         let secret_y = lagrange_eval(field, &pts, &BigUint::zero())?;
         for (label, payload) in parsed.iter().skip(k) {
             let x = BigUint::from_u64(*label as u64);
             let y = BigUint::from_be_bytes(&payload[block_idx * sl..(block_idx + 1) * sl]);
+            if y >= *field.modulus() {
+                return None;
+            }
             let pred = lagrange_eval(field, &pts, &x)?;
-            if pred != y {
+            if !ct_eq_biguint(&pred, &y) {
                 return None;
             }
             let _ = label;
         }
         // Plaintext block is `bl` bytes (lower half of the field
         // element); strip leading zeros that the share encoder added.
-        out.extend_from_slice(&field_element_to_bytes(&secret_y, bl));
+        // For honest shares the recovered value always fits in `bl`
+        // bytes; tampering of the first k can produce a wider value,
+        // in which case we refuse rather than panic.
+        let bytes = field_element_to_bytes_checked(&secret_y, bl)?;
+        out.extend_from_slice(&bytes);
     }
 
     out.truncate(secret_len);
     Some(out)
+}
+
+/// Like [`field_element_to_bytes`] but returns `None` instead of
+/// panicking when the value exceeds `width` bytes. Used on the
+/// reconstruction path where tampered first-k shares can produce a
+/// recovered field element wider than the plaintext block.
+fn field_element_to_bytes_checked(value: &BigUint, width: usize) -> Option<Vec<u8>> {
+    let mut be = value.to_be_bytes();
+    if be.len() < width {
+        let mut padded = vec![0u8; width - be.len()];
+        padded.append(&mut be);
+        Some(padded)
+    } else if be.len() == width {
+        Some(be)
+    } else {
+        let extra = be.len() - width;
+        if be[..extra].iter().all(|&b| b == 0) {
+            Some(be[extra..].to_vec())
+        } else {
+            None
+        }
+    }
 }
 
 /// Big-endian, fixed-width serialization of a field element.

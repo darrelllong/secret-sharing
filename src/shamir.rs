@@ -22,14 +22,22 @@ use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
+use crate::secure::{ct_eq_biguint, Zeroizing};
 
 /// One trustee's piece: an `(x, y)` evaluation of the sharing
 /// polynomial. The `x` coordinate is public and acts as the trustee's
 /// label.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     pub x: BigUint,
     pub y: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 /// Shamir (k, n) split. `k` is the reconstruction threshold and `n` the
@@ -56,7 +64,13 @@ pub fn split<R: Csprng>(
         "prime modulus must exceed n",
     );
 
-    let mut coeffs: Vec<BigUint> = Vec::with_capacity(k);
+    // Wrap the polynomial coefficients in `Zeroizing` so the secret
+    // (a_0) and every random pad (a_1..a_{k-1}) get volatile-zeroed
+    // when this function returns — even on early panic. The Vec's
+    // BigUint elements still self-zeroize on Drop; Zeroizing is the
+    // belt-and-braces guarantee that the *outer* allocation is also
+    // scrubbed and not handed back to the allocator with residue.
+    let mut coeffs = Zeroizing::new(Vec::<BigUint>::with_capacity(k));
     coeffs.push(field.reduce(secret));
     for _ in 1..k {
         coeffs.push(field.random(rng));
@@ -110,7 +124,7 @@ pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Big
     // Validate extras against the fitted polynomial.
     for s in &shares[k..] {
         let pred = lagrange_eval(field, &pts, &s.x)?;
-        if pred != s.y {
+        if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
     }
@@ -145,7 +159,9 @@ pub fn split_multi<R: Csprng>(
         "prime modulus must exceed n",
     );
 
-    let mut coeffs: Vec<BigUint> = Vec::with_capacity(k);
+    // Same Zeroizing guard as `split` above; coefficients carry every
+    // secret in `secrets` plus the random pad.
+    let mut coeffs = Zeroizing::new(Vec::<BigUint>::with_capacity(k));
     for s in secrets {
         coeffs.push(field.reduce(s));
     }
@@ -261,7 +277,8 @@ pub fn reconstruct_multi(
     // polynomial. Extras that disagree mean the caller supplied
     // inconsistent inputs — refuse rather than silently truncate.
     for s in &shares[k..] {
-        if crate::poly::horner(field, &coeffs, &s.x) != s.y {
+        let pred = crate::poly::horner(field, &coeffs, &s.x);
+        if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
     }

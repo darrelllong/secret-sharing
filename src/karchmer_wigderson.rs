@@ -49,6 +49,7 @@
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 use crate::field::PrimeField;
+use crate::secure::ct_eq_biguint;
 
 /// A validated monotone span program over `GF(p)` with target `e_1`.
 #[derive(Clone, Debug)]
@@ -77,6 +78,11 @@ impl SpanProgram {
         assert!(!rows.is_empty(), "MSP must have at least one row");
         assert_eq!(rows.len(), labels.len(), "labels.len() must match rows.len()");
         let m = rows[0].len();
+        assert!(
+            m > 0,
+            "MSP rows must have width m ≥ 1 — m = 0 is a degenerate \
+             access structure with no target vector to span",
+        );
         for r in &rows {
             assert_eq!(r.len(), m, "all rows must have the same width");
         }
@@ -167,7 +173,7 @@ impl SpanProgram {
             } else {
                 BigUint::zero()
             };
-            if acc != want {
+            if !ct_eq_biguint(&acc, &want) {
                 return None;
             }
         }
@@ -177,10 +183,17 @@ impl SpanProgram {
 
 /// One player's share material: a list of `(row_index, ⟨M_j, ρ_vec⟩)`
 /// for every row labelled with this player.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct PlayerShare {
     pub player: usize,
     pub fragments: Vec<(usize, BigUint)>,
+}
+
+impl core::fmt::Debug for PlayerShare {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("PlayerShare(<elided>)")
+    }
 }
 
 /// Distribute `secret` across all players present in the program.
@@ -255,11 +268,20 @@ pub fn reconstruct(program: &SpanProgram, shares: &[PlayerShare]) -> Option<BigU
     // Compute recovery coefficients for the coalition.
     let coalition: Vec<usize> = shares.iter().map(|s| s.player).collect();
     let coeffs = program.recovery_coefficients(&coalition)?;
-    // Look up each c_j's matching share value.
+    // Look up each c_j's matching share value. Duplicate row indices
+    // across the coalition's fragments are a hard reject — silently
+    // letting the last writer win contradicts the malformed-fragment
+    // rejection contract documented above.
     let mut value_by_row: std::collections::HashMap<usize, &BigUint> =
         std::collections::HashMap::new();
     for s in shares {
         for (j, v) in &s.fragments {
+            if let Some(prev) = value_by_row.get(j) {
+                if !crate::secure::ct_eq_biguint(prev, v) {
+                    return None;
+                }
+                continue;
+            }
             value_by_row.insert(*j, v);
         }
     }
@@ -580,6 +602,17 @@ mod tests {
                 "{q:?} must succeed",
             );
         }
+    }
+
+    #[test]
+    #[should_panic(expected = "MSP rows must have width m ≥ 1")]
+    fn rejects_zero_width_msp() {
+        // PEER-REVIEW P1: zero-width MSPs are degenerate access
+        // structures and must be rejected at construction.
+        let f = small();
+        let rows: Vec<Vec<BigUint>> = vec![vec![]];
+        let labels = vec![1usize];
+        let _ = SpanProgram::new(f, rows, labels);
     }
 
     #[test]

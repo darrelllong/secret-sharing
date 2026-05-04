@@ -6,7 +6,7 @@
 //! manipulations in the rest of the crate go through this wrapper so the
 //! modulus is fixed once and the operations read directly off the papers.
 
-use crate::primes::{mod_inverse, random_below};
+use crate::primes::{is_probable_prime, mod_inverse, random_below};
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 
@@ -18,13 +18,35 @@ pub struct PrimeField {
 }
 
 impl PrimeField {
-    /// Wrap a prime modulus. The caller is responsible for ensuring `p`
-    /// is in fact prime — primality is not re-verified here.
+    /// Wrap a prime modulus. **Validates primality** via Miller–Rabin
+    /// (deterministic for `p < ~2^81`, otherwise probabilistic with
+    /// false-positive rate `≤ 4^{-12}`).
+    ///
+    /// # Panics
+    /// Panics if `p ≤ 1` or if `p` fails the Miller–Rabin test.
+    /// Use [`Self::new_unchecked`] when the caller has independently
+    /// verified primality (e.g. for the bundled Mersenne primes) and
+    /// wants to skip the check.
+    #[must_use]
+    pub fn new(p: BigUint) -> Self {
+        assert!(p > BigUint::one(), "modulus must be > 1");
+        assert!(
+            is_probable_prime(&p),
+            "modulus must be prime (Miller–Rabin test)",
+        );
+        Self { p }
+    }
+
+    /// Wrap a modulus *without* primality validation. Use only when
+    /// the caller independently knows `p` is prime (e.g. it came from
+    /// [`crate::field::mersenne127`] or [`mersenne521`], or from a
+    /// trusted public parameter). Mis-use silently produces a non-
+    /// field that breaks every security claim in the crate.
     ///
     /// # Panics
     /// Panics if `p ≤ 1`.
     #[must_use]
-    pub fn new(p: BigUint) -> Self {
+    pub fn new_unchecked(p: BigUint) -> Self {
         assert!(p > BigUint::one(), "modulus must be > 1");
         Self { p }
     }
@@ -161,6 +183,24 @@ mod tests {
             assert_eq!(f.mul(&a, &inv), BigUint::one());
         }
         assert!(f.inv(&BigUint::zero()).is_none());
+    }
+
+    #[test]
+    #[should_panic(expected = "modulus must be prime")]
+    fn new_rejects_composite_modulus() {
+        // PEER-REVIEW P0: PrimeField::new must reject composite p.
+        // 255 = 3 · 5 · 17 — clearly composite.
+        let _ = PrimeField::new(BigUint::from_u64(255));
+    }
+
+    #[test]
+    fn new_unchecked_skips_primality_check() {
+        // The escape hatch is documented as caller's responsibility.
+        // Construction succeeds even on a composite modulus; security
+        // claims do not hold until the caller has independently
+        // verified primality.
+        let f = PrimeField::new_unchecked(BigUint::from_u64(255));
+        assert_eq!(f.modulus(), &BigUint::from_u64(255));
     }
 
     #[test]

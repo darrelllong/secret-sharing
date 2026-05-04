@@ -37,6 +37,7 @@
 use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};
 use crate::bigint::BigUint;
+use crate::secure::ct_eq_biguint;
 
 const SHARE_VERSION: u8 = 0x02;
 const HEADER_LEN: usize = 1 + 1 + 4;
@@ -71,6 +72,12 @@ pub fn split(field: &PrimeField, data: &[u8], k: usize, n: usize) -> Vec<Vec<u8>
     assert!(
         BigUint::from_u64(n as u64) < *field.modulus(),
         "prime modulus must exceed n",
+    );
+    // 4-byte length header — refuse anything that would silently
+    // truncate the file size on the wire.
+    assert!(
+        data.len() <= u32::MAX as usize,
+        "data length must fit in u32 (wire-format length header is 4 bytes)",
     );
     let bl = block_len(field);
     let sl = share_elem_len(field);
@@ -172,26 +179,27 @@ pub fn reconstruct(field: &PrimeField, shares: &[&[u8]], k: usize) -> Option<Vec
 
     let mut out = Vec::with_capacity(padded_len);
     for g in 0..num_groups {
-        let pts: Vec<(BigUint, BigUint)> = parsed
-            .iter()
-            .take(k)
-            .map(|(label, payload)| {
-                let x = BigUint::from_u64(*label as u64);
-                let y = BigUint::from_be_bytes(&payload[g * sl..(g + 1) * sl]);
-                (x, y)
-            })
-            .collect();
-        // Recover k coefficients by interpolating P at x = 1, 2, …, k —
-        // wait: we want the polynomial *coefficients*, not its values.
-        // Use the multi-secret Vandermonde solve: build the linear
-        // system Vc = y where V_{i,j} = (label_i)^j and y_i is the
-        // evaluation. Solve for c.
+        let mut pts: Vec<(BigUint, BigUint)> = Vec::with_capacity(k);
+        for (label, payload) in parsed.iter().take(k) {
+            let x = BigUint::from_u64(*label as u64);
+            let y = BigUint::from_be_bytes(&payload[g * sl..(g + 1) * sl]);
+            // Reject non-canonical encodings: y MUST be < p.
+            if y >= *field.modulus() {
+                return None;
+            }
+            pts.push((x, y));
+        }
+        // Recover k coefficients via Vandermonde solve.
         let coeffs = vandermonde_solve(field, &pts)?;
         // Validate extras against the recovered coefficient vector.
         for (label, payload) in parsed.iter().skip(k) {
             let x = BigUint::from_u64(*label as u64);
             let y = BigUint::from_be_bytes(&payload[g * sl..(g + 1) * sl]);
-            if horner(field, &coeffs, &x) != y {
+            if y >= *field.modulus() {
+                return None;
+            }
+            let pred = horner(field, &coeffs, &x);
+            if !ct_eq_biguint(&pred, &y) {
                 return None;
             }
         }

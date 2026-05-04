@@ -17,18 +17,18 @@
   <polygon class="grid" points="320.0,70.0 320.0,510.0" />
   <line class="axis" x1="320" y1="290" x2="320.0" y2="70.0" />
   <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
-  <polygon points="320.0,167.6 320.0,448.2" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="167.6" r="3" fill="#0f766e" />
-  <circle cx="320.0" cy="448.2" r="3" fill="#0f766e" />
-  <polygon points="320.0,189.6 320.0,448.2" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
-  <circle cx="320.0" cy="189.6" r="3" fill="#1d4ed8" />
-  <circle cx="320.0" cy="448.2" r="3" fill="#1d4ed8" />
-  <polygon points="320.0,216.2 320.0,448.2" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
-  <circle cx="320.0" cy="216.2" r="3" fill="#b45309" />
-  <circle cx="320.0" cy="448.2" r="3" fill="#b45309" />
-  <polygon points="320.0,259.2 320.0,448.2" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="259.2" r="3" fill="#b91c1c" />
-  <circle cx="320.0" cy="448.2" r="3" fill="#b91c1c" />
+  <polygon points="320.0,169.3 320.0,449.5" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="169.3" r="3" fill="#0f766e" />
+  <circle cx="320.0" cy="449.5" r="3" fill="#0f766e" />
+  <polygon points="320.0,189.7 320.0,449.5" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="189.7" r="3" fill="#1d4ed8" />
+  <circle cx="320.0" cy="449.5" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,217.3 320.0,449.5" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="217.3" r="3" fill="#b45309" />
+  <circle cx="320.0" cy="449.5" r="3" fill="#b45309" />
+  <polygon points="320.0,257.5 320.0,449.5" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="257.5" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="449.5" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">vss (Rabin-Ben-Or)</text>
   <text class="label" x="320.0" y="536.0" text-anchor="middle">cgma_vss (toy 23/11/4 group)</text>
   <text class="small" x="324.0" y="253.3">316</text>

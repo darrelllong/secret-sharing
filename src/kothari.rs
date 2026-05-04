@@ -41,6 +41,7 @@
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
 use crate::field::PrimeField;
+use crate::secure::ct_eq_biguint;
 
 /// Public matrix `A ∈ GF(p)^{k × n}` and its threshold `k`.
 #[derive(Clone, Debug)]
@@ -260,7 +261,7 @@ pub fn reconstruct(scheme: &LinearScheme, shares: &[(usize, BigUint)]) -> Option
             let term = scheme.field.mul(&solution[r], &scheme.rows[r][*col]);
             acc = scheme.field.add(&acc, &term);
         }
-        if &acc != val {
+        if !ct_eq_biguint(&acc, val) {
             return None;
         }
     }

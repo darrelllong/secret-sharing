@@ -39,6 +39,7 @@
 use crate::primes::{gcd, mod_inverse, random_below};
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
+use crate::secure::ct_eq_biguint;
 
 /// Validated Asmuth–Bloom parameter set.
 #[derive(Clone, Debug)]
@@ -55,10 +56,17 @@ pub struct AsmuthBloomParams {
 
 /// One trustee's piece: index of the modulus and the residue
 /// `y mod m_i`.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     pub index: usize,
     pub residue: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 impl AsmuthBloomParams {
@@ -212,7 +220,8 @@ pub fn reconstruct(params: &AsmuthBloomParams, shares: &[Share]) -> Option<BigUi
     }
     for s in &shares[k..] {
         let m = &params.moduli[s.index - 1];
-        if y.modulo(m) != s.residue {
+        let pred = y.modulo(m);
+        if !ct_eq_biguint(&pred, &s.residue) {
             return None;
         }
     }

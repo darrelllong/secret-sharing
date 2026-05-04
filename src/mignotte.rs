@@ -25,6 +25,7 @@
 use crate::field::PrimeField;
 use crate::primes::{gcd, mod_inverse};
 use crate::bigint::BigUint;
+use crate::secure::ct_eq_biguint;
 
 /// A validated `(k, n)`-Mignotte sequence.
 #[derive(Clone, Debug)]
@@ -38,12 +39,19 @@ pub struct MignotteSequence {
 }
 
 /// One trustee's share.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     /// 1-based index `i` of the modulus `m_i`. Public.
     pub index: usize,
     /// Residue `S mod m_i`.
     pub residue: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 impl MignotteSequence {
@@ -215,7 +223,8 @@ pub fn reconstruct(seq: &MignotteSequence, shares: &[Share]) -> Option<BigUint> 
     // Validate any extras against the recovered secret.
     for s in &shares[k..] {
         let m = &seq.moduli[s.index - 1];
-        if secret.modulo(m) != s.residue {
+        let pred = secret.modulo(m);
+        if !ct_eq_biguint(&pred, &s.residue) {
             return None;
         }
     }

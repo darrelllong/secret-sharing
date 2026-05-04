@@ -22,38 +22,38 @@
   <line class="axis" x1="320" y1="290" x2="224.5" y2="488.2" />
   <line class="axis" x1="320" y1="290" x2="105.5" y2="339.0" />
   <line class="axis" x1="320" y1="290" x2="148.0" y2="152.8" />
-  <polygon points="320.0,87.1 457.9,180.0 527.8,337.4 363.5,380.4 272.3,389.1 205.0,316.3 264.8,246.0" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="87.1" r="3" fill="#0f766e" />
-  <circle cx="457.9" cy="180.0" r="3" fill="#0f766e" />
-  <circle cx="527.8" cy="337.4" r="3" fill="#0f766e" />
-  <circle cx="363.5" cy="380.4" r="3" fill="#0f766e" />
-  <circle cx="272.3" cy="389.1" r="3" fill="#0f766e" />
-  <circle cx="205.0" cy="316.3" r="3" fill="#0f766e" />
-  <circle cx="264.8" cy="246.0" r="3" fill="#0f766e" />
-  <polygon points="320.0,107.2 446.9,188.8 513.9,334.3 356.4,365.7 277.1,379.0 205.7,316.1 265.2,246.3" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
-  <circle cx="320.0" cy="107.2" r="3" fill="#1d4ed8" />
-  <circle cx="446.9" cy="188.8" r="3" fill="#1d4ed8" />
-  <circle cx="513.9" cy="334.3" r="3" fill="#1d4ed8" />
-  <circle cx="356.4" cy="365.7" r="3" fill="#1d4ed8" />
-  <circle cx="277.1" cy="379.0" r="3" fill="#1d4ed8" />
-  <circle cx="205.7" cy="316.1" r="3" fill="#1d4ed8" />
-  <circle cx="265.2" cy="246.3" r="3" fill="#1d4ed8" />
-  <polygon points="320.0,134.2 434.0,199.1 503.2,331.8 348.3,348.8 281.9,369.0 221.2,312.5 264.4,245.6" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
-  <circle cx="320.0" cy="134.2" r="3" fill="#b45309" />
-  <circle cx="434.0" cy="199.1" r="3" fill="#b45309" />
-  <circle cx="503.2" cy="331.8" r="3" fill="#b45309" />
-  <circle cx="348.3" cy="348.8" r="3" fill="#b45309" />
-  <circle cx="281.9" cy="369.0" r="3" fill="#b45309" />
-  <circle cx="221.2" cy="312.5" r="3" fill="#b45309" />
-  <circle cx="264.4" cy="245.6" r="3" fill="#b45309" />
-  <polygon points="320.0,144.5 415.2,214.1 488.0,328.3 334.6,320.4 287.5,357.5 231.0,310.3 263.8,245.2" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="144.5" r="3" fill="#b91c1c" />
-  <circle cx="415.2" cy="214.1" r="3" fill="#b91c1c" />
-  <circle cx="488.0" cy="328.3" r="3" fill="#b91c1c" />
-  <circle cx="334.6" cy="320.4" r="3" fill="#b91c1c" />
-  <circle cx="287.5" cy="357.5" r="3" fill="#b91c1c" />
-  <circle cx="231.0" cy="310.3" r="3" fill="#b91c1c" />
-  <circle cx="263.8" cy="245.2" r="3" fill="#b91c1c" />
+  <polygon points="320.0,90.2 456.1,181.5 524.4,336.7 363.7,380.7 272.7,388.2 205.2,316.2 265.4,246.5" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="90.2" r="3" fill="#0f766e" />
+  <circle cx="456.1" cy="181.5" r="3" fill="#0f766e" />
+  <circle cx="524.4" cy="336.7" r="3" fill="#0f766e" />
+  <circle cx="363.7" cy="380.7" r="3" fill="#0f766e" />
+  <circle cx="272.7" cy="388.2" r="3" fill="#0f766e" />
+  <circle cx="205.2" cy="316.2" r="3" fill="#0f766e" />
+  <circle cx="265.4" cy="246.5" r="3" fill="#0f766e" />
+  <polygon points="320.0,104.3 445.7,189.7 512.0,333.8 357.0,366.8 276.8,379.7 205.4,316.2 265.3,246.4" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="104.3" r="3" fill="#1d4ed8" />
+  <circle cx="445.7" cy="189.7" r="3" fill="#1d4ed8" />
+  <circle cx="512.0" cy="333.8" r="3" fill="#1d4ed8" />
+  <circle cx="357.0" cy="366.8" r="3" fill="#1d4ed8" />
+  <circle cx="276.8" cy="379.7" r="3" fill="#1d4ed8" />
+  <circle cx="205.4" cy="316.2" r="3" fill="#1d4ed8" />
+  <circle cx="265.3" cy="246.4" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,134.8 433.2,199.7 502.4,331.6 347.6,347.3 282.2,368.5 221.4,312.5 265.5,246.5" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="134.8" r="3" fill="#b45309" />
+  <circle cx="433.2" cy="199.7" r="3" fill="#b45309" />
+  <circle cx="502.4" cy="331.6" r="3" fill="#b45309" />
+  <circle cx="347.6" cy="347.3" r="3" fill="#b45309" />
+  <circle cx="282.2" cy="368.5" r="3" fill="#b45309" />
+  <circle cx="221.4" cy="312.5" r="3" fill="#b45309" />
+  <circle cx="265.5" cy="246.5" r="3" fill="#b45309" />
+  <polygon points="320.0,145.1 416.2,213.3 488.9,328.5 335.1,321.4 288.3,355.8 230.9,310.3 265.3,246.4" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="145.1" r="3" fill="#b91c1c" />
+  <circle cx="416.2" cy="213.3" r="3" fill="#b91c1c" />
+  <circle cx="488.9" cy="328.5" r="3" fill="#b91c1c" />
+  <circle cx="335.1" cy="321.4" r="3" fill="#b91c1c" />
+  <circle cx="288.3" cy="355.8" r="3" fill="#b91c1c" />
+  <circle cx="230.9" cy="310.3" r="3" fill="#b91c1c" />
+  <circle cx="265.3" cy="246.4" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">trivial (n-of-n)</text>
   <text class="label" x="509.2" y="143.1" text-anchor="start">ito (k-of-n via ISN)</text>
   <text class="label" x="555.9" y="347.9" text-anchor="start">benaloh_leichter (2-of-3)</text>

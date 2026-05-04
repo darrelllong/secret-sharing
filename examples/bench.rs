@@ -30,12 +30,12 @@
 use std::time::Instant;
 
 use secret_sharing::{
-    benaloh_leichter as bl, blakley, blakley_meadows, brickell, bytes, cgma_vss,
+    asmuth_bloom, benaloh_leichter as bl, blakley, blakley_meadows, brickell, bytes, cgma_vss,
     csprng::OsRng,
     decode::reconstruct_with_errors,
     field::{mersenne127, mersenne521},
-    ida, ito, karchmer_wigderson as kw, kgh, kothari, massey, proactive, ramp, shamir,
-    trivial, vss, yamamoto,
+    ida, ito, karchmer_wigderson as kw, kgh, kothari, massey, mignotte, proactive, ramp, shamir,
+    trivial, visual, vss, yamamoto,
     BigUint, ChaCha20Rng, Csprng, PrimeField,
 };
 
@@ -803,6 +803,800 @@ fn emit_family_svg(
     Ok(())
 }
 
+// ── Non-radar benches: schemes whose perf model doesn't fit `bits` ─────────
+
+/// One sample point on a 1-D scaling curve: x-axis label + (split, recon) ns.
+struct ScalingPoint {
+    x_label: String,
+    /// Numeric x for plotting (log or linear, caller's choice).
+    x_value: f64,
+    split_ns: u128,
+    recon_ns: u128,
+}
+
+/// Hand-built Mignotte sequences whose `β` (smallest-`k`-product)
+/// straddles a target bit width. Picked to be pairwise coprime
+/// odd-prime-or-coprime moduli; validated by `MignotteSequence::new`.
+fn mignotte_curve() -> Vec<(usize, mignotte::MignotteSequence)> {
+    // (target β bit-width, m_1..m_n). Each sequence chosen so that
+    //   β = m_1·m_2·m_3 ≈ 2^target,  α = m_4·m_5 < β,
+    // and any two consecutive moduli are coprime (consecutive odd
+    // primes / coprime products are easy to pick by hand).
+    let raw: [(usize, &[u64]); 3] = [
+        // ~16-bit β: bundled small example.
+        (16, &[11, 13, 17, 19, 23]),
+        // ~64-bit β: 5 distinct primes near 2^22 (each ~22 bits;
+        // β ≈ 2^66). Listed strictly increasing.
+        (64, &[4_194_247, 4_194_271, 4_194_277, 4_194_287, 4_194_301]),
+        // ~128-bit β: 5 distinct primes near 2^43 (each ~43 bits;
+        // β ≈ 2^129). Listed strictly increasing.
+        (
+            128,
+            &[
+                8_796_093_022_039,
+                8_796_093_022_069,
+                8_796_093_022_103,
+                8_796_093_022_117,
+                8_796_093_022_151,
+            ],
+        ),
+    ];
+    raw.into_iter()
+        .map(|(bits, moduli)| {
+            let big: Vec<BigUint> = moduli.iter().copied().map(BigUint::from_u64).collect();
+            let seq = mignotte::MignotteSequence::new(big, K)
+                .unwrap_or_else(|| panic!("Mignotte seq for {bits}-bit β failed validation"));
+            (bits, seq)
+        })
+        .collect()
+}
+
+fn asmuth_bloom_curve() -> Vec<(usize, asmuth_bloom::AsmuthBloomParams)> {
+    // Asmuth–Bloom requires m_0 · M_top < M_bot. With (k, n)=(3, 5)
+    // and roughly equal m_i ≈ 2^d, we need m_0 < 2^d. Hand-pick
+    // m_0 small relative to the m_i. Validation happens in `new`.
+    let raw: [(usize, u64, &[u64]); 3] = [
+        // ~12-bit secret-modulus path: bundled small example.
+        // m_0 = 5; M_bot = 2431, M_top = 437, 5·437 = 2185 < 2431. Good.
+        (12, 5, &[11, 13, 17, 19, 23]),
+        // ~22-bit m_0 with 22-bit other moduli.
+        // M_bot ≈ 2^66, M_top ≈ 2^44, 2^22 · 2^44 = 2^66. Just barely;
+        // shrink m_0 to 2^16 to leave headroom.
+        (
+            16,
+            65_521,
+            &[4_194_247, 4_194_271, 4_194_277, 4_194_287, 4_194_301],
+        ),
+        // 32-bit m_0 with 43-bit other moduli.
+        // M_bot ≈ 2^129, M_top ≈ 2^86, 2^32 · 2^86 = 2^118 < 2^129. Good.
+        (
+            32,
+            4_294_967_291,
+            &[
+                8_796_093_022_039,
+                8_796_093_022_069,
+                8_796_093_022_103,
+                8_796_093_022_117,
+                8_796_093_022_151,
+            ],
+        ),
+    ];
+    raw.into_iter()
+        .map(|(bits, m0, moduli)| {
+            let m0 = BigUint::from_u64(m0);
+            let big: Vec<BigUint> = moduli.iter().copied().map(BigUint::from_u64).collect();
+            let p = asmuth_bloom::AsmuthBloomParams::new(m0, big, K)
+                .unwrap_or_else(|| panic!("Asmuth-Bloom params for {bits}-bit m_0 invalid"));
+            (bits, p)
+        })
+        .collect()
+}
+
+fn bench_mignotte_scaling() -> Vec<ScalingPoint> {
+    mignotte_curve()
+        .into_iter()
+        .map(|(bits, seq)| {
+            // Secret strictly inside (alpha, beta). Use alpha + 1.
+            let secret = seq.alpha().add_ref(&BigUint::from_u64(1));
+            let split_ns = time_block(ITERS, WARMUP, || mignotte::split(&seq, &secret));
+            let shares = mignotte::split(&seq, &secret);
+            let recon_ns = time_block(ITERS, WARMUP, || {
+                mignotte::reconstruct(&seq, &shares[..K]).unwrap()
+            });
+            ScalingPoint {
+                x_label: format!("≈2^{bits}"),
+                x_value: bits as f64,
+                split_ns,
+                recon_ns,
+            }
+        })
+        .collect()
+}
+
+fn bench_asmuth_bloom_scaling() -> Vec<ScalingPoint> {
+    let mut r = rng_for(0x91);
+    asmuth_bloom_curve()
+        .into_iter()
+        .map(|(bits, params)| {
+            // Pick a random secret < m_0. Use a small fixed value to
+            // avoid biasing by secret bit-length.
+            let secret = BigUint::from_u64(1);
+            let split_ns = time_block(ITERS, WARMUP, || {
+                asmuth_bloom::split(&params, &mut r, &secret)
+            });
+            let shares = asmuth_bloom::split(&params, &mut r, &secret);
+            let recon_ns = time_block(ITERS, WARMUP, || {
+                asmuth_bloom::reconstruct(&params, &shares[..K]).unwrap()
+            });
+            ScalingPoint {
+                x_label: format!("m_0≈2^{bits}"),
+                x_value: bits as f64,
+                split_ns,
+                recon_ns,
+            }
+        })
+        .collect()
+}
+
+fn bench_visual_by_n() -> Vec<ScalingPoint> {
+    // Fixed 8×8 image; vary n in 2..=5 (per-pixel expansion 2^(n-1)).
+    let mut r = rng_for(0x76);
+    let secret: Vec<Vec<bool>> = (0..8)
+        .map(|y| (0..8).map(|x| (x + y) % 2 == 0).collect())
+        .collect();
+    (2..=5usize)
+        .map(|n| {
+            let split_ns = time_block(ITERS, WARMUP, || visual::split_n_of_n(&mut r, &secret, n));
+            let shares = visual::split_n_of_n(&mut r, &secret, n);
+            let recon_ns = time_block(ITERS, WARMUP, || {
+                let stacked = visual::stack(&shares).unwrap();
+                visual::decode(&stacked, n).unwrap()
+            });
+            ScalingPoint {
+                x_label: format!("n={n}"),
+                x_value: n as f64,
+                split_ns,
+                recon_ns,
+            }
+        })
+        .collect()
+}
+
+fn bench_visual_by_pixels() -> Vec<ScalingPoint> {
+    // Fixed n=3; vary image side in {4, 8, 16, 32, 64}.
+    let mut r = rng_for(0x77);
+    let n = 3;
+    [4usize, 8, 16, 32, 64]
+        .into_iter()
+        .map(|side| {
+            let secret: Vec<Vec<bool>> = (0..side)
+                .map(|y| (0..side).map(|x| (x + y) % 2 == 0).collect())
+                .collect();
+            let split_ns = time_block(50, 10, || visual::split_n_of_n(&mut r, &secret, n));
+            let shares = visual::split_n_of_n(&mut r, &secret, n);
+            let recon_ns = time_block(50, 10, || {
+                let stacked = visual::stack(&shares).unwrap();
+                visual::decode(&stacked, n).unwrap()
+            });
+            ScalingPoint {
+                x_label: format!("{side}×{side}"),
+                x_value: (side * side) as f64,
+                split_ns,
+                recon_ns,
+            }
+        })
+        .collect()
+}
+
+fn bench_cgma_vss_by_group() -> Vec<ScalingPoint> {
+    // Three Schnorr groups of increasing modulus size.
+    let groups: Vec<(usize, cgma_vss::DlogGroup)> = vec![
+        (5, cgma_vss::small_test_group()),
+        (
+            8,
+            cgma_vss::DlogGroup::new(
+                BigUint::from_u64(167),
+                BigUint::from_u64(83),
+                BigUint::from_u64(4),
+            )
+            .expect("(167, 83, 4) Schnorr group"),
+        ),
+        (1024, oakley_group2_dlog_group()),
+    ];
+    let mut out = Vec::new();
+    let mut r = rng_for(0xC9);
+    for (bits, group) in groups {
+        let secret = BigUint::from_u64(1);
+        let split_ns = time_block(50, 10, || cgma_vss::deal(&group, &mut r, &secret, K, N));
+        let (shares, commits) = cgma_vss::deal(&group, &mut r, &secret, K, N);
+        let recon_ns = time_block(50, 10, || {
+            for s in &shares {
+                std::hint::black_box(cgma_vss::verify_share(&group, &commits, s));
+            }
+            cgma_vss::reconstruct(&group, &shares[..K], K).unwrap()
+        });
+        out.push(ScalingPoint {
+            x_label: format!("{bits}-bit"),
+            x_value: bits as f64,
+            split_ns,
+            recon_ns,
+        });
+    }
+    out
+}
+
+fn oakley_group2_dlog_group() -> cgma_vss::DlogGroup {
+    // p = OAKLEY group 2 (1024-bit safe prime). q = (p−1)/2 is prime.
+    // g = 4 = 2^2 lies in the order-q subgroup since 2 generates the
+    // full (Z/pZ)*; squaring lands in the index-2 subgroup of order q.
+    let p = oakley_group2_prime();
+    let q = {
+        let p_minus_1 = p.sub_ref(&BigUint::one());
+        let (half, _) = p_minus_1.div_rem(&BigUint::from_u64(2));
+        half
+    };
+    let g = BigUint::from_u64(4);
+    cgma_vss::DlogGroup::new(p, q, g).expect("OAKLEY group 2 with g=4")
+}
+
+// ── Cold-cache: first-iteration latency vs warm median. ────────────
+
+struct ColdResult {
+    scheme: &'static str,
+    cold_split_ns: u128,
+    warm_split_ns: u128,
+    cold_recon_ns: u128,
+    warm_recon_ns: u128,
+}
+
+/// One pass: time a single split + a single reconstruct with NO
+/// warmup, return ns. Bench at the 128-bit prime field for all
+/// scalar schemes.
+fn cold_one<S, R, OS, ORet>(mut split_fn: S, mut recon_fn: R) -> (u128, u128)
+where
+    S: FnMut() -> OS,
+    R: FnMut(&OS) -> ORet,
+{
+    // No warmup at all.
+    let t0 = Instant::now();
+    let shares = split_fn();
+    let split_ns = t0.elapsed().as_nanos();
+    let t1 = Instant::now();
+    let _ = recon_fn(&shares);
+    let recon_ns = t1.elapsed().as_nanos();
+    (split_ns, recon_ns)
+}
+
+/// Aggregate cold-cache numbers for the eight most-used schemes. The
+/// "cold" measurement is a fresh process boot's first call; we
+/// approximate it by running just before any warmup.
+fn bench_cold_cache(fields: &[PrimeField; 4], warm_results: &[Result]) -> Vec<ColdResult> {
+    let field = &fields[0]; // 128-bit Mersenne for all scalar schemes.
+    let mut r = rng_for(0xC0);
+    let secret = field.random(&mut r);
+    let mut out: Vec<ColdResult> = Vec::new();
+
+    let warm_lookup = |name: &str| -> (u128, u128) {
+        warm_results
+            .iter()
+            .find(|w| w.scheme == name)
+            .map(|w| (w.splits[0], w.recons[0]))
+            .unwrap_or((0, 0))
+    };
+
+    // shamir
+    {
+        let mut r = rng_for(0xC1);
+        let s = field.random(&mut r);
+        let (cs, cr) = cold_one(
+            || shamir::split(field, &mut r, &s, K, N),
+            |sh| shamir::reconstruct(field, &sh[..K], K).unwrap(),
+        );
+        let (ws, wr) = warm_lookup("shamir");
+        out.push(ColdResult { scheme: "shamir", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // blakley
+    {
+        let mut r = rng_for(0xC2);
+        let s = field.random(&mut r);
+        let (cs, cr) = cold_one(
+            || blakley::split(field, &mut r, &s, K, N),
+            |sh| blakley::reconstruct(field, &sh[..K], K).unwrap(),
+        );
+        let (ws, wr) = warm_lookup("blakley");
+        out.push(ColdResult { scheme: "blakley", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // kothari
+    {
+        let scheme = kothari::vandermonde(field.clone(), K, N);
+        let mut r = rng_for(0xC3);
+        let s = field.random(&mut r);
+        let (cs, cr) = cold_one(
+            || kothari::split(&scheme, &mut r, &s),
+            |sh| {
+                let pairs: Vec<(usize, BigUint)> =
+                    (0..K).map(|c| (c, sh[c].clone())).collect();
+                kothari::reconstruct(&scheme, &pairs).unwrap()
+            },
+        );
+        let (ws, wr) = warm_lookup("kothari");
+        out.push(ColdResult { scheme: "kothari", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // ramp
+    {
+        let mut r = rng_for(0xC4);
+        let secret_vec: Vec<BigUint> = (0..K).map(|_| field.random(&mut r)).collect();
+        let (cs, cr) = cold_one(
+            || ramp::split(field, &secret_vec, N),
+            |sh| ramp::reconstruct(field, &sh[..K], K).unwrap(),
+        );
+        let (ws, wr) = warm_lookup("ramp");
+        out.push(ColdResult { scheme: "ramp", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // vss
+    {
+        let mut r = rng_for(0xC5);
+        let s = field.random(&mut r);
+        let (cs, cr) = cold_one(
+            || vss::deal(field, &mut r, &s, K, N),
+            |sh| vss::reconstruct(field, &sh[..K], K).unwrap(),
+        );
+        let (ws, wr) = warm_lookup("vss (Rabin-Ben-Or)");
+        out.push(ColdResult { scheme: "vss", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // bytes
+    {
+        let mut r = rng_for(0xC6);
+        let data = vec![0xC3u8; 16];
+        let (cs, cr) = cold_one(
+            || bytes::split(field, &mut r, &data, K, N),
+            |sh| {
+                let refs: Vec<&[u8]> = sh.iter().map(Vec::as_slice).collect();
+                bytes::reconstruct(field, &refs[..K], K).unwrap()
+            },
+        );
+        let (ws, wr) = warm_lookup("bytes (chunked Shamir)");
+        out.push(ColdResult { scheme: "bytes", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // ida
+    {
+        let data = vec![0x5Au8; 16];
+        let (cs, cr) = cold_one(
+            || ida::split(field, &data, K, N),
+            |sh| {
+                let refs: Vec<&[u8]> = sh.iter().map(Vec::as_slice).collect();
+                ida::reconstruct(field, &refs[..K], K).unwrap()
+            },
+        );
+        let (ws, wr) = warm_lookup("ida (Reed-Solomon)");
+        out.push(ColdResult { scheme: "ida", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+
+    // trivial
+    {
+        let mut r = rng_for(0xC7);
+        let s = field.random(&mut r);
+        let (cs, cr) = cold_one(
+            || trivial::split(field, &mut r, &s, N),
+            |sh| trivial::reconstruct(field, sh),
+        );
+        let (ws, wr) = warm_lookup("trivial (n-of-n)");
+        out.push(ColdResult { scheme: "trivial", cold_split_ns: cs, warm_split_ns: ws, cold_recon_ns: cr, warm_recon_ns: wr });
+    }
+    let _ = secret;
+    out
+}
+
+// ── New SVG helpers: line chart and horizontal bar chart. ──────────
+
+const LINE_W: f64 = 640.0;
+const LINE_H: f64 = 420.0;
+
+/// Build a line chart: each series is `(label, color, points)` where
+/// each point is `(x_label, x_value, y_value_ns)`. y axis is log-ns;
+/// x axis is linear in x_value.
+/// Per-line series passed to `build_line_svg`: label, colour, and a
+/// vector of `(x_label, x_value, y_value)` data points.
+type LineSeries<'a> = (&'a str, &'a str, Vec<(String, f64, f64)>);
+
+fn build_line_svg(
+    title: &str,
+    subtitle: &str,
+    x_axis_label: &str,
+    series: &[LineSeries],
+) -> String {
+    // Collect bounds.
+    let xs: Vec<f64> = series
+        .iter()
+        .flat_map(|(_, _, pts)| pts.iter().map(|p| p.1))
+        .collect();
+    let ys: Vec<f64> = series
+        .iter()
+        .flat_map(|(_, _, pts)| pts.iter().map(|p| p.2))
+        .filter(|y| *y > 0.0 && y.is_finite())
+        .collect();
+    let xmin = xs.iter().cloned().fold(f64::INFINITY, f64::min);
+    let xmax = xs.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    let ymin_raw = ys.iter().cloned().fold(f64::INFINITY, f64::min);
+    let ymax_raw = ys.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    let ymin = 10f64.powf(ymin_raw.log10().floor());
+    let ymax = 10f64.powf(ymax_raw.log10().ceil());
+
+    let plot_x0 = 80.0_f64;
+    let plot_x1 = LINE_W - 30.0;
+    let plot_y0 = 60.0_f64;
+    let plot_y1 = LINE_H - 90.0;
+    let pw = plot_x1 - plot_x0;
+    let ph = plot_y1 - plot_y0;
+
+    let map_x = |x: f64| -> f64 {
+        if (xmax - xmin).abs() < f64::EPSILON {
+            plot_x0 + pw / 2.0
+        } else {
+            plot_x0 + pw * (x - xmin) / (xmax - xmin)
+        }
+    };
+    let map_y = |y: f64| -> f64 {
+        if y <= 0.0 {
+            return plot_y1;
+        }
+        let span = (ymax / ymin).log10();
+        plot_y1 - ph * (y / ymin).log10() / span
+    };
+
+    let mut s = String::new();
+    s.push_str(&format!(
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{:.0}\" height=\"{:.0}\" viewBox=\"0 0 {:.0} {:.0}\" role=\"img\">\n",
+        LINE_W, LINE_H, LINE_W, LINE_H
+    ));
+    s.push_str(&format!("  <title>{}</title>\n", title));
+    s.push_str("  <style>\n");
+    s.push_str("    .bg { fill: #fbf8f1; }\n");
+    s.push_str("    .grid { stroke: #c9c2b7; stroke-width: 1; fill: none; }\n");
+    s.push_str("    .axis { stroke: #6b6257; stroke-width: 1.5; fill: none; }\n");
+    s.push_str("    .label { fill: #342f29; font: 11px ui-sans-serif, -apple-system, sans-serif; }\n");
+    s.push_str("    .small { fill: #6b6257; font: 10px ui-sans-serif, -apple-system, sans-serif; }\n");
+    s.push_str("    .title { fill: #342f29; font: bold 13px ui-sans-serif, -apple-system, sans-serif; }\n");
+    s.push_str("  </style>\n");
+    s.push_str(&format!(
+        "  <rect class=\"bg\" x=\"0\" y=\"0\" width=\"{:.0}\" height=\"{:.0}\" rx=\"12\" />\n",
+        LINE_W, LINE_H
+    ));
+    // Plot frame.
+    s.push_str(&format!(
+        "  <line class=\"axis\" x1=\"{:.1}\" y1=\"{:.1}\" x2=\"{:.1}\" y2=\"{:.1}\" />\n",
+        plot_x0, plot_y1, plot_x1, plot_y1
+    ));
+    s.push_str(&format!(
+        "  <line class=\"axis\" x1=\"{:.1}\" y1=\"{:.1}\" x2=\"{:.1}\" y2=\"{:.1}\" />\n",
+        plot_x0, plot_y0, plot_x0, plot_y1
+    ));
+    // Y gridlines + tick labels at each decade.
+    let mut decade = ymin;
+    while decade <= ymax + 0.001 {
+        let y = map_y(decade);
+        s.push_str(&format!(
+            "  <line class=\"grid\" x1=\"{:.1}\" y1=\"{:.1}\" x2=\"{:.1}\" y2=\"{:.1}\" />\n",
+            plot_x0, y, plot_x1, y
+        ));
+        s.push_str(&format!(
+            "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\" text-anchor=\"end\">{}</text>\n",
+            plot_x0 - 6.0,
+            y + 3.0,
+            human_ns(decade as u128)
+        ));
+        decade *= 10.0;
+    }
+    // X tick labels: pick from first series' x_labels.
+    if let Some((_, _, pts)) = series.first() {
+        for (lbl, xv, _) in pts {
+            let x = map_x(*xv);
+            s.push_str(&format!(
+                "  <line class=\"grid\" x1=\"{:.1}\" y1=\"{:.1}\" x2=\"{:.1}\" y2=\"{:.1}\" />\n",
+                x, plot_y0, x, plot_y1
+            ));
+            s.push_str(&format!(
+                "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\" text-anchor=\"middle\">{}</text>\n",
+                x,
+                plot_y1 + 14.0,
+                lbl
+            ));
+        }
+    }
+    // Series.
+    for (label, color, pts) in series {
+        let path: String = pts
+            .iter()
+            .enumerate()
+            .map(|(i, (_, xv, yv))| {
+                let cmd = if i == 0 { "M" } else { "L" };
+                format!("{} {:.1} {:.1}", cmd, map_x(*xv), map_y(*yv))
+            })
+            .collect::<Vec<_>>()
+            .join(" ");
+        s.push_str(&format!(
+            "  <path d=\"{}\" stroke=\"{}\" stroke-width=\"2\" fill=\"none\" />\n",
+            path, color
+        ));
+        for (_, xv, yv) in pts {
+            s.push_str(&format!(
+                "  <circle cx=\"{:.1}\" cy=\"{:.1}\" r=\"3.5\" fill=\"{}\" />\n",
+                map_x(*xv),
+                map_y(*yv),
+                color
+            ));
+        }
+        let _ = label;
+    }
+    // Title + axis labels.
+    s.push_str(&format!(
+        "  <text class=\"title\" x=\"{:.1}\" y=\"{:.1}\">{}</text>\n",
+        plot_x0, plot_y0 - 30.0, title
+    ));
+    s.push_str(&format!(
+        "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\">{}</text>\n",
+        plot_x0, plot_y0 - 14.0, subtitle
+    ));
+    s.push_str(&format!(
+        "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\" text-anchor=\"middle\">{}</text>\n",
+        (plot_x0 + plot_x1) / 2.0,
+        plot_y1 + 32.0,
+        x_axis_label
+    ));
+    s.push_str(&format!(
+        "  <text class=\"small\" x=\"20\" y=\"{:.1}\" transform=\"rotate(-90 20 {:.1})\" text-anchor=\"middle\">latency (log scale)</text>\n",
+        (plot_y0 + plot_y1) / 2.0,
+        (plot_y0 + plot_y1) / 2.0,
+    ));
+    // Legend.
+    let mut lx = plot_x0;
+    let ly = LINE_H - 22.0;
+    for (label, color, _) in series {
+        s.push_str(&format!(
+            "  <rect x=\"{:.1}\" y=\"{:.1}\" width=\"12\" height=\"12\" fill=\"{}\" rx=\"2\" />\n",
+            lx, ly, color
+        ));
+        s.push_str(&format!(
+            "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\">{}</text>\n",
+            lx + 18.0,
+            ly + 10.0,
+            label
+        ));
+        lx += 28.0 + 8.0 * (label.len() as f64);
+    }
+    s.push_str("</svg>\n");
+    s
+}
+
+/// Build a horizontal bar chart with two bars per row (for cold vs warm).
+/// `rows = (label, cold_ns, warm_ns)`.
+fn build_bar_svg(title: &str, subtitle: &str, rows: &[(String, u128, u128)]) -> String {
+    let n = rows.len() as f64;
+    let row_h = 30.0;
+    let bar_h = 11.0;
+    let plot_x0 = 130.0;
+    let plot_x1 = 600.0;
+    let plot_w = plot_x1 - plot_x0;
+    let plot_y0 = 60.0;
+    let height = plot_y0 + n * row_h + 70.0;
+
+    let max_ns: u128 = rows
+        .iter()
+        .flat_map(|(_, c, w)| [*c, *w])
+        .max()
+        .unwrap_or(1)
+        .max(1);
+    // Log scale: clamp min at 100ns.
+    let min_ns_f = 100.0_f64;
+    let max_ns_f = max_ns as f64;
+    let ymax = 10f64.powf(max_ns_f.log10().ceil());
+    let map_w = |ns: u128| -> f64 {
+        let v = (ns as f64).max(min_ns_f);
+        let span = (ymax / min_ns_f).log10();
+        plot_w * (v / min_ns_f).log10() / span
+    };
+
+    let mut s = String::new();
+    s.push_str(&format!(
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"{:.0}\" viewBox=\"0 0 640 {:.0}\" role=\"img\">\n",
+        height, height
+    ));
+    s.push_str(&format!("  <title>{}</title>\n", title));
+    s.push_str("  <style>\n");
+    s.push_str("    .bg { fill: #fbf8f1; }\n");
+    s.push_str("    .grid { stroke: #c9c2b7; stroke-width: 1; }\n");
+    s.push_str("    .label { fill: #342f29; font: 11px ui-sans-serif, -apple-system, sans-serif; }\n");
+    s.push_str("    .small { fill: #6b6257; font: 10px ui-sans-serif, -apple-system, sans-serif; }\n");
+    s.push_str("    .title { fill: #342f29; font: bold 13px ui-sans-serif, -apple-system, sans-serif; }\n");
+    s.push_str("  </style>\n");
+    s.push_str(&format!(
+        "  <rect class=\"bg\" x=\"0\" y=\"0\" width=\"640\" height=\"{:.0}\" rx=\"12\" />\n",
+        height
+    ));
+    s.push_str(&format!(
+        "  <text class=\"title\" x=\"20\" y=\"30\">{}</text>\n",
+        title
+    ));
+    s.push_str(&format!(
+        "  <text class=\"small\" x=\"20\" y=\"46\">{}</text>\n",
+        subtitle
+    ));
+    // Decade gridlines on the x-axis.
+    let mut decade = min_ns_f;
+    while decade <= ymax + 0.001 {
+        let x = plot_x0 + map_w(decade as u128);
+        s.push_str(&format!(
+            "  <line class=\"grid\" x1=\"{:.1}\" y1=\"{:.1}\" x2=\"{:.1}\" y2=\"{:.1}\" />\n",
+            x,
+            plot_y0,
+            x,
+            plot_y0 + n * row_h + 4.0
+        ));
+        s.push_str(&format!(
+            "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\" text-anchor=\"middle\">{}</text>\n",
+            x,
+            plot_y0 + n * row_h + 18.0,
+            human_ns(decade as u128)
+        ));
+        decade *= 10.0;
+    }
+    for (i, (label, cold_ns, warm_ns)) in rows.iter().enumerate() {
+        let y_top = plot_y0 + (i as f64) * row_h;
+        // Label.
+        s.push_str(&format!(
+            "  <text class=\"label\" x=\"{:.1}\" y=\"{:.1}\" text-anchor=\"end\">{}</text>\n",
+            plot_x0 - 8.0,
+            y_top + bar_h + 5.0,
+            label
+        ));
+        // Cold bar (top).
+        s.push_str(&format!(
+            "  <rect x=\"{:.1}\" y=\"{:.1}\" width=\"{:.1}\" height=\"{:.1}\" fill=\"#b91c1c\" rx=\"2\" />\n",
+            plot_x0,
+            y_top,
+            map_w(*cold_ns).max(1.0),
+            bar_h
+        ));
+        // Warm bar (bottom).
+        s.push_str(&format!(
+            "  <rect x=\"{:.1}\" y=\"{:.1}\" width=\"{:.1}\" height=\"{:.1}\" fill=\"#0f766e\" rx=\"2\" />\n",
+            plot_x0,
+            y_top + bar_h + 1.0,
+            map_w(*warm_ns).max(1.0),
+            bar_h
+        ));
+        // Ratio annotation (cold / warm).
+        if *warm_ns > 0 {
+            let ratio = (*cold_ns as f64) / (*warm_ns as f64);
+            s.push_str(&format!(
+                "  <text class=\"small\" x=\"{:.1}\" y=\"{:.1}\">cold/warm = {:.1}×</text>\n",
+                plot_x0 + map_w(*cold_ns).max(1.0) + 8.0,
+                y_top + bar_h + 5.0,
+                ratio
+            ));
+        }
+    }
+    // Legend.
+    let ly = plot_y0 + n * row_h + 38.0;
+    s.push_str(&format!(
+        "  <rect x=\"20\" y=\"{:.1}\" width=\"12\" height=\"12\" fill=\"#b91c1c\" rx=\"2\" /><text class=\"small\" x=\"38\" y=\"{:.1}\">cold (first call)</text>\n",
+        ly,
+        ly + 10.0
+    ));
+    s.push_str(&format!(
+        "  <rect x=\"160\" y=\"{:.1}\" width=\"12\" height=\"12\" fill=\"#0f766e\" rx=\"2\" /><text class=\"small\" x=\"178\" y=\"{:.1}\">warm median</text>\n",
+        ly,
+        ly + 10.0
+    ));
+    s.push_str("</svg>\n");
+    s
+}
+
+fn print_scaling_table(title: &str, points: &[ScalingPoint]) {
+    println!("\n## {title}\n");
+    println!("| Parameter | split | reconstruct |");
+    println!("|-----------|-------|-------------|");
+    for p in points {
+        println!(
+            "| `{}` | {} | {} |",
+            p.x_label,
+            human_ns(p.split_ns),
+            human_ns(p.recon_ns)
+        );
+    }
+}
+
+fn print_cold_table(rows: &[ColdResult]) {
+    println!("\n## Cold-cache vs warm median (first call vs 200-iter median)\n");
+    println!("| Scheme | cold split | warm split | cold recon | warm recon | cold/warm split | cold/warm recon |");
+    println!("|--------|-----------|-----------|-----------|-----------|----------------|----------------|");
+    for r in rows {
+        let s_ratio = if r.warm_split_ns == 0 {
+            "—".to_string()
+        } else {
+            format!("{:.1}×", r.cold_split_ns as f64 / r.warm_split_ns as f64)
+        };
+        let r_ratio = if r.warm_recon_ns == 0 {
+            "—".to_string()
+        } else {
+            format!("{:.1}×", r.cold_recon_ns as f64 / r.warm_recon_ns as f64)
+        };
+        println!(
+            "| `{}` | {} | {} | {} | {} | {} | {} |",
+            r.scheme,
+            human_ns(r.cold_split_ns),
+            human_ns(r.warm_split_ns),
+            human_ns(r.cold_recon_ns),
+            human_ns(r.warm_recon_ns),
+            s_ratio,
+            r_ratio,
+        );
+    }
+}
+
+fn emit_scaling_line_svg(
+    title: &str,
+    subtitle: &str,
+    x_axis_label: &str,
+    points: &[ScalingPoint],
+    file: &str,
+) -> std::io::Result<()> {
+    let split_pts: Vec<(String, f64, f64)> = points
+        .iter()
+        .map(|p| (p.x_label.clone(), p.x_value, p.split_ns as f64))
+        .collect();
+    let recon_pts: Vec<(String, f64, f64)> = points
+        .iter()
+        .map(|p| (p.x_label.clone(), p.x_value, p.recon_ns as f64))
+        .collect();
+    let series = [
+        ("split", "#0f766e", split_pts),
+        ("reconstruct", "#1d4ed8", recon_pts),
+    ];
+    let svg = build_line_svg(title, subtitle, x_axis_label, &series);
+    std::fs::write(file, svg)?;
+    eprintln!("wrote {file}");
+    Ok(())
+}
+
+fn emit_cold_bar_svg(rows: &[ColdResult], file: &str) -> std::io::Result<()> {
+    // Two SVGs would be cleaner, but the cold/warm comparison reads
+    // best as one chart per operation. Use split first.
+    let split_rows: Vec<(String, u128, u128)> = rows
+        .iter()
+        .map(|r| (r.scheme.to_string(), r.cold_split_ns, r.warm_split_ns))
+        .collect();
+    let svg = build_bar_svg(
+        "Cold-cache vs warm median (split, 128-bit field)",
+        "First-iteration latency in red, 200-iteration warm median in teal; log x-axis",
+        &split_rows,
+    );
+    std::fs::write(file, svg)?;
+    eprintln!("wrote {file}");
+    Ok(())
+}
+
+fn emit_cold_recon_bar_svg(rows: &[ColdResult], file: &str) -> std::io::Result<()> {
+    let recon_rows: Vec<(String, u128, u128)> = rows
+        .iter()
+        .map(|r| (r.scheme.to_string(), r.cold_recon_ns, r.warm_recon_ns))
+        .collect();
+    let svg = build_bar_svg(
+        "Cold-cache vs warm median (reconstruct, 128-bit field)",
+        "First-iteration latency in red, 200-iteration warm median in teal; log x-axis",
+        &recon_rows,
+    );
+    std::fs::write(file, svg)?;
+    eprintln!("wrote {file}");
+    Ok(())
+}
+
 fn main() -> std::io::Result<()> {
     os_smoke_check();
     let fields = primes_for_sizes();
@@ -862,6 +1656,70 @@ fn main() -> std::io::Result<()> {
         "assets/other-throughput-radar.svg",
         &results,
     )?;
+
+    // ── Non-radar dimensions ───────────────────────────────────────
+    eprintln!("\nbenching non-radar dimensions...");
+
+    eprintln!("  Mignotte by legal-range bit width...");
+    let mignotte_pts = bench_mignotte_scaling();
+    print_scaling_table("Mignotte by legal-range bit width (k=3, n=5)", &mignotte_pts);
+    emit_scaling_line_svg(
+        "Mignotte: latency vs legal-range bit width",
+        "k=3, n=5; secret picked just inside (α, β); log y, linear x in bits",
+        "approximate β bit width",
+        &mignotte_pts,
+        "assets/mignotte-scaling.svg",
+    )?;
+
+    eprintln!("  Asmuth-Bloom by m_0 bit width...");
+    let ab_pts = bench_asmuth_bloom_scaling();
+    print_scaling_table("Asmuth-Bloom by m_0 bit width (k=3, n=5)", &ab_pts);
+    emit_scaling_line_svg(
+        "Asmuth-Bloom: latency vs m_0 bit width",
+        "k=3, n=5; secret = 1 mod m_0; log y, linear x in bits",
+        "m_0 bit width",
+        &ab_pts,
+        "assets/asmuth-bloom-scaling.svg",
+    )?;
+
+    eprintln!("  Visual cryptography by n (8×8 image)...");
+    let vis_n = bench_visual_by_n();
+    print_scaling_table("Visual cryptography by n (8×8 image)", &vis_n);
+    emit_scaling_line_svg(
+        "Visual cryptography (n, n): latency vs n",
+        "8×8 secret image; per-pixel expansion = 2^(n-1)",
+        "n (number of shares = threshold)",
+        &vis_n,
+        "assets/visual-by-n.svg",
+    )?;
+
+    eprintln!("  Visual cryptography by image size (n=3)...");
+    let vis_pix = bench_visual_by_pixels();
+    print_scaling_table("Visual cryptography by pixel count (n=3)", &vis_pix);
+    emit_scaling_line_svg(
+        "Visual cryptography (3, 3): latency vs image area",
+        "fixed n=3; image scales W×H from 4×4 to 64×64",
+        "image area (pixels, label = side×side)",
+        &vis_pix,
+        "assets/visual-by-pixels.svg",
+    )?;
+
+    eprintln!("  CGMA-VSS by Schnorr group bit width...");
+    let cgma_pts = bench_cgma_vss_by_group();
+    print_scaling_table("CGMA-VSS by Schnorr group bit width (k=3, n=5)", &cgma_pts);
+    emit_scaling_line_svg(
+        "CGMA-VSS: latency vs Schnorr group bit width",
+        "k=3, n=5; toy (23) and small (167) groups vs 1024-bit OAKLEY group 2",
+        "Schnorr prime p bit width",
+        &cgma_pts,
+        "assets/cgma-vss-scaling.svg",
+    )?;
+
+    eprintln!("  Cold-cache (first-iteration latency)...");
+    let cold = bench_cold_cache(&fields, &results);
+    print_cold_table(&cold);
+    emit_cold_bar_svg(&cold, "assets/cold-cache-split.svg")?;
+    emit_cold_recon_bar_svg(&cold, "assets/cold-cache-reconstruct.svg")?;
 
     Ok(())
 }

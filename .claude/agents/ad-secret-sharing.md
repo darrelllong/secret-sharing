@@ -92,20 +92,51 @@ Attack surfaces — walk every claim through these:
 6. SIDE CHANNELS. Secret-dependent timing and memory access are
    concerns whenever the secret or a share enters a comparison or
    conditional. Look for:
-     - == on secret-derived values (Python's == on bytes is not
-       constant-time; should use hmac.compare_digest)
-     - branches on secret bits
-     - GMP / int-to-bytes conversions whose timing depends on the
-       integer's bit length
-     - share-size or compressed-share encodings that vary with the
-       secret value
-   P1 unless the threat model explicitly excludes side-channel
-   adversaries.
+     - == on secret-derived values — `BigUint::eq` short-circuits on
+       limb mismatch and leaks the bit-length; this crate provides
+       `crate::secure::ct_eq_biguint` and every share / coefficient
+       / polynomial-evaluation comparison MUST use it. A site that
+       still uses `==` on a secret-derived value is **P0** (not P1)
+       because the leak is direct and exploitable.
+     - branches on secret bits — including pivot-search loops in
+       Gaussian elimination over secret-bearing matrices, and the
+       `if exp.bit(i)` branch in square-and-multiply exponentiation
+       over a secret share. P1, downgraded to P2 only if the
+       threat model explicitly excludes side-channel adversaries
+       AND the docstring repeats the exclusion at the call site.
+     - integer-to-bytes conversions whose timing depends on bit
+       length (any `to_be_bytes` or `to_string` of a secret value).
+     - share-size, compressed-share encodings, or wire-format
+       lengths that vary with the secret value — invariant
+       per-share length is mandatory.
 
-7. KEY MATERIAL HYGIENE. Secrets and shares must be zeroized after
-   use. In Python this is hard (immutable strings/bytes); look for
-   bytearray + zero-fill, or ctypes-level wiping. Without zeroization
-   on the secret-handling path, P1.
+7. KEY MATERIAL HYGIENE. Memory residue is a real, exploitable threat:
+   freed heap is reallocated to other consumers byte-for-byte unless
+   the slot was overwritten before drop. The bar:
+     - Every secret-bearing intermediate `Vec<BigUint>`,
+       `Vec<u8>`, `[u8; N]`, and `BigUint` must be wrapped in
+       `crate::secure::Zeroizing<T>` OR have a custom `Drop` that
+       calls `core::ptr::write_volatile` on each element. A `for b
+       in v.iter_mut() { *b = 0 }` loop at function exit does NOT
+       count — the optimiser may elide non-volatile stores on a
+       soon-to-be-freed allocation. P1.
+     - Volatile writes must be followed by
+       `core::sync::atomic::compiler_fence(SeqCst)` so the scrub is
+       not reordered past the deallocation. Missing fence: P1.
+     - `Drop` impls must run in the right order — outer wrappers
+       first, then inner. `ManuallyDrop<T>` is the canonical
+       building block; rolling your own with `mem::take` is suspect.
+     - Stack residue: parameters passed by value (by-move) leave a
+       copy on the caller's stack. Prefer `&BigUint` over
+       `BigUint` for secret-derived inputs. P2 unless a stack-
+       inspection adversary is in scope.
+     - The bundled CSPRNG (`ChaCha20Rng`) and any RNG that
+       internally caches a key MUST volatile-zero the key, the
+       nonce, the counter, and the keystream buffer in `Drop`.
+       Without that: P1.
+     - `Debug` impls on secret-bearing structs must NOT print the
+       inner value — `#[derive(Debug)]` on a secret leaks via
+       `{:?}` formatting. P1.
 
 8. PARAMETER CONSTRAINTS. Specific to the scheme:
      - Shamir over GF(p): p > max(secret, n)

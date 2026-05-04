@@ -13,8 +13,12 @@ use core::cmp::Ordering;
 use core::sync::atomic::{compiler_fence, Ordering as AtomicOrdering};
 
 /// Zero a slice with volatile writes the optimiser is not allowed to
-/// elide. Local copy of `cryptography::ct::zeroize_slice` used by
-/// [`BigUint::drop`] to scrub secret limbs.
+/// elide. Local copy of `cryptography::ct::zeroize_slice`. No longer
+/// invoked from `BigUint::drop` (that path scrubs the full capacity
+/// directly, not just the live `[0..len]` slice), but kept as a
+/// utility for any future caller that wants to scrub a fixed-len
+/// stack array.
+#[allow(dead_code)]
 fn zeroize_slice<T: Copy + Default>(slice: &mut [T]) {
     for item in slice.iter_mut() {
         // SAFETY: `item` is a valid `&mut T` for the duration of this
@@ -46,12 +50,52 @@ pub enum Sign {
 }
 
 /// Unsigned multiprecision integer stored as little-endian `u64` limbs.
-#[derive(Clone, Debug, Eq, PartialEq)]
+///
+/// Both `PartialEq` and `Debug` are implemented manually to avoid
+/// leaking secret-derived limbs:
+///
+/// - `PartialEq::eq` compares all limbs in a single OR-fold so the
+///   timing depends only on the larger of the two limb counts (which
+///   is a public function of the modulus, not of the secret bits).
+/// - `Debug::fmt` prints `BigUint(<elided>)`. Any panic backtrace,
+///   `dbg!`, `assert_eq!` failure message, or log statement that
+///   formats a `BigUint` reveals nothing about the integer's value.
+///
+/// The Drop impl below volatile-zeroes the entire allocated capacity
+/// of the limb buffer (not just `[0..len]`), so high-significance
+/// limbs from intermediate products are not left in heap residue.
+#[derive(Clone)]
 pub struct BigUint {
     limbs: Vec<u64>,
 }
 
+impl Eq for BigUint {}
+
+impl PartialEq for BigUint {
+    fn eq(&self, other: &Self) -> bool {
+        // Constant-in-limb-count OR-fold. Pad the shorter operand
+        // with zero limbs (`limb_or_zero`), then accumulate `lhs ^
+        // rhs` across every position without short-circuiting.
+        let n = self.limbs.len().max(other.limbs.len());
+        let mut acc: u64 = 0;
+        for i in 0..n {
+            let a = self.limbs.get(i).copied().unwrap_or(0);
+            let b = other.limbs.get(i).copied().unwrap_or(0);
+            acc |= a ^ b;
+        }
+        acc == 0
+    }
+}
+
+impl core::fmt::Debug for BigUint {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("BigUint(<elided>)")
+    }
+}
+
 /// Signed multiprecision integer used by later public-key helpers.
+/// `Debug` and `PartialEq` are derived now that `BigUint` itself uses
+/// constant-time comparison and elided Debug output.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BigInt {
     sign: Sign,
@@ -217,6 +261,98 @@ impl BigUint {
             .position(|&byte| byte != 0)
             .expect("non-zero bigint must encode to at least one non-zero byte");
         out.drain(0..first_nonzero);
+        out
+    }
+
+    /// Big-endian serialization at a caller-supplied fixed byte width
+    /// — pads or truncates to exactly `byte_width` bytes.
+    ///
+    /// Used by [`crate::secure::ct_eq_biguint_padded`] to avoid the
+    /// leading-non-zero-byte scan inside `to_be_bytes`, which would
+    /// otherwise leak the operand's bit length through scan latency.
+    ///
+    /// **Residual side-channel.** The implementation copies the
+    /// operand's limb buffer into a `byte_width`-sized scratch via
+    /// `core::ptr::copy_nonoverlapping`, copying exactly
+    /// `min(byte_width.div_ceil(8), self.limbs.len())` limbs. That
+    /// copy length depends on the operand's normalised limb count —
+    /// itself a function of the operand's high-bit position. The
+    /// leak is an *upper bound on the secret bit length*, granular
+    /// to one limb (8 bytes); compare with `to_be_bytes`'s byte-
+    /// granular leading-zero scan. For schemes where both operands
+    /// are reduced field elements (the modulus is public, so all
+    /// reduced elements share the same limb count), the limb count
+    /// is constant and the residual leak vanishes.
+    ///
+    /// # Panics
+    /// Panics if the value's actual byte length exceeds `byte_width`
+    /// — i.e. some limb beyond index `byte_width.div_ceil(8) − 1` is
+    /// non-zero, or the trim-to-`byte_width` step would discard a
+    /// non-zero leading byte. `byte_width = 0` is legal only for the
+    /// zero value.
+    #[must_use]
+    pub fn to_be_bytes_padded(&self, byte_width: usize) -> Vec<u8> {
+        if byte_width == 0 {
+            assert!(self.is_zero(), "value does not fit in 0 bytes");
+            return Vec::new();
+        }
+        let limb_width = byte_width.div_ceil(8);
+        // Any high limb beyond `limb_width` must be zero — otherwise
+        // the value spills past `byte_width` bytes.
+        for i in limb_width..self.limbs.len() {
+            assert!(
+                self.limbs[i] == 0,
+                "value does not fit in {byte_width} bytes",
+            );
+        }
+        // Materialise a `limb_width`-sized limb scratch by a single
+        // memcpy of the live limbs (the `copy_n` count is the only
+        // operand-dependent quantity — see the residual-leak note in
+        // the docstring). The tail of the scratch stays zero.
+        let mut padded_limbs = vec![0u64; limb_width];
+        let copy_n = self.limbs.len().min(limb_width);
+        if copy_n > 0 {
+            // SAFETY: `self.limbs.as_ptr()` is valid for `self.limbs.len()`
+            // contiguous u64 reads; `copy_n ≤ self.limbs.len()`.
+            // `padded_limbs.as_mut_ptr()` is valid for `limb_width`
+            // contiguous u64 writes; `copy_n ≤ limb_width`. Source
+            // and destination are non-overlapping (separate Vec
+            // allocations).
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.limbs.as_ptr(),
+                    padded_limbs.as_mut_ptr(),
+                    copy_n,
+                );
+            }
+        }
+        // Convert little-endian limb scratch to big-endian byte buffer.
+        // The number of iterations is fixed at `limb_width`, no per-
+        // iteration branch on operand limb count.
+        let mut out = vec![0u8; limb_width * 8];
+        for (i, limb) in padded_limbs.iter().enumerate().take(limb_width) {
+            let dst_end = limb_width * 8 - i * 8;
+            let dst_start = dst_end - 8;
+            out[dst_start..dst_end].copy_from_slice(&limb.to_be_bytes());
+        }
+        // Scrub the limb scratch — it holds a verbatim copy of secret
+        // limbs and is about to be dropped.
+        for w in padded_limbs.iter_mut() {
+            // SAFETY: `w` is a valid `&mut u64`.
+            unsafe { core::ptr::write_volatile(w, 0u64) };
+        }
+        compiler_fence(AtomicOrdering::SeqCst);
+        // If the rounded-up limb width gave more bytes than requested,
+        // trim the leading bytes. Those bytes MUST be zero — otherwise
+        // the value did not fit in `byte_width` bytes.
+        if out.len() > byte_width {
+            let trim = out.len() - byte_width;
+            assert!(
+                out[..trim].iter().all(|&b| b == 0),
+                "value does not fit in {byte_width} bytes",
+            );
+            out.drain(..trim);
+        }
         out
     }
 
@@ -970,10 +1106,23 @@ impl MontgomeryCtx {
 
 impl Drop for BigUint {
     fn drop(&mut self) {
-        // BigUint backs private exponents, prime factors, and nonces in the
-        // public-key layer. Clear the limb buffer on drop so those values do
-        // not linger in freed heap memory.
-        zeroize_slice(self.limbs.as_mut_slice());
+        // BigUint backs private exponents, prime factors, polynomial
+        // coefficients, and Lagrange intermediates. Volatile-zero the
+        // ENTIRE allocated capacity of the limb vector — not just
+        // `[0..len]` — because intermediate products and `normalize()`
+        // truncations leave high-significance secret limbs in the
+        // tail `[len..capacity)`, which the regular `zeroize_slice`
+        // (which walks `as_mut_slice()` = `[0..len]`) misses.
+        let cap = self.limbs.capacity();
+        if cap > 0 {
+            let raw = self.limbs.as_mut_ptr();
+            for i in 0..cap {
+                // SAFETY: i ∈ [0, cap) addresses a u64 inside the
+                // allocation we own; volatile writes are sound.
+                unsafe { core::ptr::write_volatile(raw.add(i), 0u64) };
+            }
+            compiler_fence(AtomicOrdering::SeqCst);
+        }
     }
 }
 

@@ -27,16 +27,24 @@
 use crate::field::PrimeField;
 use crate::bigint::BigUint;
 use crate::csprng::Csprng;
+use crate::secure::ct_eq_biguint;
 
 /// One trustee's hyperplane equation
 /// `a_1 y_1 + … + a_{k−1} y_{k−1} + y_k = b`. The `y_k` coefficient is
 /// fixed at 1 by construction and is not stored.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Share {
     /// The `k − 1` leading coefficients `(a_1, …, a_{k−1})`.
     pub a: Vec<BigUint>,
     /// The right-hand side `b`.
     pub b: BigUint,
+}
+
+impl core::fmt::Debug for Share {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // Secret-bearing: do not print field contents.
+        f.write_str("Share(<elided>)")
+    }
 }
 
 /// Distribute `n` Blakley shares of a single field-element secret.
@@ -64,10 +72,17 @@ pub fn split<R: Csprng>(
         point.push(field.random(rng));
     }
 
-    (0..n)
-        .map(|_| {
-            // Random hyperplane through P: pick (a_1, …, a_{k-1}) uniform
-            // and force b so the equation evaluates to 0 at P.
+    // Generate shares with a singularity guard on the FIRST k. The
+    // paper-level claim is "any k shares reconstruct"; we implement
+    // it for the first-k path by re-sampling those shares until the
+    // resulting linear system is non-singular. For large fields the
+    // resample is essentially never triggered; the cap exists so
+    // pathologically small fields cannot loop forever.
+    const MAX_RESAMPLE: usize = 64;
+    let mut shares: Vec<Share> = Vec::with_capacity(n);
+    for share_idx in 0..n {
+        let mut attempt = 0usize;
+        loop {
             let mut a: Vec<BigUint> = Vec::with_capacity(k - 1);
             for _ in 0..(k - 1) {
                 a.push(field.random(rng));
@@ -78,9 +93,84 @@ pub fn split<R: Csprng>(
                 let term = field.mul(&a[j], &point[j]);
                 b = field.add(&b, &term);
             }
-            Share { a, b }
-        })
-        .collect()
+            let candidate = Share { a, b };
+            // Re-sample only the first k shares for the rank guard.
+            // Beyond i = k, accept whatever the RNG produced.
+            if share_idx < k {
+                shares.push(candidate);
+                if first_k_full_rank(field, &shares) {
+                    break;
+                }
+                shares.pop();
+                attempt += 1;
+                assert!(
+                    attempt < MAX_RESAMPLE,
+                    "Blakley split could not find a non-singular share \
+                     within {MAX_RESAMPLE} resamples — field is too small \
+                     for k = {k}",
+                );
+            } else {
+                shares.push(candidate);
+                break;
+            }
+        }
+    }
+    shares
+}
+
+/// Return whether the partially-built `shares` (used as the first
+/// `shares.len()` rows of the augmented system) form a full-rank
+/// leading block. Used by `split` to reject singular first-k matrices.
+#[allow(clippy::needless_range_loop)]
+fn first_k_full_rank(field: &PrimeField, shares: &[Share]) -> bool {
+    let k = shares.len();
+    if k == 0 {
+        return true;
+    }
+    let coeff_len = shares[0].a.len() + 1; // k columns: (k-1 a's) + the y_k coefficient (1)
+    let mut mat: Vec<Vec<BigUint>> = Vec::with_capacity(k);
+    for s in shares {
+        let mut row = Vec::with_capacity(coeff_len);
+        for c in &s.a {
+            row.push(field.reduce(c));
+        }
+        row.push(BigUint::one());
+        mat.push(row);
+    }
+    // Try to find a pivot in each column; bail false on no-pivot.
+    for col in 0..k {
+        let mut pivot_row = None;
+        for r in col..k {
+            if !mat[r][col].is_zero() {
+                pivot_row = Some(r);
+                break;
+            }
+        }
+        let Some(pr) = pivot_row else {
+            return false;
+        };
+        if pr != col {
+            mat.swap(pr, col);
+        }
+        let inv = match field.inv(&mat[col][col]) {
+            Some(v) => v,
+            None => return false,
+        };
+        for c in col..k {
+            mat[col][c] = field.mul(&mat[col][c], &inv);
+        }
+        for r in 0..k {
+            if r == col || mat[r][col].is_zero() {
+                continue;
+            }
+            let factor = mat[r][col].clone();
+            for c in col..k {
+                let term = field.mul(&factor, &mat[col][c]);
+                mat[r][c] = field.sub(&mat[r][c], &term);
+            }
+        }
+    }
+    true
 }
 
 /// Recover the secret from `k` (or more) Blakley shares by solving the
@@ -155,7 +245,8 @@ pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Big
             let term = field.mul(&s.a[j], &point[j]);
             lhs = field.add(&lhs, &term);
         }
-        if lhs != field.reduce(&s.b) {
+        let rhs = field.reduce(&s.b);
+        if !ct_eq_biguint(&lhs, &rhs) {
             return None;
         }
     }
