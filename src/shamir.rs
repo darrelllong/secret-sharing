@@ -121,7 +121,6 @@ pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Big
         .collect();
     let secret = lagrange_eval(field, &pts, &BigUint::zero())?;
 
-    // Validate extras against the fitted polynomial.
     for s in &shares[k..] {
         let pred = lagrange_eval(field, &pts, &s.x)?;
         if !ct_eq_biguint(&pred, &s.y) {
@@ -368,8 +367,8 @@ mod tests {
 
     #[test]
     fn multi_secret_rejects_inconsistent_extra_share() {
-        // AD #2: a corrupted share past the first k must cause refusal,
-        // not silent truncation.
+        // A corrupted share past the first k must cause refusal, not
+        // silent truncation.
         let f = small_field();
         let mut r = rng();
         let secrets: Vec<BigUint> = (1..=2).map(|i| BigUint::from_u64(50 + i)).collect();
@@ -381,8 +380,8 @@ mod tests {
 
     #[test]
     fn reconstruct_below_threshold_returns_none() {
-        // AD #3: reconstruct must refuse when fewer than k shares are
-        // supplied, instead of returning a uniform-random "secret".
+        // Below threshold, reconstruct must refuse rather than return a
+        // uniform-random "secret" from a lower-degree fit.
         let f = small_field();
         let mut r = rng();
         let secret = BigUint::from_u64(0xCAFE);
@@ -392,8 +391,8 @@ mod tests {
 
     #[test]
     fn reconstruct_rejects_inconsistent_extra_share() {
-        // AD #3 follow-on: with > k shares, an extra that disagrees
-        // with the polynomial fit to the first k must yield None.
+        // With > k shares, an extra that disagrees with the polynomial
+        // fit to the first k must yield None.
         let f = small_field();
         let mut r = rng();
         let secret = BigUint::from_u64(0xBEEF);

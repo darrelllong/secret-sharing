@@ -85,14 +85,15 @@ pub fn reconstruct_with_errors(
     }
 
     if max_errors == 0 {
-        // Pure Lagrange — no error-locator needed.
+        // No errors permitted — skip Berlekamp–Welch and use plain
+        // Lagrange, then validate every extra against the fitted
+        // polynomial as defence-in-depth.
         let pts: Vec<(BigUint, BigUint)> = shares
             .iter()
             .take(k)
             .map(|s| (s.x.clone(), s.y.clone()))
             .collect();
         let secret = crate::poly::lagrange_eval_unchecked(field, &pts, &BigUint::zero());
-        // Validate against extras (defence-in-depth).
         for s in &shares[k..] {
             let pred = crate::poly::lagrange_eval_unchecked(field, &pts, &s.x);
             if !ct_eq_biguint(&pred, &s.y) {
@@ -289,7 +290,6 @@ fn poly_div_exact(
             let term = field.mul(&coef, &div[j]);
             rem[shift + j] = field.sub(&rem[shift + j], &term);
         }
-        // Trim
         while !rem.is_empty() && rem.last().unwrap().is_zero() {
             rem.pop();
         }

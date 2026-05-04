@@ -93,7 +93,6 @@ pub fn split<R: Csprng>(
     padded.resize(secret.len() + pad, 0);
     let num_blocks = padded.len() / bl;
 
-    // Pre-build the n trustee headers.
     let mut shares: Vec<Vec<u8>> = (1..=n)
         .map(|i| {
             let mut hdr = Vec::with_capacity(HEADER_LEN + num_blocks * sl);
@@ -174,7 +173,6 @@ pub fn reconstruct(field: &PrimeField, shares: &[&[u8]], k: usize) -> Option<Vec
             return None;
         }
     }
-    // Distinct labels.
     for i in 0..parsed.len() {
         for j in (i + 1)..parsed.len() {
             if parsed[i].0 == parsed[j].0 {

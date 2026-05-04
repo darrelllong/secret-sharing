@@ -198,7 +198,6 @@ pub fn split<R: Csprng>(scheme: &CodeScheme, rng: &mut R, secret: &BigUint) -> V
         .expect("nonzero entry has an inverse in a prime field");
     m[r_star] = scheme.field.mul(&diff, &inv);
 
-    // Compute c_j = ⟨m, G[:, j]⟩ for j = 1..=n.
     (1..=scheme.n)
         .map(|j| {
             let mut acc = BigUint::zero();
@@ -219,7 +218,6 @@ pub fn split<R: Csprng>(scheme: &CodeScheme, rng: &mut R, secret: &BigUint) -> V
 /// duplicates, out-of-range columns, or unqualified coalitions.
 #[must_use]
 pub fn reconstruct(scheme: &CodeScheme, shares: &[Share]) -> Option<BigUint> {
-    // Reject duplicates.
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
             if shares[i].player == shares[j].player {
@@ -229,7 +227,6 @@ pub fn reconstruct(scheme: &CodeScheme, shares: &[Share]) -> Option<BigUint> {
     }
     let coalition: Vec<usize> = shares.iter().map(|s| s.player).collect();
     let coeffs = scheme.recovery_coefficients(&coalition)?;
-    // Build a value lookup keyed by player.
     let mut value_by_player: std::collections::HashMap<usize, &BigUint> =
         std::collections::HashMap::new();
     for s in shares {

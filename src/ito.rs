@@ -308,21 +308,11 @@ mod tests {
 
     #[test]
     fn explicit_non_threshold_structure() {
-        // 4 parties; access structure: {1, 2} OR {3, 4} OR {1, 3} qualify.
-        // Maximal forbidden coalitions: every coalition that doesn't
-        // include any of those minimal qualified pairs.
-        // Minimal qualifies: {1,2}, {3,4}, {1,3}.
-        // Forbidden are subsets of {1..4} not containing any of them.
-        // Let's enumerate maximal forbidden by hand:
-        //   - {2, 4}: doesn't contain {1,2} (no 1), {3,4} (no 3), {1,3} (no 1 or 3). Forbidden.
-        //   - {1, 4}: doesn't contain {1,2} (no 2), {3,4} (no 3), {1,3} (no 3). Forbidden.
-        //   - {2, 3}: doesn't contain {1,2} (no 1), {3,4} (no 4), {1,3} (no 1). Forbidden.
-        // So maximal forbidden ⊇ {{1,4}, {2,3}, {2,4}}. Any 3-element set
-        // contains at least one of {1,2}, {3,4}, {1,3}? Check {1,2,4}:
-        //   contains {1,2} ⇒ qualified. Check {1,3,4}: contains {1,3} ⇒
-        //   qualified. Check {2,3,4}: contains {3,4} ⇒ qualified. So all
-        //   3-element supersets are qualified ⇒ {1,4}, {2,3}, {2,4} are
-        //   indeed maximal.
+        // Non-threshold access structure on 4 parties with minimal
+        // qualifying sets {1,2}, {3,4}, {1,3} and maximal forbidden
+        // sets {1,4}, {2,3}, {2,4} — every 3-element subset contains
+        // at least one minimal qualifier, so the maximal-forbidden
+        // family is closed at size 2.
         let f = small();
         let mut r = rng();
         let structure = AccessStructure::new(

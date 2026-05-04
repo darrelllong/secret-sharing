@@ -93,7 +93,6 @@ fn main() {
     });
 
     let ms: f64 = match op.as_str() {
-        // ── shamir ──
         "shamir_split" => {
             let f = field();
             let mut r = rng();
@@ -117,7 +116,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── blakley ──
         "blakley_split" => {
             let f = field();
             let mut r = rng();
@@ -141,7 +139,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── kothari (Vandermonde) ──
         "kothari_split" => {
             let scheme = kothari::vandermonde(field(), K, N);
             let mut r = rng();
@@ -166,7 +163,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── karchmer-wigderson ──
         "karchmer_wigderson_split" => {
             let prog = kw::threshold_msp(field(), K, N);
             let mut r = rng();
@@ -191,7 +187,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── brickell ──
         "brickell_split" => {
             let f = field();
             let vectors: Vec<Vec<BigUint>> = (1..=N)
@@ -242,7 +237,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── massey ──
         "massey_split" => {
             let f = field();
             let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
@@ -279,7 +273,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── ramp ──
         "ramp_split" => {
             let f = field();
             let mut r = rng();
@@ -303,7 +296,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── yamamoto ──
         "yamamoto_split" => {
             let f = field();
             let mut r = rng();
@@ -327,7 +319,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── blakley_meadows ──
         "blakley_meadows_split" => {
             let f = field();
             let mut r = rng();
@@ -353,7 +344,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── kgh ──
         "kgh_split" => {
             let f = field();
             let mut r = rng();
@@ -377,7 +367,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── vss (Rabin-Ben-Or) ──
         "vss_split" => {
             let f = field();
             let mut r = rng();
@@ -401,7 +390,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── cgma_vss (RFC 5114 §2.3 — 2048/256 Schnorr group) ──
         "cgma_vss_split" => {
             let group = cgma_vss::rfc5114_modp_2048_256();
             let mut r = rng();
@@ -428,7 +416,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── mignotte (small example) ──
         "mignotte_split" => {
             let seq = mignotte::small_example_3_of_5();
             let s = seq.alpha().add_ref(&BigUint::from_u64(1));
@@ -450,7 +437,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── asmuth_bloom (small example) ──
         "asmuth_bloom_split" => {
             let params = asmuth_bloom::small_example_3_of_5();
             let mut r = rng();
@@ -474,7 +460,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── trivial ──
         "trivial_split" => {
             let f = field();
             let mut r = rng();
@@ -498,7 +483,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── ito ──
         "ito_split" => {
             let f = field();
             let structure = ito::threshold_access_structure(N, K);
@@ -525,7 +509,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── benaloh-leichter (2-of-3 formula) ──
         "benaloh_leichter_split" => {
             let f = field();
             let formula = bl::Formula::or(vec![
@@ -560,7 +543,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── proactive ──
         "proactive_refresh" => {
             let f = field();
             let mut r = rng();
@@ -587,7 +569,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── bytes (16-byte secret) ──
         "bytes_split_16" => {
             let f = field();
             let mut r = rng();
@@ -612,7 +593,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── ida (16-byte file) ──
         "ida_split_16" => {
             let f = field();
             let data = vec![0x5Au8; 16];
@@ -635,7 +615,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── decode (Berlekamp-Welch, t=1, n=11) ──
         "decode_reconstruct_t1" => {
             let f = field();
             let mut r = rng();
@@ -649,7 +628,6 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── visual (n=3, 8x8) ──
         "visual_split_3_8" => {
             let mut r = rng();
             let secret: Vec<Vec<bool>> = (0..8)

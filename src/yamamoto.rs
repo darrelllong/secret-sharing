@@ -120,7 +120,6 @@ pub fn reconstruct(
         .map(|s| (s.x.clone(), s.y.clone()))
         .collect();
 
-    // Validate extras against the polynomial fit.
     for s in &shares[k..] {
         let pred = lagrange_eval(field, &pts, &s.x)?;
         if !ct_eq_biguint(&pred, &s.y) {
@@ -191,9 +190,7 @@ mod tests {
         let mut r = rng();
         let secret: Vec<BigUint> = (1..=3).map(|i| BigUint::from_u64(0x500 + i)).collect();
         let mut shares = split(&f, &mut r, &secret, 4, 7);
-        // The clean version with extras succeeds.
         assert_eq!(reconstruct(&f, &shares, 4, 3), Some(secret.clone()));
-        // Tamper with one of the extras (index 5).
         shares[5].y = f.add(&shares[5].y, &BigUint::from_u64(1));
         assert!(reconstruct(&f, &shares, 4, 3).is_none());
     }
@@ -236,8 +233,8 @@ mod tests {
     #[test]
     #[should_panic(expected = "n must be at least k")]
     fn split_rejects_n_below_k() {
-        // AD #1 (P0): split must reject n < k, otherwise produces an
-        // unreconstructable share set.
+        // n < k would produce an unreconstructable share set; the
+        // assertion in `split` must catch it.
         let f = small();
         let mut r = rng();
         let secret: Vec<BigUint> = (1..=2).map(BigUint::from_u64).collect();
@@ -246,9 +243,9 @@ mod tests {
 
     #[test]
     fn k_minus_l_shares_does_not_yield_secret() {
-        // AD #7: Yamamoto's headline claim is "any k − L shares reveal
-        // nothing." Test the mechanical analogue: with strictly fewer
-        // than k shares, `reconstruct` refuses.
+        // Yamamoto's headline claim is "any k − L shares reveal nothing."
+        // The mechanical analogue here: with strictly fewer than k shares,
+        // reconstruct must refuse rather than return a partial secret.
         let f = small();
         let mut r = rng();
         let secret: Vec<BigUint> = (1..=2).map(|i| BigUint::from_u64(0x1000 + i)).collect();

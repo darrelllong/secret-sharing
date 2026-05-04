@@ -136,7 +136,8 @@ mod tests {
     #[test]
     #[should_panic(expected = "n must be ≥ k")]
     fn ramp_split_rejects_n_below_k() {
-        // PEER-REVIEW P0: ramp::split must reject n < k = secret.len().
+        // n < k = secret.len() would put the secret anchors past the
+        // share count and produce an unreconstructable codeword.
         let f = small_field();
         let secret: Vec<BigUint> = (1..=4).map(BigUint::from_u64).collect();
         let _ = split(&f, &secret, 3);
@@ -144,8 +145,9 @@ mod tests {
 
     #[test]
     fn ramp_split_rejects_secret_anchor_labels() {
-        // PEER-REVIEW P1: reconstruct must reject shares whose label
-        // collides with one of the secret-anchor abscissae 1..=k.
+        // The first k abscissae carry the secret directly; a share
+        // labelled in 1..=k would let its holder read a secret slot
+        // off the wire. reconstruct must reject the colliding label.
         let f = small_field();
         let secret: Vec<BigUint> = (1..=3).map(BigUint::from_u64).collect();
         let mut shares = split(&f, &secret, 5);

@@ -81,13 +81,11 @@ impl AsmuthBloomParams {
         if m0 <= BigUint::one() {
             return None;
         }
-        // Strictly increasing.
         for i in 1..n {
             if moduli[i - 1] >= moduli[i] {
                 return None;
             }
         }
-        // Each m_i > m_0 and coprime with m_0.
         for m in &moduli {
             if m <= &m0 {
                 return None;
@@ -96,7 +94,6 @@ impl AsmuthBloomParams {
                 return None;
             }
         }
-        // Pairwise coprime.
         for i in 0..n {
             for j in (i + 1)..n {
                 if gcd(&moduli[i], &moduli[j]) != BigUint::one() {
@@ -106,7 +103,6 @@ impl AsmuthBloomParams {
         }
         let m_bot = product(&moduli[..k]);
         let m_top = product(&moduli[n - (k - 1)..]);
-        // m_0 · M_top < M_bot.
         if m0.mul_ref(&m_top) >= m_bot {
             return None;
         }
@@ -333,8 +329,9 @@ mod tests {
 
     #[test]
     fn rejects_when_inequality_fails() {
-        // m_0 = 5, moduli = [7, 11, 13, 17, 19], k = 3
-        // M_bot = 7·11·13 = 1001; M_top = 17·19 = 323; 5·323 = 1615 > 1001 → fail.
+        // Parameters chosen so the Asmuth–Bloom condition
+        // m_0 · M_top < M_bot is violated (1615 > 1001), which would
+        // collapse the secrecy gap; the constructor must refuse.
         let m0 = BigUint::from_u64(5);
         let m = vec![
             BigUint::from_u64(7),
@@ -348,14 +345,12 @@ mod tests {
 
     #[test]
     fn first_k_tamper_likely_falls_outside_m_bot() {
-        // AD #6 (P1 replacement): with M_bot = 2431 and prod_first_k =
-        // M_bot, a tampered first-k share's CRT result spans [0, prod)
-        // = [0, M_bot), so the bounds check `y >= M_bot` (line 200)
-        // always passes — but `y mod m_0` differs from the secret. This
-        // test exercises that the recovered "secret" generically
-        // disagrees with the original under first-k tampering, so a
-        // caller using Asmuth-Bloom against an adversarial shareholder
-        // sees garbage rather than the original.
+        // First-k tampering against Asmuth–Bloom does not necessarily
+        // trip the `y >= M_bot` bounds check — the CRT result still
+        // lands in [0, prod_first_k), which equals M_bot here — but
+        // `y mod m_0` is now wrong. The contract is: tampering must
+        // not silently roundtrip to the original secret; a wrong
+        // recovery (or a None) is the acceptable outcome.
         let p = small_example_3_of_5();
         let mut r = rng();
         let secret = BigUint::from_u64(2);
@@ -387,8 +382,9 @@ mod tests {
 
     #[test]
     fn larger_parameter_round_trip() {
-        // AD #6 follow-on: a larger (4, 7) configuration to exercise
-        // more substantial CRT folding.
+        // (4, 7) configuration: exercises a CRT fold over four moduli,
+        // catching off-by-one bugs that the minimal (3, 5) example
+        // would miss.
         let m0 = BigUint::from_u64(11);
         let moduli = [101u64, 103, 107, 109, 113, 127, 131]
             .into_iter()

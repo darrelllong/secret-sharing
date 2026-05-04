@@ -135,7 +135,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "n must be at least 2")]
     fn additive_split_rejects_n_one() {
-        // AD #6: n = 1 leaks the secret in plaintext.
+        // n = 1 would hand the lone trustee the secret in plaintext.
         let f = PrimeField::new(BigUint::from_u64(65_537));
         let mut r = rng();
         let _ = split(&f, &mut r, &BigUint::from_u64(1), 1);

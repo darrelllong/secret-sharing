@@ -608,7 +608,6 @@ fn build_radar_svg(
         SVG_W, SVG_H
     ));
 
-    // Concentric rings.
     for ring in 1..=RINGS {
         let r = RADIUS * (ring as f64) / (RINGS as f64);
         let pts: Vec<(f64, f64)> = angles.iter().map(|&a| polar(r, a)).collect();
@@ -620,7 +619,6 @@ fn build_radar_svg(
         s.push_str(&format!("  <polygon class=\"grid\" points=\"{}\" />\n", pts_str));
     }
 
-    // Spokes.
     for &a in &angles {
         let (x2, y2) = polar(RADIUS, a);
         s.push_str(&format!(
@@ -629,7 +627,6 @@ fn build_radar_svg(
         ));
     }
 
-    // Series polygons.
     let value_radius = |value: f64| -> f64 {
         let v = value.clamp(min_value, max_value);
         let span = (max_value / min_value).log10();
@@ -660,7 +657,6 @@ fn build_radar_svg(
         let _ = label;
     }
 
-    // Axis labels.
     let label_offset = 22.0;
     for (i, &lbl) in axis_labels.iter().enumerate() {
         let (x, y) = polar(RADIUS + label_offset, angles[i]);
@@ -677,7 +673,9 @@ fn build_radar_svg(
         ));
     }
 
-    // Radial scale labels along the rightward spoke.
+    // Log-spaced tick labels along the rightward spoke; the radar
+    // axis is logarithmic so each ring corresponds to a 10× gap, not
+    // a linear gap.
     for ring in 1..=RINGS {
         let r = RADIUS * (ring as f64) / (RINGS as f64);
         let span = (max_value / min_value).log10();
@@ -690,7 +688,6 @@ fn build_radar_svg(
         ));
     }
 
-    // Title + subtitle.
     s.push_str(&format!(
         "  <text class=\"label\" x=\"20\" y=\"{:.0}\" font-weight=\"bold\">{}</text>\n",
         SVG_H - 90.0,
@@ -702,7 +699,6 @@ fn build_radar_svg(
         subtitle
     ));
 
-    // Legend.
     let mut lx = 20.0;
     let ly = SVG_H - 40.0;
     for (label, color, _) in series {

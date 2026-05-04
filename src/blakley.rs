@@ -137,7 +137,6 @@ fn first_k_full_rank(field: &PrimeField, shares: &[Share]) -> bool {
         row.push(BigUint::one());
         mat.push(row);
     }
-    // Try to find a pivot in each column; bail false on no-pivot.
     for col in 0..k {
         let mut pivot_row = None;
         for r in col..k {
@@ -235,10 +234,8 @@ pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Big
         }
     }
 
-    // The recovered point P = (mat[0][k], …, mat[k-1][k]).
     let point: Vec<BigUint> = (0..k).map(|i| mat[i][k].clone()).collect();
 
-    // Validate every extra share against P.
     for s in &shares[k..] {
         let mut lhs = point[k - 1].clone();
         for j in 0..(k - 1) {
@@ -319,8 +316,9 @@ mod tests {
 
     #[test]
     fn tampered_first_extra_share_is_rejected() {
-        // AD #8: extras-validation must catch the first extra (index k),
-        // not just the last one.
+        // The validation loop must cover the boundary at index k. A
+        // bound like `k+1..n` would miss the first extra and let one
+        // tampered share past silently.
         let f = small();
         let mut r = rng();
         let secret = BigUint::from_u64(0xCAFE);
@@ -331,8 +329,9 @@ mod tests {
 
     #[test]
     fn tampered_exactly_one_extra_share_rejected() {
-        // AD #8: exercise n = k + 1 — exactly one extra. Off-by-one in
-        // the validation loop bounds would leave this case uncovered.
+        // n = k + 1 is the minimal case where extras-validation runs:
+        // exactly one extra. An off-by-one in the loop bounds would
+        // leave this case uncovered while passing the larger fuzz cases.
         let f = small();
         let mut r = rng();
         let secret = BigUint::from_u64(0xBAD);

@@ -210,13 +210,14 @@ pub fn split<R: Csprng>(
         secret < program.field.modulus(),
         "secret must be < field modulus"
     );
-    // ρ_vec = (s, r_2, …, r_m) with r_i uniform random.
+    // ρ_vec = (s, r_2, …, r_m) with r_i uniform random — the secret
+    // sits in column 0 so that ⟨e_1, ρ_vec⟩ = s, which is what the
+    // qualifying-set recovery vector reproduces.
     let mut rho_vec: Vec<BigUint> = Vec::with_capacity(program.m);
     rho_vec.push(secret.clone());
     for _ in 1..program.m {
         rho_vec.push(program.field.random(rng));
     }
-    // Compute every row's share value = ⟨M_j, ρ_vec⟩.
     let mut by_player: std::collections::BTreeMap<usize, Vec<(usize, BigUint)>> =
         std::collections::BTreeMap::new();
     for (j, row) in program.rows.iter().enumerate() {
@@ -246,7 +247,6 @@ pub fn split<R: Csprng>(
 ///   the fitted secret-bearing vector.
 #[must_use]
 pub fn reconstruct(program: &SpanProgram, shares: &[PlayerShare]) -> Option<BigUint> {
-    // Reject duplicates.
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
             if shares[i].player == shares[j].player {
@@ -254,7 +254,6 @@ pub fn reconstruct(program: &SpanProgram, shares: &[PlayerShare]) -> Option<BigU
             }
         }
     }
-    // Validate fragment row indices and label consistency.
     for s in shares {
         for (j, _) in &s.fragments {
             if *j >= program.d() {
@@ -265,7 +264,6 @@ pub fn reconstruct(program: &SpanProgram, shares: &[PlayerShare]) -> Option<BigU
             }
         }
     }
-    // Compute recovery coefficients for the coalition.
     let coalition: Vec<usize> = shares.iter().map(|s| s.player).collect();
     let coeffs = program.recovery_coefficients(&coalition)?;
     // Look up each c_j's matching share value. Duplicate row indices
@@ -430,12 +428,10 @@ mod tests {
         let secret = BigUint::from_u64(0xC0FFEE);
         let shares = split(&prog, &mut r, &secret);
         assert_eq!(shares.len(), 5);
-        // Any 3 reconstruct.
         for &(a, b, c) in &[(1usize, 2, 3), (1, 3, 5), (2, 4, 5), (3, 4, 5)] {
             let coalition = pick(&shares, &[a, b, c]);
             assert_eq!(reconstruct(&prog, &coalition), Some(secret.clone()), "subset ({a},{b},{c})");
         }
-        // 2 fail.
         for &(a, b) in &[(1usize, 2), (3, 5), (4, 5)] {
             let coalition = pick(&shares, &[a, b]);
             assert!(reconstruct(&prog, &coalition).is_none(), "subset ({a},{b}) must fail");
@@ -475,11 +471,9 @@ mod tests {
 
     #[test]
     fn explicit_and_msp() {
-        // (P1 AND P2): both rows must contribute. e_1 = (1, 0). Take
-        // M = [[1, 1], [0, -1]] labelled (1, 2). Then row 1 alone
-        // spans (1, 1) but not (1, 0); row 2 alone is (0, -1); both
-        // together: row1 + row2 = (1, 0) = e_1. So {1,2} qualifies and
-        // singletons do not.
+        // P1 AND P2 as a hand-built MSP: M = [[1, 1], [0, -1]] with
+        // labels (1, 2). Neither row alone spans e_1 = (1, 0), but
+        // their sum does — so the access structure is exactly {{1, 2}}.
         let f = small();
         let neg_one = f.sub(&BigUint::zero(), &BigUint::one());
         let rows = vec![
@@ -517,7 +511,6 @@ mod tests {
         let mut r = rng();
         let secret = BigUint::from_u64(22);
         let mut shares = split(&prog, &mut r, &secret);
-        // Forge: claim player 1 holds a row labelled 2.
         let row_idx_for_player_2 = (0..prog.d()).find(|&j| prog.labels[j] == 2).unwrap();
         shares[0]
             .fragments
@@ -564,19 +557,13 @@ mod tests {
 
     #[test]
     fn unqualified_coalition_returns_none_in_oversized_program() {
-        // Build an MSP with m > |J| for some unqualified coalition, to
-        // exercise the back-check inside recovery_coefficients.
-        // Construction: 4 rows over GF(p), m = 3, target e_1 = (1,0,0).
-        // Rows: M_1 = (1,0,0), M_2 = (0,1,0), M_3 = (0,0,1), M_4 = (1,1,1).
-        // Labels: 1, 2, 3, 4.
-        // Qualifying coalitions: any coalition whose row-set spans e_1.
-        // {1} alone: row (1,0,0) spans e_1. Qualified.
-        // {2}: row (0,1,0). Doesn't span e_1. Unqualified — m=3, |J|=1.
-        // {2,3}: spans (0,1,0),(0,0,1) only — no e_1 component reachable
-        //   without row 1 or row 4. Unqualified — m=3, |J|=2.
-        // {4}: row (1,1,1). e_1 = M_4 - M_2 - M_3 — but {4} alone doesn't
-        //   have M_2 or M_3. Unqualified.
-        // {2,3,4}: M_4 - M_2 - M_3 = (1,0,0) = e_1. Qualified.
+        // 4-row MSP over m = 3 with rows e_1, e_2, e_3, (1,1,1) and
+        // labels 1..=4. Access structure: a coalition qualifies iff its
+        // rows span e_1 = (1,0,0). The minimal qualifying sets are {1}
+        // and {2,3,4} (since e_1 = M_4 − M_2 − M_3); everything else is
+        // unqualified, which exercises the recovery_coefficients back-
+        // check on cases where the linear solver finds *some* combination
+        // of the rows but not one whose first coordinate is 1.
         let f = small();
         let rows = vec![
             vec![BigUint::one(), BigUint::zero(), BigUint::zero()],
@@ -607,8 +594,10 @@ mod tests {
     #[test]
     #[should_panic(expected = "MSP rows must have width m ≥ 1")]
     fn rejects_zero_width_msp() {
-        // PEER-REVIEW P1: zero-width MSPs are degenerate access
-        // structures and must be rejected at construction.
+        // A zero-width MSP has no secret column; `e_1` does not exist,
+        // so the access structure is undefined. Construction must
+        // refuse rather than silently produce a "scheme" that nobody
+        // can target with a recovery vector.
         let f = small();
         let rows: Vec<Vec<BigUint>> = vec![vec![]];
         let labels = vec![1usize];

@@ -66,13 +66,11 @@ impl MignotteSequence {
         if k < 2 || k > n {
             return None;
         }
-        // Strictly increasing.
         for i in 1..n {
             if moduli[i - 1] >= moduli[i] {
                 return None;
             }
         }
-        // Pairwise coprime.
         for i in 0..n {
             for j in (i + 1)..n {
                 if gcd(&moduli[i], &moduli[j]) != BigUint::one() {
@@ -182,7 +180,6 @@ pub fn reconstruct(seq: &MignotteSequence, shares: &[Share]) -> Option<BigUint> 
         }
     }
 
-    // CRT-fold the first k shares.
     let used = &shares[..k];
     let (mut x, mut prod) = (BigUint::zero(), BigUint::one());
     let mut first = true;
@@ -220,7 +217,6 @@ pub fn reconstruct(seq: &MignotteSequence, shares: &[Share]) -> Option<BigUint> 
         return None;
     }
 
-    // Validate any extras against the recovered secret.
     for s in &shares[k..] {
         let m = &seq.moduli[s.index - 1];
         let pred = secret.modulo(m);
@@ -349,10 +345,9 @@ mod tests {
 
     #[test]
     fn rejects_when_alpha_geq_beta() {
-        // 7, 11 with k = 1 isn't allowed (k ≥ 2), so try k = 2 over a
-        // tiny sequence where alpha (m_n) ≥ beta (m_1·m_2)? With k = 2,
-        // alpha = m_n, beta = m_1·m_2. Pick {2, 3, 7}: alpha = 7,
-        // beta = 6 → α ≥ β, reject.
+        // {2, 3, 7} with k = 2 gives α = m_n = 7 and β = m_1·m_2 = 6,
+        // collapsing the secrecy gap (α, β) — Mignotte's construction
+        // is undefined here, so new() must refuse.
         let m = vec![
             BigUint::from_u64(2),
             BigUint::from_u64(3),
@@ -363,8 +358,10 @@ mod tests {
 
     #[test]
     fn first_k_tamper_outside_range_rejected() {
-        // AD #2 (P0): a tampered first-k share whose CRT result falls
-        // outside (α, β) must yield None, not garbage.
+        // Mignotte's reconstruction-uniqueness only holds when the CRT
+        // result lands in (α, β). A tampered first-k share that pushes
+        // the result out of that gap must return None, not garbage in
+        // the upper interval.
         let seq = small_example_3_of_5();
         let secret = BigUint::from_u64(1234);
         let mut shares = split(&seq, &secret);

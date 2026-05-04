@@ -96,7 +96,6 @@ pub fn refresh<R: Csprng>(
         contributions.push(coeffs);
     }
 
-    // For each recipient, sum every contributor's r_i(x_j).
     shares
         .iter()
         .map(|recipient| {
@@ -157,7 +156,6 @@ pub fn recover_share(
         .take(k)
         .map(|s| (s.x.clone(), s.y.clone()))
         .collect();
-    // Validate every extra against the polynomial fit to the first k.
     for s in live.iter().skip(k) {
         let pred = lagrange_eval(field, &pts, &s.x)?;
         if !ct_eq_biguint(&pred, &s.y) {
@@ -313,8 +311,8 @@ mod tests {
 
     #[test]
     fn recover_share_validates_extras() {
-        // AD P0: with > k shares, an extra inconsistent with the first
-        // k must produce None, not a poisoned recovered value.
+        // With > k shares, an extra inconsistent with the first k must
+        // produce None, not a poisoned recovered value.
         let f = small();
         let mut r = rng();
         let secret = BigUint::from_u64(0x55);
@@ -334,13 +332,10 @@ mod tests {
         let mut r = rng();
         let secret = BigUint::from_u64(0xDECAF);
         let mut shares = shamir::split(&f, &mut r, &secret, 3, 5);
-        // Cycle A: refresh.
         shares = refresh(&f, &mut r, &shares, 3);
-        // Lose player 3.
         let lost_x = shares[2].x.clone();
         let live: Vec<Share> = vec![shares[0].clone(), shares[1].clone(), shares[3].clone()];
         let recovered = recover_share(&f, &live, 3, &lost_x).unwrap();
-        // Insert back; reconstruct.
         let mut full: Vec<Share> = vec![
             shares[0].clone(),
             shares[1].clone(),

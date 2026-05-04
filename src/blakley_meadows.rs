@@ -309,9 +309,7 @@ mod tests {
         let mut r = rng();
         let secret: Vec<BigUint> = (1..=2).map(|i| BigUint::from_u64(0x300 + i)).collect();
         let mut shares = split(&f, &mut r, &secret, 4, 7);
-        // All 7 with k=4: extras 4..6 must validate.
         assert_eq!(reconstruct(&f, &shares, 4, 2), Some(secret.clone()));
-        // Tamper extras[5].
         shares[5].b = f.add(&shares[5].b, &BigUint::from_u64(1));
         assert!(reconstruct(&f, &shares, 4, 2).is_none());
     }

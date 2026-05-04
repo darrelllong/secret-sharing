@@ -189,9 +189,7 @@ pub fn reconstruct(field: &PrimeField, shares: &[&[u8]], k: usize) -> Option<Vec
             }
             pts.push((x, y));
         }
-        // Recover k coefficients via Vandermonde solve.
         let coeffs = vandermonde_solve(field, &pts)?;
-        // Validate extras against the recovered coefficient vector.
         for (label, payload) in parsed.iter().skip(k) {
             let x = BigUint::from_u64(*label as u64);
             let y = BigUint::from_be_bytes(&payload[g * sl..(g + 1) * sl]);
@@ -420,11 +418,12 @@ mod tests {
 
     #[test]
     fn first_k_tamper_does_not_panic() {
-        // AD #3 (P0): a tampered share within the first k could push a
-        // recovered "coefficient" past 2^(8·bl), which previously
-        // panicked in `field_element_to_bytes`. Now we return either
-        // None (if a coefficient overflows bl bytes) or a wrong-but-
-        // typed Vec<u8>; we never panic.
+        // A tampered first-k share can push a recovered "coefficient"
+        // past 2^(8·bl); an earlier version of `field_element_to_bytes`
+        // panicked on that overflow. The contract is now: return None
+        // on overflow, or a wrong-but-correctly-typed Vec<u8> — never
+        // unwind. Many bytes are tampered to maximise the chance some
+        // coefficient lands out of range.
         let field = f();
         let data: Vec<u8> = (0..120u8).collect();
         let shares = split(&field, &data, 3, 5);

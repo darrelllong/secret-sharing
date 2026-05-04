@@ -84,7 +84,6 @@ fn basis_matrices(n: usize) -> (Vec<Vec<bool>>, Vec<Vec<bool>>) {
 /// Fisher–Yates with rejection-sampled indices.
 fn random_permutation<R: Csprng>(rng: &mut R, m: usize) -> Vec<usize> {
     let mut perm: Vec<usize> = (0..m).collect();
-    // Fisher–Yates from the back.
     for i in (1..m).rev() {
         let j = bounded_index(rng, i + 1);
         perm.swap(i, j);
@@ -275,13 +274,9 @@ mod tests {
     #[test]
     fn basis_matrices_have_expected_shape_n2() {
         let (c0, c1) = basis_matrices(2);
-        // m = 2; even subsets: {} and {1,2}; odd: {1} and {2}.
-        // C_0: row i indicates "is i in subset σ".
-        //   col 0 (subset {}): both rows 0
-        //   col 1 (subset {1,2}): both rows 1
-        // C_1:
-        //   col 0 (subset {1}): row 0 = 1, row 1 = 0
-        //   col 1 (subset {2}): row 0 = 0, row 1 = 1
+        // Naor–Shamir n = 2: C_0 columns enumerate the even-parity
+        // subsets {}, {1,2} (both rows match); C_1 columns enumerate
+        // the odd-parity subsets {1}, {2} (rows disagree).
         assert_eq!(c0[0], vec![false, true]);
         assert_eq!(c0[1], vec![false, true]);
         assert_eq!(c1[0], vec![true, false]);

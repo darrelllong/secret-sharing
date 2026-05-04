@@ -245,7 +245,9 @@ pub fn verify_share(group: &DlogGroup, commits: &Commitments, share: &VssShare) 
     if j_big >= *group.q() {
         return false;
     }
-    // Subgroup membership of every commitment.
+    // Subgroup membership: a commitment outside ⟨g⟩ escapes the
+    // discrete-log binding argument, so reject before applying the
+    // verification equation.
     for c_i in &commits.c {
         if c_i.is_zero() {
             return false;
@@ -264,7 +266,6 @@ pub fn verify_share(group: &DlogGroup, commits: &Commitments, share: &VssShare) 
     for c_i in &commits.c {
         let term = group.pow(c_i, &pow_j);
         rhs = group.mul(&rhs, &term);
-        // Update pow_j to j^{i+1} mod q.
         pow_j = BigUint::mod_mul(&pow_j, &j, q);
     }
     lhs == rhs
@@ -401,16 +402,13 @@ mod tests {
     fn round_trip_3_of_5() {
         let group = small_test_group();
         let mut r = rng();
-        // Secret < q = 11.
-        let secret = BigUint::from_u64(7);
+        let secret = BigUint::from_u64(7); // < q = 11
         let (shares, commits) = deal(&group, &mut r, &secret, 3, 5);
         assert_eq!(shares.len(), 5);
         assert_eq!(commits.c.len(), 3);
-        // Every share verifies.
         for s in &shares {
             assert!(verify_share(&group, &commits, s), "player {} verifies", s.player);
         }
-        // Any 3 reconstruct.
         assert_eq!(reconstruct(&group, &shares[..3], 3), Some(secret.clone()));
         assert_eq!(reconstruct(&group, &shares[2..5], 3), Some(secret));
     }
@@ -421,13 +419,11 @@ mod tests {
         let mut r = rng();
         let secret = BigUint::from_u64(3);
         let (mut shares, commits) = deal(&group, &mut r, &secret, 3, 5);
-        // Add 1 to share 3's value (mod q = 11). Any deterministic
-        // perturbation that lands on a different residue class breaks
-        // verification.
+        // +1 mod q lands on a different residue class, which is the
+        // smallest perturbation that breaks the Feldman equation.
         let q = BigUint::from_u64(11);
         shares[2].value = shares[2].value.add_ref(&BigUint::one()).modulo(&q);
         assert!(!verify_share(&group, &commits, &shares[2]));
-        // Untampered shares still verify.
         for s in shares.iter().filter(|s| s.player != 3) {
             assert!(verify_share(&group, &commits, s));
         }
@@ -435,13 +431,13 @@ mod tests {
 
     #[test]
     fn verify_rejects_oversized_player() {
-        // AD: player abscissa j ≥ q aliases mod q; verify_share must
-        // refuse before the equation could spuriously pass.
+        // Player abscissa j ≥ q aliases mod q (j ≡ 0 mod q lands on
+        // the secret slot itself); verify_share must refuse before the
+        // equation could spuriously pass.
         let group = small_test_group();
         let mut r = rng();
         let secret = BigUint::from_u64(2);
         let (_shares, commits) = deal(&group, &mut r, &secret, 3, 5);
-        // Synthesise a share with player == q (out of range).
         let bad = VssShare {
             player: 11,
             value: BigUint::zero(),
@@ -451,16 +447,15 @@ mod tests {
 
     #[test]
     fn verify_rejects_non_subgroup_commitment() {
-        // AD: a malicious dealer can put c_i outside the order-q
-        // subgroup. Verification must catch this before applying the
-        // discrete-log reduction.
+        // A malicious dealer can broadcast c_i outside the order-q
+        // subgroup, escaping the discrete-log binding argument.
+        // Verification must reject before that reduction even applies.
         let group = small_test_group();
         let mut r = rng();
         let secret = BigUint::from_u64(2);
         let (shares, mut commits) = deal(&group, &mut r, &secret, 3, 5);
-        // Replace c_0 with a non-subgroup element. In (Z/23)*, take
-        // an element of order 22 (full group): we showed in
-        // rejects_non_subgroup_generator that 5 has order 22.
+        // 5 has order 22 in (Z/23)*, so it lies outside the order-11
+        // subgroup that legitimate commitments must occupy.
         commits.c[0] = BigUint::from_u64(5);
         for s in &shares {
             assert!(!verify_share(&group, &commits, s));
@@ -473,9 +468,9 @@ mod tests {
         let mut r = rng();
         let secret = BigUint::from_u64(5);
         let (shares, mut commits) = deal(&group, &mut r, &secret, 3, 5);
-        // Tamper c_0 (the commitment to the secret coefficient).
+        // c_0 is the commitment to the secret coefficient; perturbing
+        // it shifts the constant term of every verification equation.
         commits.c[0] = group.mul(&commits.c[0], &BigUint::from_u64(2));
-        // Every share should now fail verification.
         for s in &shares {
             assert!(!verify_share(&group, &commits, s));
         }
@@ -502,10 +497,10 @@ mod tests {
 
     #[test]
     fn larger_group_round_trip() {
-        // Slightly larger safe-prime group: p = 167, q = 83, g = ?
-        // Verify a generator of the order-83 subgroup: 2^2 = 4 has
-        // order dividing 83; if 4 ≠ 1, it equals 83 (only choices are
-        // 1 and 83).
+        // (p, q) = (167, 83): a Schnorr group large enough to exercise
+        // multi-block exponentiation but small enough for round-trip
+        // tests. g = 4 generates the order-83 subgroup (since 83 is
+        // prime, any element ≠ 1 with g^q = 1 has order exactly q).
         let group = DlogGroup::new(
             BigUint::from_u64(167),
             BigUint::from_u64(83),
@@ -523,9 +518,9 @@ mod tests {
 
     #[test]
     fn rejects_identity_generator_after_reduction() {
-        // PEER-REVIEW (P0, second pass): `g = p + 1` reduces to 1 in
-        // (Z/pZ)*; accepting it would let the dealer collapse every
-        // commitment to 1 and break Feldman binding.
+        // `g = p + 1` reduces to 1 in (Z/pZ)*. Accepting it would let
+        // the dealer collapse every commitment to 1 and break Feldman
+        // binding — so the identity check must run after `g mod p`.
         let bad = DlogGroup::new(
             BigUint::from_u64(23),
             BigUint::from_u64(11),
@@ -536,13 +531,8 @@ mod tests {
 
     #[test]
     fn rejects_non_subgroup_generator() {
-        // g = 3 is not in the order-11 subgroup of (Z/23)*: 3^11 mod 23.
-        // 3^2 = 9. 3^4 = 81 mod 23 = 81 - 3*23 = 12. 3^8 = 144 mod 23 = 144 - 6*23 = 6.
-        // 3^11 = 3^8 · 3^2 · 3 = 6 · 9 · 3 = 162 mod 23 = 162 - 7*23 = 162 - 161 = 1?
-        // Let me recompute: 6*9 = 54, 54 mod 23 = 54-46 = 8. 8 * 3 = 24 mod 23 = 1. So 3^11 = 1.
-        // So 3 IS in the subgroup. Try g = 5: 5^11 mod 23.
-        //   5^2 = 25 mod 23 = 2. 5^4 = 4. 5^8 = 16. 5^11 = 16 * 4 * 5 = 320 mod 23 = 320 - 13*23 = 320 - 299 = 21.
-        //   Not 1, so g=5 has order > 11; it must be order 22 (the full group).
+        // 5 generates all of (Z/23)* (order 22), so it cannot lie in
+        // the order-11 subgroup; new() must reject it.
         let bad = DlogGroup::new(
             BigUint::from_u64(23),
             BigUint::from_u64(11),
@@ -563,7 +553,8 @@ mod tests {
 
     #[test]
     fn rejects_q_too_large() {
-        // q ≥ p is nonsensical.
+        // q ≥ p makes "q | p − 1" unsatisfiable (any divisor of p − 1
+        // is < p), so the constructor must refuse.
         let bad = DlogGroup::new(
             BigUint::from_u64(23),
             BigUint::from_u64(23),

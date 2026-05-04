@@ -448,9 +448,11 @@ mod tests {
 
     #[test]
     fn exactly_k_shares_with_one_tamper_silently_wrong() {
-        // AD #1 (P1): documents that the docstring's "robustness limit"
-        // matches reality — no redundancy, tampered first-k yields a
-        // wrong secret rather than None.
+        // With no redundancy, a tampered first-k share yields a wrong
+        // secret rather than `None` — pinning the docstring's stated
+        // "no robustness" limit so a future "fix" can't quietly add
+        // mismatched-extras detection that this scheme can't actually
+        // provide.
         let scheme = vandermonde(small(), 3, 5);
         let mut r = rng();
         let secret = BigUint::from_u64(0xC0FFEE);
@@ -468,7 +470,9 @@ mod tests {
     #[test]
     #[should_panic(expected = "secret must be < field modulus")]
     fn split_rejects_oversize_secret() {
-        // AD #2 (P1): split asserts on out-of-range inputs.
+        // A secret ≥ p would be silently reduced; the split path must
+        // assert and panic instead, since a reduced secret reconstructs
+        // to the wrong value.
         let scheme = vandermonde(tiny(), 3, 5); // modulus 65537
         let mut r = rng();
         let _ = split(&scheme, &mut r, &BigUint::from_u64(70_000));

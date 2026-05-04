@@ -188,8 +188,10 @@ mod tests {
     #[test]
     #[should_panic(expected = "modulus must be prime")]
     fn new_rejects_composite_modulus() {
-        // PEER-REVIEW P0: PrimeField::new must reject composite p.
-        // 255 = 3 · 5 · 17 — clearly composite.
+        // A composite modulus has zero divisors, so `inv` would silently
+        // fail on shares landing in the wrong residue class; the safe
+        // constructor must screen p with primality before returning.
+        // 255 = 3 · 5 · 17.
         let _ = PrimeField::new(BigUint::from_u64(255));
     }
 

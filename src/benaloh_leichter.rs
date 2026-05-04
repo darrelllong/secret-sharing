@@ -450,11 +450,11 @@ mod tests {
 
     #[test]
     fn solo_forger_at_others_path_is_rejected() {
-        // PEER-REVIEW P1: a player attaching a fragment for a leaf
-        // path labelled with a different player must be rejected.
-        // `reconstruct` enforces path-ownership: every supplied
-        // fragment's path must resolve to a leaf labelled with the
-        // submitting player.
+        // Without path-ownership enforcement, player 1 could submit a
+        // fragment for player 2's leaf and forge a coalition the
+        // formula does not actually authorise. `reconstruct` must
+        // verify every fragment's path resolves to a leaf labelled with
+        // the submitting player.
         let f = small();
         let mut r = rng();
         let formula = Formula::or(vec![Formula::party(1), Formula::party(2)]);
