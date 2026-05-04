@@ -15,13 +15,13 @@ scheme catalogued in [`bib/references.bib`](bib/references.bib):
 | Paper | Year | What it gives us |
 |-------|------|------------------|
 | Shamir, *How to Share a Secret* | 1979 | Classical $(k, n)$ polynomial threshold scheme |
-| Karnin, Greene, Hellman, *On Secret Sharing Systems* | 1983 | Trivial $n$-of-$n$ split, multi-secret extension, the matrix scheme $v_i = u \cdot A_i$ |
+| Karnin, Greene, Hellman, *On Secret Sharing Systems* | 1983 | Trivial n-of-n split, multi-secret extension, the matrix scheme $v_i = u \cdot A_i$ |
 | McEliece, Sarwate, *On Sharing Secrets and Reed–Solomon Codes* | 1981 | Ramp (data-compressed) variant and errors-and-erasures recovery via Berlekamp–Welch |
 | Blakley, *Safeguarding Cryptographic Keys* | 1979 | Geometric $(k, n)$ threshold via random hyperplanes through a fixed point |
 | Mignotte, *How to Share a Secret* | 1983 | CRT-based $(k, n)$ (reconstruction-uniqueness, not perfectly secret) |
 | Asmuth, Bloom, *A Modular Approach to Key Safeguarding* | 1983 | CRT-based $(k, n)$ with statistical secrecy |
 | Rabin, *Efficient Dispersal of Information…* | 1989 | Reed–Solomon-style information dispersal (erasure coding, not secret sharing) |
-| Yamamoto, *Secret Sharing System Using $(k, L, n)$* | 1986 | Generalised ramp scheme spanning Shamir ($L=1$) and McEliece–Sarwate ($L=k$) |
+| Yamamoto, *Secret Sharing System Using $(k, L, n)$ | 1986 | Generalised ramp scheme spanning Shamir (when $L = 1$) and McEliece–Sarwate (when $L = k$) |
 | Ito, Saito, Nishizeki, *Secret Sharing Scheme Realising General Access Structure* | 1989 | Cumulative-array realisation of any monotone access structure |
 | Benaloh, Leichter, *Generalised Secret Sharing and Monotone Functions* | 1988 | Recursive distribution along a monotone Boolean formula |
 | Rabin, Ben-Or, *Verifiable Secret Sharing and Multiparty Protocols* | 1989 | Information-theoretic VSS via bivariate polynomials with cross-checks |
@@ -47,8 +47,8 @@ that
 
 1. **Recoverability:** any $k$ shares reconstruct $s$.
 2. **Secrecy:** any $k - 1$ shares reveal nothing — every candidate
-   value of $s$ remains equally likely (information-theoretic
-   security).
+ value of $s$ remains equally likely (information-theoretic
+ security).
 
 $k = 1$ is forbidden everywhere in this crate, since a degree-zero
 polynomial would distribute the secret in plaintext.
@@ -57,35 +57,35 @@ polynomial would distribute the secret in plaintext.
 
 ```text
 secret_sharing
-├── field             PrimeField over BigUint; mersenne127 / mersenne521 helpers
-├── poly              Horner evaluation, Lagrange interpolation
-├── trivial           KGH §I additive (and XOR) n-of-n split
-├── shamir            Shamir 1979 (k, n) + KGH §IV multi-secret extension
-├── bytes             Chunked byte-string Shamir with a versioned wire format
-├── kgh               KGH §II matrix scheme v_i = u·A_i for vector secrets
-├── ramp              McEliece–Sarwate ramp / data-compressed Reed–Solomon
-├── decode            McEliece–Sarwate errors-and-erasures via Berlekamp–Welch
-├── blakley           Blakley 1979 hyperplane (k, n) threshold
-├── mignotte          Mignotte 1983 CRT (k, n) — reconstruction-uniqueness
-├── asmuth_bloom      Asmuth–Bloom 1983 modular CRT (k, n) — statistical secrecy
-├── ida               Rabin 1989 Information Dispersal (erasure coding, no secrecy)
-├── yamamoto          Yamamoto 1986 (k, L, n) ramp — generalises Shamir & MS-ramp
-├── ito               Ito–Saito–Nishizeki 1989 cumulative-array general access
-├── benaloh_leichter  Benaloh–Leichter 1988 monotone-formula scheme
-├── kothari           Kothari 1984 generalised linear (k, n)
+├── field PrimeField over BigUint; mersenne127 / mersenne521 helpers
+├── poly Horner evaluation, Lagrange interpolation
+├── trivial KGH §I additive (and XOR) n-of-n split
+├── shamir Shamir 1979 (k, n) + KGH §IV multi-secret extension
+├── bytes Chunked byte-string Shamir with a versioned wire format
+├── kgh KGH §II matrix scheme v_i = u·A_i for vector secrets
+├── ramp McEliece–Sarwate ramp / data-compressed Reed–Solomon
+├── decode McEliece–Sarwate errors-and-erasures via Berlekamp–Welch
+├── blakley Blakley 1979 hyperplane (k, n) threshold
+├── mignotte Mignotte 1983 CRT (k, n) — reconstruction-uniqueness
+├── asmuth_bloom Asmuth–Bloom 1983 modular CRT (k, n) — statistical secrecy
+├── ida Rabin 1989 Information Dispersal (erasure coding, no secrecy)
+├── yamamoto Yamamoto 1986 (k, L, n) ramp — generalises Shamir & MS-ramp
+├── ito Ito–Saito–Nishizeki 1989 cumulative-array general access
+├── benaloh_leichter Benaloh–Leichter 1988 monotone-formula scheme
+├── kothari Kothari 1984 generalised linear (k, n)
 ├── karchmer_wigderson Karchmer–Wigderson 1993 monotone span programs
-├── brickell          Brickell 1989 ideal vector-space SSS
-├── massey            Massey 1993 linear-code SSS via minimal codewords
-├── visual            Naor–Shamir 1994 visual cryptography (n, n)
-├── blakley_meadows   Blakley–Meadows 1984 (k, L, n) hyperplane ramp
-├── vss               Rabin–Ben-Or 1989 bivariate-polynomial VSS
-├── cgma_vss          Chor–Goldwasser–Micali–Awerbuch 1985 Feldman-style VSS
-├── proactive         Herzberg et al. 1995 share refresh + lost-share recovery
-├── bigint            Self-contained BigUint + BigInt + MontgomeryCtx
-├── csprng            Csprng trait + ChaCha20Rng (RFC 7539) + OsRng
-├── primes            gcd, mod_inverse, mod_pow, random_below, is_probable_prime{,_random}
-├── secure            Zeroize + Zeroizing<T> + ct_eq_biguint + ct_eq_biguint_padded
-└── poly              Horner + Lagrange (mod-p label discipline)
+├── brickell Brickell 1989 ideal vector-space SSS
+├── massey Massey 1993 linear-code SSS via minimal codewords
+├── visual Naor–Shamir 1994 visual cryptography (n, n)
+├── blakley_meadows Blakley–Meadows 1984 (k, L, n) hyperplane ramp
+├── vss Rabin–Ben-Or 1989 bivariate-polynomial VSS
+├── cgma_vss Chor–Goldwasser–Micali–Awerbuch 1985 Feldman-style VSS
+├── proactive Herzberg et al. 1995 share refresh + lost-share recovery
+├── bigint Self-contained BigUint + BigInt + MontgomeryCtx
+├── csprng Csprng trait + ChaCha20Rng (RFC 7539) + OsRng
+├── primes gcd, mod_inverse, mod_pow, random_below, is_probable_prime{,_random}
+├── secure Zeroize + Zeroizing<T> + ct_eq_biguint + ct_eq_biguint_padded
+└── poly Horner + Lagrange (mod-p label discipline)
 ```
 
 ## How each scheme works
@@ -94,7 +94,7 @@ secret_sharing
 
 Pick $v_1, \ldots, v_{n-1}$ uniformly at random in $[0, p)$, then set
 
-$$ v_n \;=\; s \;-\; (v_1 + v_2 + \cdots + v_{n-1}) \pmod{p} $$
+$$ v_n = s - (v_1 + v_2 + \cdots + v_{n-1}) \pmod{p} $$
 
 so that $\sum_i v_i \equiv s \pmod{p}$. Reconstruction is the sum.
 The XOR variant is the $q = 2$ special case applied byte-wise. There
@@ -102,9 +102,9 @@ is no $k < n$ threshold — every share is required.
 
 ### `shamir` — (k, n) polynomial threshold scheme (Shamir 1979)
 
-Choose a random degree-$(k - 1)$ polynomial
+Choose a random degree $k - 1$ polynomial
 
-$$ q(x) \;=\; a_0 + a_1 x + a_2 x^2 + \cdots + a_{k-1} x^{k-1}, \qquad a_0 = s $$
+$$ q(x) = a_0 + a_1 x + a_2 x^2 + \cdots + a_{k-1} x^{k-1}, \qquad a_0 = s $$
 
 over $\mathrm{GF}(p)$. Trustee $i \in \{1, \ldots, n\}$ is given
 $(i, q(i) \bmod p)$. Any $k$ shares interpolate $q(x)$ (Lagrange) and
@@ -115,7 +115,7 @@ secret uniformly distributed.
 
 Pack $\ell \le k$ secrets into the lowest-order coefficients:
 
-$$ q(x) \;=\; s_0 + s_1 x + \cdots + s_{\ell-1} x^{\ell-1} + u_\ell x^\ell + \cdots + u_{k-1} x^{k-1} $$
+$$ q(x) = s_0 + s_1 x + \cdots + s_{\ell-1} x^{\ell-1} + u_\ell x^\ell + \cdots + u_{k-1} x^{k-1} $$
 
 with $u_\ell, \ldots, u_{k-1}$ uniform random padding. Any $k$
 trustees recover all $\ell$ secrets simultaneously; any $k - 1$
@@ -123,9 +123,9 @@ trustees learn nothing about any single secret.
 
 ### `kgh` — matrix scheme $v_i = u \cdot A_i$ for vector secrets (KGH §II)
 
-Generalise the secret to a length-$m$ vector $s \in \mathrm{GF}(p)^m$.
+Generalise the secret to a length $m$ vector $s \in \mathrm{GF}(p)^m$.
 Form the internal vector $u = (s, u_1, \ldots, u_{k-1})$, where each
-$u_j$ is a length-$m$ block of independent uniform field elements.
+$u_j$ is a length $m$ block of independent uniform field elements.
 Trustee $i$ receives the vector share $v_i = u \cdot A_i$ where the
 $A_i$ are public $km \times m$ matrices, every $k$-subset of which
 has full rank. The crate instantiates the public matrix bank with the
@@ -141,10 +141,10 @@ an independent Shamir polynomial per block, and serialises each share
 with the wire format
 
 ```text
-version : u8         = 0x01
-label   : u8         = trustee index 1..=255
-length  : u32 (BE)   = byte-length of the original secret
-blocks  : [u8; ...]  = concatenated big-endian field-element blocks
+version : u8 = 0x01
+label : u8 = trustee index 1..=255
+length : u32 (BE) = byte-length of the original secret
+blocks : [u8; ...] = concatenated big-endian field-element blocks
 ```
 
 $\mathrm{share\_elem\_len} = \lceil p.\mathrm{bits}() / 8 \rceil$
@@ -155,12 +155,10 @@ blocks are 15 bytes).
 ### `ramp` — McEliece–Sarwate ramp scheme
 
 The secret is now $k$ field elements $(b_1, \ldots, b_k)$. Find the
-unique degree-$(k - 1)$ polynomial $P(x)$ with $P(j) = b_j$ for $j =
-1..k$, and distribute $(k + i, P(k + i))$ for $i = 1..n$. Any $k$
+unique degree $k - 1$ polynomial $P(x)$ with $P(j) = b_j$ for $j = 1..k$, and distribute $(k + i, P(k + i))$ for $i = 1..n$. Any $k$
 shares interpolate $P$ and reconstruct every $b_j$. Per-trustee
 payload is one field element regardless of secret length — $k\times$
-smaller than the secret. The trade-off is that an opponent with $k -
-1$ shares narrows the secret to one of $p$ candidates rather than
+smaller than the secret. The trade-off is that an opponent with $k - 1$ shares narrows the secret to one of $p$ candidates rather than
 $p^k$.
 
 ### `decode` — Berlekamp–Welch errors-and-erasures recovery
@@ -170,23 +168,20 @@ code, so the standard errors-and-erasures decoders apply. Given $m$
 shares, of which up to $t$ may have been tampered with, the secret
 can still be recovered whenever
 
-$$ m - 2t \;\ge\; k. $$
+$$ m - 2t \ge k. $$
 
 This crate implements **Berlekamp–Welch**: find polynomials $Q(x)$ of
 degree $< k + t$ and $E(x)$ of degree $\le t$, with $E \not\equiv 0$,
 such that $Q(x_i) = y_i \cdot E(x_i)$ for every share. Solve as a
-homogeneous linear system over $\mathrm{GF}(p)$, polynomial-divide $Q
-/ E$ to recover the original message polynomial $M(x)$, and read $s =
-M(0)$. Erasures are handled by simply not supplying the lost share —
+homogeneous linear system over $\mathrm{GF}(p)$, polynomial-divide $Q / E$ to recover the original message polynomial $M(x)$, and read $s = M(0)$. Erasures are handled by simply not supplying the lost share —
 the agreement bound applies to whatever shares remain.
 
 ### `blakley` — geometric $(k, n)$ threshold (Blakley 1979)
 
-Pick a random point $P = (s, r_1, \ldots, r_{k-1}) \in
-\mathrm{GF}(p)^k$ whose first coordinate is the secret. Each share is
+Pick a random point $P = (s, r_1, \ldots, r_{k-1}) \in \mathrm{GF}(p)^k$ whose first coordinate is the secret. Each share is
 a random hyperplane through $P$:
 
-$$ a_1 y_1 + \cdots + a_{k-1} y_{k-1} + y_k \;=\; b $$
+$$ a_1 y_1 + \cdots + a_{k-1} y_{k-1} + y_k = b $$
 
 with $b$ chosen so the equation holds at $P$. Any $k$ shares solve a
 linear system for $P$ and read off $s$; any $k - 1$ shares cut a
@@ -198,11 +193,10 @@ $\mathrm{GF}(p)$.
 A *Mignotte sequence* is $m_1 < m_2 < \cdots < m_n$ pairwise coprime
 with
 
-$$ \alpha \;:=\; \prod\nolimits_{(k - 1)\,\mathrm{largest}} m_i \;<\; \beta \;:=\; \prod\nolimits_{k\,\mathrm{smallest}} m_i. $$
+$$ \alpha := \prod\nolimits_{(k - 1)\mathrm{largest}} m_i < \beta := \prod\nolimits_{k\mathrm{smallest}} m_i. $$
 
 The secret $S \in (\alpha, \beta)$ is shared as $(m_i, S \bmod m_i)$.
-Any $k$ residues CRT-determine $S$ uniquely in $[0, \prod m_{i_j})
-\supseteq [0, \beta) \ni S$. Mignotte gives reconstruction
+Any $k$ residues CRT-determine $S$ uniquely in $[0, \prod m_{i_j}) \supseteq [0, \beta) \ni S$. Mignotte gives reconstruction
 uniqueness, *not* perfect secrecy: $k - 1$ residues narrow the
 candidates to roughly $(\beta - \alpha) / \prod (\text{those } k - 1 \text{ moduli})$
 values.
@@ -210,13 +204,9 @@ values.
 ### `asmuth_bloom` — modular CRT $(k, n)$ (Asmuth–Bloom 1983)
 
 Strengthens Mignotte with a public secret-modulus $m_0$ (coprime with
-each $m_i$) and the inequality $m_0 \cdot M_{\mathrm{top}} <
-M_{\mathrm{bot}}$. The secret $S < m_0$ is masked as $y = S + A \cdot
-m_0$ for uniform $A \in [0, \lfloor M_{\mathrm{bot}} / m_0 \rfloor)$
-and shared as $(m_i, y \bmod m_i)$. CRT-recover $y$, then return $y
-\bmod m_0$. The mask makes secrecy *statistical* (near-perfect with
-deviation $O(m_0 \cdot M_{\mathrm{top}} / M_{\mathrm{bot}})$): $k -
-1$ shares leave $S$ very nearly uniform over $[0, m_0)$.
+each $m_i$) and the inequality $m_0 \cdot M_{\mathrm{top}} < M_{\mathrm{bot}}$. The secret $S < m_0$ is masked as $y = S + A \cdot m_0$ for uniform $A \in [0, \lfloor M_{\mathrm{bot}} / m_0 \rfloor)$
+and shared as $(m_i, y \bmod m_i)$. CRT-recover $y$, then return $y \bmod m_0$. The mask makes secrecy *statistical* (near-perfect with
+deviation $O(m_0 \cdot M_{\mathrm{top}} / M_{\mathrm{bot}})$): $k - 1$ shares leave $S$ very nearly uniform over $[0, m_0)$.
 
 ### `ida` — Rabin Information Dispersal (Rabin 1989)
 
@@ -231,10 +221,8 @@ goal and secrecy isn't.
 
 ### `yamamoto` — $(k, L, n)$ ramp (Yamamoto 1986)
 
-The secret is $(s_1, \ldots, s_L) \in \mathrm{GF}(p)^L$ with $1 \le L
-\le k$. Pick the unique degree-$(k - 1)$ polynomial $P$ such that
-$P(j) = s_j$ for $j = 1..L$ and $P(j) = u_j$ (uniform random) for $j
-= L+1..k$. Distribute $P(k + 1), \ldots, P(k + n)$. Any $k$ shares
+The secret is $(s_1, \ldots, s_L) \in \mathrm{GF}(p)^L$ with $1 \le L \le k$. Pick the unique degree $k - 1$ polynomial $P$ such that
+$P(j) = s_j$ for $j = 1..L$ and $P(j) = u_j$ (uniform random) for $j = L+1..k$. Distribute $P(k + 1), \ldots, P(k + n)$. Any $k$ shares
 interpolate $P$ and read every $s_j$; any $k - L$ shares reveal
 nothing; intermediate counts leak proportional information by
 Yamamoto's analysis. The $L = 1$ case is Shamir; $L = k$ is
@@ -243,9 +231,7 @@ McEliece–Sarwate ramp.
 ### `ito` — general access structure (Ito–Saito–Nishizeki 1989)
 
 Realise *any* monotone access structure $\mathcal{A}$. The user
-supplies the maximal forbidden coalitions $F_1, \ldots, F_t$ ($Q \in
-\mathcal{A} \iff \forall i,\, Q \not\subseteq F_i$). Choose $r_1,
-\ldots, r_{t-1}$ uniform with $r_t = s - \sum r_i \pmod{p}$; player
+supplies the maximal forbidden coalitions $F_1, \ldots, F_t$ ($Q \in \mathcal{A} \iff \forall i, Q \not\subseteq F_i$). Choose $r_1, \ldots, r_{t-1}$ uniform with $r_t = s - \sum r_i \pmod{p}$; player
 $j$ holds $\{(i, r_i) : j \notin F_i\}$. A qualified coalition covers
 every $i$, so summing the $r_i$ recovers $s$. Per-player share size
 is the number of $F_i$ not containing $j$ — exponential in the worst
@@ -256,7 +242,7 @@ case but appropriate for arbitrary monotone structures.
 Distribute the secret along a monotone Boolean formula tree:
 
 - AND nodes additively split the value among children (random shares
-  summing to the value).
+ summing to the value).
 - OR nodes hand each child the same value.
 - Leaves go to the labelled party.
 
@@ -286,8 +272,7 @@ structure; subsumes van Dijk's "linear construction."
 
 ### `brickell` — ideal vector-space SSS (Brickell 1989)
 
-One vector $v_j \in \mathrm{GF}(p)^m$ per player. Sample uniform $u
-\in \mathrm{GF}(p)^m$ with $\langle u, e_1 \rangle = s$; player $j$
+One vector $v_j \in \mathrm{GF}(p)^m$ per player. Sample uniform $u \in \mathrm{GF}(p)^m$ with $\langle u, e_1 \rangle = s$; player $j$
 gets $\langle v_j, u \rangle$. Per-player share is one field element
 regardless of $m$ (the *ideal* property). Internally a one-row-per-
 player specialisation of MSP.
@@ -295,24 +280,22 @@ player specialisation of MSP.
 ### `massey` — linear-code SSS via minimal codewords (Massey 1993)
 
 A $k \times (n + 1)$ generator matrix $G$ over $\mathrm{GF}(p)$;
-column 0 is the secret slot. Sample message $m$ with $m \cdot G[:,0]
-= s$; player $j$ receives $c_j = \langle m, G[:, j] \rangle$. A
+column 0 is the secret slot. Sample message $m$ with $m \cdot G[:,0] = s$; player $j$ receives $c_j = \langle m, G[:, j] \rangle$. A
 coalition is qualified iff $G[:, 0]$ lies in the span of its columns;
 the minimal qualified sets correspond to minimal codewords of the
 dual code $C^\perp$ — Massey's theorem.
 
 ### `visual` — Naor–Shamir visual cryptography (Naor–Shamir 1994)
 
-Black-and-white image as `Vec<Vec<bool>>`. Each pixel expands to $m =
-2^{n-1}$ sub-pixels per share. Two basis matrices $C_0$ (white,
+Black-and-white image as `Vec<Vec<bool>>`. Each pixel expands to $m = 2^{n-1}$ sub-pixels per share. Two basis matrices $C_0$ (white,
 even-cardinality subsets) and $C_1$ (black, odd-cardinality subsets)
 are column-permuted per pixel and rows distributed to the shares.
 Reconstruction stacks (bitwise OR) all $n$ shares; the eye reads the
-contrast between weight-$m$ (black) and weight-$(m-1)$ (white) blocks.
+contrast between weight $m$ (black) and weight $m - 1$ (white) blocks.
 
 ### `blakley_meadows` — $(k, L, n)$ Blakley ramp (Blakley–Meadows 1984)
 
-Place the length-$L$ secret in the first $L$ coordinates of an
+Place the length $L$ secret in the first $L$ coordinates of an
 internal point $P \in \mathrm{GF}(p)^k$, fill the rest with uniform
 padding, and emit $n$ random hyperplanes through $P$. Any $k$ shares
 recover $P$ (and hence every $s_j$); any $k - L$ shares fix $P$ on
@@ -323,8 +306,7 @@ vector statistically uniform over $\mathrm{GF}(p)^L$.
 
 Information-theoretic verifiable secret sharing. Sample a bivariate
 polynomial $F(x, y)$ of degree $\le k - 1$ in each variable with
-$F(0, 0) = s$. Player $i$ receives $g_i(y) = F(i, y)$ and $h_i(x) =
-F(x, i)$. Pairwise cross-checks $g_i(j) \stackrel{?}{=} h_j(i)$ (in
+$F(0, 0) = s$. Player $i$ receives $g_i(y) = F(i, y)$ and $h_i(x) = F(x, i)$. Pairwise cross-checks $g_i(j) \stackrel{?}{=} h_j(i)$ (in
 both directions) catch any tampered slice with probability 1.
 Reconstruction Lagrange-interpolates $\Phi(x) = F(x, 0)$ from
 $g_i(0)$ for $k$ consistent players, then reads $s = \Phi(0)$. The
@@ -334,23 +316,21 @@ honest-majority bound $2(k - 1) < n$ is enforced by the
 ### `cgma_vss` — Chor–GMA computational VSS via Feldman commitments (1985)
 
 Public Schnorr group $(p, q, g)$ with $q$ prime, $q \mid p - 1$, $g$
-of order exactly $q$. Sample $f(x) = a_0 + a_1 x + \cdots + a_{k-1}
-x^{k-1}$ over $\mathrm{GF}(q)$ with $a_0 = s$. Broadcast commitments
+of order exactly $q$. Sample $f(x) = a_0 + a_1 x + \cdots + a_{k-1} x^{k-1}$ over $\mathrm{GF}(q)$ with $a_0 = s$. Broadcast commitments
 $c_i = g^{a_i} \bmod p$. Each share $(j, f(j) \bmod q)$ is verified
 by
 
-$$ g^{f(j)} \;\stackrel{?}{=}\; \prod_{i=0}^{k-1} c_i^{j^i} \pmod{p}. $$
+$$ g^{f(j)} \stackrel{?}{=} \prod_{i=0}^{k-1} c_i^{j^i} \pmod{p}. $$
 
 Group construction validates primality of $p$ and $q$ via Miller–
 Rabin (deterministic for sizes $< 2^{81}$, random-witness via
-`is_probable_prime_random` for larger), exact divisibility $q \mid (p
-- 1)$, and that $g$ reduced mod $p$ is neither 0 nor 1. Every
+`is_probable_prime_random` for larger), exact divisibility $q \mid (p - 1)$, and that $g$ reduced mod $p$ is neither 0 nor 1. Every
 commitment is also subgroup-checked at `verify_share` time.
 
 ### `proactive` — Herzberg et al. share refresh (1995)
 
 `refresh` produces a fresh share vector for the same secret by
-having each player contribute a degree-$(k-1)$ polynomial $r_i(x)$
+having each player contribute a degree $k - 1$ polynomial $r_i(x)$
 with $r_i(0) = 0$ and adding $\sum_i r_i(j)$ to player $j$'s share.
 Old shares no longer combine with new shares. `recover_share`
 reconstructs a missing share via Lagrange evaluation, with the same
@@ -362,36 +342,36 @@ Beyond the per-scheme math, the crate enforces a uniform defensive-
 security layer:
 
 - **Volatile-zero on drop.** Every secret-bearing intermediate buffer
-  (polynomial coefficient vectors, bivariate matrices, refresh
-  contributions, rng buffers) is wrapped in `Zeroizing<T>` so its
-  contents are volatile-zeroed on every exit path, including panic
-  unwind. `BigUint::Drop` itself volatile-zeros the entire allocated
-  capacity of its limb buffer (not just $[0..\mathrm{len})$).
+ (polynomial coefficient vectors, bivariate matrices, refresh
+ contributions, rng buffers) is wrapped in `Zeroizing<T>` so its
+ contents are volatile-zeroed on every exit path, including panic
+ unwind. `BigUint::Drop` itself volatile-zeros the entire allocated
+ capacity of its limb buffer (not just $[0..\mathrm{len})$).
 - **Constant-time secret-derived equality.** `BigUint::eq` compares
-  all limbs in an OR-fold without short-circuit. The
-  `secure::ct_eq_biguint{,_padded}` helpers do the same at the byte
-  level; every reconstruct / extras-validate site that compares
-  secret-derived values uses one of them, never `==` directly.
+ all limbs in an OR-fold without short-circuit. The
+ `secure::ct_eq_biguint{,_padded}` helpers do the same at the byte
+ level; every reconstruct / extras-validate site that compares
+ secret-derived values uses one of them, never `==` directly.
 - **Non-leaking Debug.** `BigUint`'s manual `Debug` prints
-  `BigUint(<elided>)` so panic backtraces, `dbg!`, and `assert_eq!`
-  failure messages cannot accidentally print a secret limb. Every
-  share-bearing struct elides its inner value through the same
-  pattern.
+ `BigUint(<elided>)` so panic backtraces, `dbg!`, and `assert_eq!`
+ failure messages cannot accidentally print a secret limb. Every
+ share-bearing struct elides its inner value through the same
+ pattern.
 - **CSPRNG memory hygiene.** `ChaCha20Rng` has no `Clone`, scrubs its
-  key / nonce / counter / keystream-buffer in `Drop`, scrubs the
-  `state` and `init` stack arrays inside `refill` through their live
-  mutable bindings, and treats $(\mathrm{counter},\,\mathrm{nonce})$
-  as a single 128-bit block index so the period is $2^{128}$
-  blocks.
+ key / nonce / counter / keystream-buffer in `Drop`, scrubs the
+ `state` and `init` stack arrays inside `refill` through their live
+ mutable bindings, and treats $(\mathrm{counter},\mathrm{nonce})$
+ as a single 128-bit block index so the period is $2^{128}$
+ blocks.
 
 What is **not** addressed:
 
 - Variable-time arithmetic. `BigUint` `mul` / `add` / `sub` / `inv`
-  are not constant-time. Co-located timing observers can recover
-  bit-length information from secret arithmetic. Side-channel
-  resistance is explicitly out of scope.
+ are not constant-time. Co-located timing observers can recover
+ bit-length information from secret arithmetic. Side-channel
+ resistance is explicitly out of scope.
 - `mlock` against swap. Platform-specific; do at the application
-  layer if needed.
+ layer if needed.
 
 ## Usage
 
@@ -408,9 +388,9 @@ The crate has no other dependencies.
 
 ```rust
 use secret_sharing::{
-    csprng::OsRng,
-    field::{mersenne127, PrimeField},
-    shamir, BigUint, ChaCha20Rng,
+ csprng::OsRng,
+ field::{mersenne127, PrimeField},
+ shamir, BigUint, ChaCha20Rng,
 };
 
 let field = PrimeField::new_unchecked(mersenne127()); // bundled prime
@@ -426,9 +406,9 @@ assert_eq!(recovered, secret);
 
 ```rust
 use secret_sharing::{
-    csprng::OsRng, bytes,
-    field::{mersenne127, PrimeField},
-    ChaCha20Rng,
+ csprng::OsRng, bytes,
+ field::{mersenne127, PrimeField},
+ ChaCha20Rng,
 };
 
 let field = PrimeField::new_unchecked(mersenne127());
@@ -445,10 +425,10 @@ assert_eq!(recovered, aes_key.to_vec());
 
 ```rust
 use secret_sharing::{
-    csprng::OsRng,
-    decode::reconstruct_with_errors,
-    field::{mersenne127, PrimeField},
-    shamir, BigUint, ChaCha20Rng,
+ csprng::OsRng,
+ decode::reconstruct_with_errors,
+ field::{mersenne127, PrimeField},
+ shamir, BigUint, ChaCha20Rng,
 };
 
 let field = PrimeField::new_unchecked(mersenne127());
@@ -469,9 +449,9 @@ assert_eq!(recovered, secret);
 
 ```rust
 use secret_sharing::{
-    csprng::OsRng,
-    field::{mersenne127, PrimeField},
-    shamir, BigUint, ChaCha20Rng,
+ csprng::OsRng,
+ field::{mersenne127, PrimeField},
+ shamir, BigUint, ChaCha20Rng,
 };
 
 let field = PrimeField::new_unchecked(mersenne127());
@@ -487,8 +467,8 @@ assert_eq!(got, secrets);
 
 ```rust
 use secret_sharing::{
-    field::{mersenne127, PrimeField},
-    ramp, BigUint,
+ field::{mersenne127, PrimeField},
+ ramp, BigUint,
 };
 
 let field = PrimeField::new_unchecked(mersenne127());
@@ -502,9 +482,9 @@ assert_eq!(recovered, secret);
 
 ```rust
 use secret_sharing::{
-    csprng::OsRng,
-    field::{mersenne127, PrimeField},
-    kgh, BigUint, ChaCha20Rng,
+ csprng::OsRng,
+ field::{mersenne127, PrimeField},
+ kgh, BigUint, ChaCha20Rng,
 };
 
 let field = PrimeField::new_unchecked(mersenne127());
@@ -522,8 +502,8 @@ For copy-pasteable examples covering every scheme, see
 ## Testing and lints
 
 ```sh
-cargo test                                       # 236 unit + 7 integration + 2 doc
-cargo clippy --all-targets -- -D warnings        # clean
+cargo test # 236 unit + 7 integration + 2 doc
+cargo clippy --all-targets -- -D warnings # clean
 ```
 
 ## Choosing a field
@@ -544,23 +524,23 @@ via `PrimeField::new_unchecked` once you have witnesses.
 ## Design notes
 
 - **No external dependencies.** `Cargo.toml`'s `[dependencies]` is
-  empty. Big-integer code is in-tree (`src/bigint.rs`); the CSPRNG is
-  ChaCha20 (`src/csprng.rs`); OS entropy is read directly from
-  `/dev/urandom` (`src/csprng.rs::OsRng`).
+ empty. Big-integer code is in-tree (`src/bigint.rs`); the CSPRNG is
+ ChaCha20 (`src/csprng.rs`); OS entropy is read directly from
+ `/dev/urandom` (`src/csprng.rs::OsRng`).
 - **Variable-time arithmetic.** `BigUint` is documented as
-  variable-time; do not deploy in side-channel-exposed environments.
+ variable-time; do not deploy in side-channel-exposed environments.
 - **No allocation-free path.** Polynomials and matrices use plain
-  `Vec<BigUint>`. Performance is dominated by big-integer modular
-  multiplication, not by allocator overhead.
+ `Vec<BigUint>`. Performance is dominated by big-integer modular
+ multiplication, not by allocator overhead.
 - **Wire format only in `bytes` and `ida`.** Other modules return
-  native `BigUint` shares; serialise via `BigUint::to_be_bytes()` if
-  needed.
+ native `BigUint` shares; serialise via `BigUint::to_be_bytes()` if
+ needed.
 - **`Option`-returning reconstructors.** Every `reconstruct` validates
-  its inputs and returns `None` on contract violations the caller may
-  not have controlled (corrupt shares, malformed wire format,
-  duplicate / mod-$p$-aliased $x$ coordinates, non-canonical encoded
-  field elements). Static contract violations (e.g. $k < 2$) panic.
+ its inputs and returns `None` on contract violations the caller may
+ not have controlled (corrupt shares, malformed wire format,
+ duplicate / mod-p-aliased $x$ coordinates, non-canonical encoded
+ field elements). Static contract violations (e.g. $k < 2$) panic.
 
 <p align="center">
-  <img src="assets/ship_of_fools.png" width="50%" alt="Ship of Fools">
+ <img src="assets/ship_of_fools.png" width="50%" alt="Ship of Fools">
 </p>
