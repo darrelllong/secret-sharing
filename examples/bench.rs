@@ -410,12 +410,12 @@ fn bench_vss(fields: &[PrimeField; 4]) -> Result {
 
 fn bench_cgma_vss() -> Result {
     // cgma_vss is over a fixed Schnorr group; secret-bit dimension does
-    // not directly map to a prime field. We bench at the toy group for
-    // all four sizes (yielding the same number 4×) so the radar still
-    // includes it, with a clear note in PERFORMANCE.md.
-    let group = cgma_vss::small_test_group();
+    // not directly map to a prime field. We bench at the RFC 5114 §2.3
+    // 2048-bit / 256-bit-subgroup group for all four sizes (yielding
+    // the same number 4×) so the radar still includes it.
+    let group = cgma_vss::rfc5114_modp_2048_256();
     let mut r = rng_for(0xC9);
-    let secret = BigUint::from_u64(7);
+    let secret = BigUint::from_u64(0x1234_5678_9abc_def0);
 
     let split_med = time_block(ITERS, WARMUP, || cgma_vss::deal(&group, &mut r, &secret, K, N));
     let (shares, commits) = cgma_vss::deal(&group, &mut r, &secret, K, N);
@@ -427,7 +427,7 @@ fn bench_cgma_vss() -> Result {
         cgma_vss::reconstruct(&group, &shares[..K], K).unwrap()
     });
     Result {
-        scheme: "cgma_vss (toy 23/11/4 group)",
+        scheme: "cgma_vss (RFC 5114 §2.3, 2048/256)",
         family: Family::Vss,
         splits: [split_med; 4],
         recons: [recon_med; 4],
@@ -989,7 +989,8 @@ fn bench_visual_by_pixels() -> Vec<ScalingPoint> {
 }
 
 fn bench_cgma_vss_by_group() -> Vec<ScalingPoint> {
-    // Three Schnorr groups of increasing modulus size.
+    // Four Schnorr groups of increasing modulus size, capped by the
+    // RFC 5114 §2.3 standard at 2048 bits.
     let groups: Vec<(usize, cgma_vss::DlogGroup)> = vec![
         (5, cgma_vss::small_test_group()),
         (
@@ -1002,6 +1003,7 @@ fn bench_cgma_vss_by_group() -> Vec<ScalingPoint> {
             .expect("(167, 83, 4) Schnorr group"),
         ),
         (1024, oakley_group2_dlog_group()),
+        (2048, cgma_vss::rfc5114_modp_2048_256()),
     ];
     let mut out = Vec::new();
     let mut r = rng_for(0xC9);
@@ -1539,9 +1541,9 @@ fn print_vss_table(results: &[Result]) {
     println!();
     println!(
         "Caveat: `cgma_vss` columns are constant because the bench \
-         uses a fixed toy Schnorr group at every secret-bit setting. \
-         For the actual scaling with group size, see the \
-         `cgma-vss-scaling` chart and table below."
+         uses the fixed RFC 5114 §2.3 (2048/256) Schnorr group at \
+         every secret-bit setting. For the actual scaling with group \
+         size, see the `cgma-vss-scaling` chart and table below."
     );
 }
 
@@ -1754,7 +1756,7 @@ fn main() -> std::io::Result<()> {
     print_scaling_table("CGMA-VSS by Schnorr group bit width (k=3, n=5)", &cgma_pts);
     emit_scaling_line_svg(
         "CGMA-VSS: latency vs Schnorr group bit width",
-        "k=3, n=5; toy (23) and small (167) groups vs 1024-bit OAKLEY group 2",
+        "k=3, n=5; toy (23) → small (167) → 1024-bit OAKLEY group 2 → 2048-bit RFC 5114 §2.3",
         "Schnorr prime p bit width",
         &cgma_pts,
         "assets/cgma-vss-scaling.svg",

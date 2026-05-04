@@ -90,18 +90,24 @@ degenerates to a line, so the right honest format is the table:
 |-----------------------|--------------|---------|------------|------|
 | `vss`                 | split        | 0.1551  | ±0.01006   | 93   |
 | `vss`                 | reconstruct  | 0.08332 | ±0.001296  | 150  |
-| `cgma_vss`            | split        | 0.0149  | ±0.000374  | 63   |
-| `cgma_vss`            | reconstruct  | 0.0520  | ±0.001457  | 88   |
+| `cgma_vss`            | split        | 1.338   | ±0.08875   | 39   |
+| `cgma_vss`            | reconstruct  | 13.14   | ±1.136     | 34   |
 
 `vss::deal` builds a full bivariate `k × k` polynomial matrix, so
 splits cost ~5× a single Shamir secret. Reconstruction is dominated
 by the `n²` pairwise consistency check.
 
-`cgma_vss` numbers are over the toy `(p = 23, q = 11, g = 4)` group
-— useful for checking the reconstruction wire path, **uninformative
-for production**. Real DH-style group exponentiation costs orders of
-magnitude more; see `assets/cgma-vss-scaling.svg` for the
-group-size scaling curve.
+`cgma_vss` is now benched against the **RFC 5114 §2.3 group**
+(2048-bit `p`, 256-bit prime-order subgroup `q`) — the canonical
+Schnorr-style group from the IETF standard, ~112-bit symmetric-
+equivalent security per NIST SP 800-57. Numbers are dominated by
+2048-bit modular exponentiation: `deal` performs `k = 3` group
+exponentiations to commit, `reconstruct` performs `n × k = 15`
+exponentiations across the per-share `verify` calls plus the
+final Lagrange interpolation in `GF(q)`. Constructor
+[`rfc5114_modp_2048_256`](src/cgma_vss.rs) returns the validated
+group. For the scaling curve across group sizes (toy → 167 → 1024
+OAKLEY → 2048 RFC 5114) see `assets/cgma-vss-scaling.svg`.
 
 ### CRT schemes (small example sequences)
 

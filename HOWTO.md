@@ -437,11 +437,11 @@ assert_eq!(recovered, secret);
 ```rust
 use secret_sharing::{csprng::OsRng, cgma_vss, BigUint, ChaCha20Rng};
 
-// Production: supply your own (p, q, g) — RFC 3526 group 14 or
-// equivalent. Toy group below for illustration only.
-let group = cgma_vss::small_test_group();
+// RFC 5114 §2.3 — 2048-bit p, 256-bit prime-order subgroup, generator
+// g of that subgroup. Validated cryptographer-grade Schnorr group.
+let group = cgma_vss::rfc5114_modp_2048_256();
 let mut rng = ChaCha20Rng::from_os_entropy(&mut OsRng::new().unwrap());
-let secret = BigUint::from_u64(7); // < q
+let secret = BigUint::from_u64(0x1234_5678_9abc_def0); // < q (256-bit)
 
 let (shares, commits) = cgma_vss::deal(&group, &mut rng, &secret, /*k=*/3, /*n=*/5);
 

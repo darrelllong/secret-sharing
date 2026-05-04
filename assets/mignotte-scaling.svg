@@ -23,12 +23,12 @@
   <text class="small" x="307.1" y="344.0" text-anchor="middle">≈2^64</text>
   <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
   <text class="small" x="610.0" y="344.0" text-anchor="middle">≈2^128</text>
-  <path d="M 80.0 276.3 L 307.1 218.7 L 610.0 174.6" stroke="#0f766e" stroke-width="2" fill="none" />
+  <path d="M 80.0 276.3 L 307.1 218.7 L 610.0 172.9" stroke="#0f766e" stroke-width="2" fill="none" />
   <circle cx="80.0" cy="276.3" r="3.5" fill="#0f766e" />
   <circle cx="307.1" cy="218.7" r="3.5" fill="#0f766e" />
-  <circle cx="610.0" cy="174.6" r="3.5" fill="#0f766e" />
-  <path d="M 80.0 142.2 L 307.1 129.8 L 610.0 115.6" stroke="#1d4ed8" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="142.2" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="172.9" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 143.3 L 307.1 129.8 L 610.0 115.6" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="143.3" r="3.5" fill="#1d4ed8" />
   <circle cx="307.1" cy="129.8" r="3.5" fill="#1d4ed8" />
   <circle cx="610.0" cy="115.6" r="3.5" fill="#1d4ed8" />
   <text class="title" x="80.0" y="30.0">Mignotte: latency vs legal-range bit width</text>

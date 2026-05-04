@@ -26,7 +26,7 @@
 //!
 //! VSS:
 //!   vss_split, vss_reconstruct
-//!   cgma_vss_split, cgma_vss_reconstruct  (toy 23/11/4 group)
+//!   cgma_vss_split, cgma_vss_reconstruct  (RFC 5114 §2.3 — 2048-bit p, 256-bit q)
 //!
 //! CRT (small example sequences):
 //!   mignotte_split, mignotte_reconstruct
@@ -401,12 +401,12 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
-        // ── cgma_vss (toy group) ──
+        // ── cgma_vss (RFC 5114 §2.3 — 2048/256 Schnorr group) ──
         "cgma_vss_split" => {
-            let group = cgma_vss::small_test_group();
+            let group = cgma_vss::rfc5114_modp_2048_256();
             let mut r = rng();
-            let s = BigUint::from_u64(7); // < q = 11
-            let n_iter = iters(2000);
+            let s = BigUint::from_u64(0x1234_5678_9abc_def0); // < q (256-bit)
+            let n_iter = iters(20);
             let t0 = Instant::now();
             for _ in 0..n_iter {
                 black_box(cgma_vss::deal(&group, &mut r, &s, K, N));
@@ -414,11 +414,11 @@ fn main() {
             ms_per_op(t0.elapsed(), n_iter)
         }
         "cgma_vss_reconstruct" => {
-            let group = cgma_vss::small_test_group();
+            let group = cgma_vss::rfc5114_modp_2048_256();
             let mut r = rng();
-            let s = BigUint::from_u64(7);
+            let s = BigUint::from_u64(0x1234_5678_9abc_def0);
             let (shares, commits) = cgma_vss::deal(&group, &mut r, &s, K, N);
-            let n_iter = iters(2000);
+            let n_iter = iters(20);
             let t0 = Instant::now();
             for _ in 0..n_iter {
                 for sh in &shares {

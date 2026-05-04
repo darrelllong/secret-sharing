@@ -35,8 +35,8 @@
 |----------------------------------|------------|------------|-------|
 | vss_split                        |     0.1551 |  ±0.01006 |    93 |
 | vss_reconstruct                  |    0.08332 | ±0.001296 |   150 |
-| cgma_vss_split                   |     0.0149 | ±0.0003737 |    63 |
-| cgma_vss_reconstruct             |      0.052 | ±0.001457 |    88 |
+| cgma_vss_split                   |      1.338 |  ±0.08875 |    39 |
+| cgma_vss_reconstruct             |      13.14 |    ±1.136 |    34 |
 
 ### CRT (small example sequences)
 

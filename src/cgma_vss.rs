@@ -25,11 +25,14 @@
 //! reduces to the IND-CPA security of the share channel (which is
 //! caller-supplied; this module verifies, it does not encrypt).
 //!
-//! Group choice. Production deployments should use a 2048-bit RFC 3526
-//! safe-prime group or a comparable Schnorr group. The bundled
-//! [`small_test_group`] is a `(p = 23, q = 11, g = 4)` toy used by the
-//! unit tests — useless for security, useful for fast end-to-end
-//! correctness checks.
+//! Group choice. The bundled [`rfc5114_modp_2048_256`] returns the
+//! IETF-standard 2048-bit MODP group with a 256-bit prime-order
+//! subgroup (RFC 5114 §2.3) — the canonical Schnorr-style group for
+//! this scheme and the right default for new deployments. The
+//! [`small_test_group`] `(p = 23, q = 11, g = 4)` is retained for
+//! the unit tests where seconds-per-test would otherwise dominate
+//! every CI run; it is **insecure** and must never be reached for
+//! production code.
 //!
 //! Secret entropy. Because the dealer broadcasts `c_0 = g^s`, a low-
 //! entropy secret can be brute-forced from `c_0` directly without
@@ -315,6 +318,74 @@ pub fn small_test_group() -> DlogGroup {
         BigUint::from_u64(4),
     )
     .expect("hand-validated toy group")
+}
+
+/// RFC 5114 §2.3 — 2048-bit MODP group with a 256-bit prime-order
+/// subgroup. Standardised Schnorr-style group; the 2048-bit `p` and
+/// 256-bit `q` give roughly 112-bit symmetric-equivalent security per
+/// NIST SP 800-57. The same `(p, q, g)` are used by the IETF IKE and
+/// TLS profiles that pre-date RFC 7919, and remain a reasonable
+/// floor for new Schnorr-VSS deployments where modular-exponent cost
+/// is the budget concern. For ≥128-bit security move to a 3072/256
+/// FIPS 186-4 group, an EC group, or RFC 7919 FFDHE3072 (no prime-
+/// order subgroup, so unsuited to plain Feldman).
+///
+/// Validated through [`DlogGroup::new`] on every call — a failure
+/// would mean the bundled hex constants were corrupted in transit.
+#[must_use]
+pub fn rfc5114_modp_2048_256() -> DlogGroup {
+    // RFC 5114 §2.3, hex digits stripped of whitespace.
+    const P_HEX: &str = "\
+        87A8E61DB4B6663CFFBBD19C651959998CEEF608660DD0F2\
+        5D2CEED4435E3B00E00DF8F1D61957D4FAF7DF4561B2AA30\
+        16C3D91134096FAA3BF4296D830E9A7C209E0C6497517ABD\
+        5A8A9D306BCF67ED91F9E6725B4758C022E0B1EF4275BF7B\
+        6C5BFC11D45F9088B941F54EB1E59BB8BC39A0BF12307F5C\
+        4FDB70C581B23F76B63ACAE1CAA6B7902D52526735488A0E\
+        F13C6D9A51BFA4AB3AD8347796524D8EF6A167B5A41825D9\
+        67E144E5140564251CCACB83E6B486F6B3CA3F7971506026\
+        C0B857F689962856DED4010ABD0BE621C3A3960A54E710C3\
+        75F26375D7014103A4B54330C198AF126116D2276E11715F\
+        693877FAD7EF09CADB094AE91E1A1597";
+    const Q_HEX: &str =
+        "8CF83642A709A097B447997640129DA299B1A47D1EB3750BA308B0FE64F5FBD3";
+    const G_HEX: &str = "\
+        3FB32C9B73134D0B2E77506660EDBD484CA7B18F21EF205407F4793A1A0BA125\
+        10DBC15077BE463FFF4FED4AAC0BB555BE3A6C1B0C6B47B1BC3773BF7E8C6F62\
+        901228F8C28CBB18A55AE31341000A650196F931C77A57F2DDF463E5E9EC144B\
+        777DE62AAAB8A8628AC376D282D6ED3864E67982428EBC831D14348F6F2F9193\
+        B5045AF2767164E1DFC967C1FB3F2E55A4BD1BFFE83B9C80D052B985D182EA0A\
+        DB2A3B7313D3FE14C8484B1E052588B9B7D2BBD2DF016199ECD06E1557CD0915\
+        B3353BBB64E0EC377FD028370DF92B52C7891428CDC67EB6184B523D1DB246C3\
+        2F63078490F00EF8D647D148D47954515E2327CFEF98C582664B4C0F6CC41659";
+    DlogGroup::new(hex_to_biguint(P_HEX), hex_to_biguint(Q_HEX), hex_to_biguint(G_HEX))
+        .expect("RFC 5114 §2.3 group is well-formed")
+}
+
+/// Decode a (possibly whitespace-padded) hex string to a `BigUint`.
+/// Used only by the standardised-group constructors. Panics on a
+/// malformed input — the constants are compile-time literals, so a
+/// runtime panic would mean a transcription error to fix at the call
+/// site.
+fn hex_to_biguint(hex: &str) -> BigUint {
+    let mut bytes = Vec::with_capacity(hex.len() / 2);
+    let cleaned: Vec<u8> = hex.bytes().filter(|b| !b.is_ascii_whitespace()).collect();
+    assert!(cleaned.len().is_multiple_of(2), "hex literal must have even length");
+    for chunk in cleaned.chunks_exact(2) {
+        let hi = nibble(chunk[0]);
+        let lo = nibble(chunk[1]);
+        bytes.push((hi << 4) | lo);
+    }
+    BigUint::from_be_bytes(&bytes)
+}
+
+fn nibble(b: u8) -> u8 {
+    match b {
+        b'0'..=b'9' => b - b'0',
+        b'a'..=b'f' => b - b'a' + 10,
+        b'A'..=b'F' => b - b'A' + 10,
+        _ => panic!("non-hex character in literal: {b:#x}"),
+    }
 }
 
 #[cfg(test)]

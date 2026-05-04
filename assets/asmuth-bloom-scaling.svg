@@ -23,14 +23,14 @@
   <text class="small" x="186.0" y="344.0" text-anchor="middle">m_0≈2^16</text>
   <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
   <text class="small" x="610.0" y="344.0" text-anchor="middle">m_0≈2^32</text>
-  <path d="M 80.0 235.6 L 186.0 152.0 L 610.0 118.2" stroke="#0f766e" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="235.6" r="3.5" fill="#0f766e" />
-  <circle cx="186.0" cy="152.0" r="3.5" fill="#0f766e" />
-  <circle cx="610.0" cy="118.2" r="3.5" fill="#0f766e" />
-  <path d="M 80.0 143.3 L 186.0 124.4 L 610.0 109.0" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <path d="M 80.0 230.9 L 186.0 151.9 L 610.0 116.9" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="230.9" r="3.5" fill="#0f766e" />
+  <circle cx="186.0" cy="151.9" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="116.9" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 143.3 L 186.0 125.1 L 610.0 107.9" stroke="#1d4ed8" stroke-width="2" fill="none" />
   <circle cx="80.0" cy="143.3" r="3.5" fill="#1d4ed8" />
-  <circle cx="186.0" cy="124.4" r="3.5" fill="#1d4ed8" />
-  <circle cx="610.0" cy="109.0" r="3.5" fill="#1d4ed8" />
+  <circle cx="186.0" cy="125.1" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="107.9" r="3.5" fill="#1d4ed8" />
   <text class="title" x="80.0" y="30.0">Asmuth-Bloom: latency vs m_0 bit width</text>
   <text class="small" x="80.0" y="46.0">k=3, n=5; secret = 1 mod m_0; log y, linear x in bits</text>
   <text class="small" x="345.0" y="362.0" text-anchor="middle">m_0 bit width</text>
