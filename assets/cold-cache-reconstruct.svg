@@ -19,37 +19,37 @@
   <line class="grid" x1="600.0" y1="60.0" x2="600.0" y2="304.0" />
   <text class="small" x="600.0" y="318.0" text-anchor="middle">100.0 µs</text>
   <text class="label" x="122.0" y="76.0" text-anchor="end">shamir</text>
-  <rect x="130.0" y="60.0" width="386.1" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="60.0" width="387.9" height="11.0" fill="#b91c1c" rx="2" />
   <rect x="130.0" y="72.0" width="382.1" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="524.1" y="76.0">cold/warm = 1.1×</text>
+  <text class="small" x="525.9" y="76.0">cold/warm = 1.1×</text>
   <text class="label" x="122.0" y="106.0" text-anchor="end">blakley</text>
-  <rect x="130.0" y="90.0" width="468.5" height="11.0" fill="#b91c1c" rx="2" />
-  <rect x="130.0" y="102.0" width="468.0" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="606.5" y="106.0">cold/warm = 1.0×</text>
+  <rect x="130.0" y="90.0" width="469.3" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="102.0" width="463.9" height="11.0" fill="#0f766e" rx="2" />
+  <text class="small" x="607.3" y="106.0">cold/warm = 1.1×</text>
   <text class="label" x="122.0" y="136.0" text-anchor="end">kothari</text>
-  <rect x="130.0" y="120.0" width="406.2" height="11.0" fill="#b91c1c" rx="2" />
-  <rect x="130.0" y="132.0" width="400.5" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="544.2" y="136.0">cold/warm = 1.1×</text>
+  <rect x="130.0" y="120.0" width="407.1" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="132.0" width="400.3" height="11.0" fill="#0f766e" rx="2" />
+  <text class="small" x="545.1" y="136.0">cold/warm = 1.1×</text>
   <text class="label" x="122.0" y="166.0" text-anchor="end">ramp</text>
-  <rect x="130.0" y="150.0" width="456.4" height="11.0" fill="#b91c1c" rx="2" />
-  <rect x="130.0" y="162.0" width="454.6" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="594.4" y="166.0">cold/warm = 1.0×</text>
+  <rect x="130.0" y="150.0" width="457.2" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="162.0" width="454.7" height="11.0" fill="#0f766e" rx="2" />
+  <text class="small" x="595.2" y="166.0">cold/warm = 1.0×</text>
   <text class="label" x="122.0" y="196.0" text-anchor="end">vss</text>
-  <rect x="130.0" y="180.0" width="460.2" height="11.0" fill="#b91c1c" rx="2" />
-  <rect x="130.0" y="192.0" width="452.1" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="598.2" y="196.0">cold/warm = 1.1×</text>
+  <rect x="130.0" y="180.0" width="455.9" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="192.0" width="451.7" height="11.0" fill="#0f766e" rx="2" />
+  <text class="small" x="593.9" y="196.0">cold/warm = 1.1×</text>
   <text class="label" x="122.0" y="226.0" text-anchor="end">bytes</text>
-  <rect x="130.0" y="210.0" width="431.2" height="11.0" fill="#b91c1c" rx="2" />
-  <rect x="130.0" y="222.0" width="428.7" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="569.2" y="226.0">cold/warm = 1.0×</text>
+  <rect x="130.0" y="210.0" width="431.0" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="222.0" width="428.6" height="11.0" fill="#0f766e" rx="2" />
+  <text class="small" x="569.0" y="226.0">cold/warm = 1.0×</text>
   <text class="label" x="122.0" y="256.0" text-anchor="end">ida</text>
-  <rect x="130.0" y="240.0" width="424.6" height="11.0" fill="#b91c1c" rx="2" />
-  <rect x="130.0" y="252.0" width="418.7" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="562.6" y="256.0">cold/warm = 1.1×</text>
+  <rect x="130.0" y="240.0" width="423.1" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="252.0" width="419.0" height="11.0" fill="#0f766e" rx="2" />
+  <text class="small" x="561.1" y="256.0">cold/warm = 1.1×</text>
   <text class="label" x="122.0" y="286.0" text-anchor="end">trivial</text>
-  <rect x="130.0" y="270.0" width="162.1" height="11.0" fill="#b91c1c" rx="2" />
+  <rect x="130.0" y="270.0" width="159.5" height="11.0" fill="#b91c1c" rx="2" />
   <rect x="130.0" y="282.0" width="115.0" height="11.0" fill="#0f766e" rx="2" />
-  <text class="small" x="300.1" y="286.0">cold/warm = 2.0×</text>
+  <text class="small" x="297.5" y="286.0">cold/warm = 1.9×</text>
   <rect x="20" y="338.0" width="12" height="12" fill="#b91c1c" rx="2" /><text class="small" x="38" y="348.0">cold (first call)</text>
   <rect x="160" y="338.0" width="12" height="12" fill="#0f766e" rx="2" /><text class="small" x="178" y="348.0">warm median</text>
 </svg>

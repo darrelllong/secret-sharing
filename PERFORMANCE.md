@@ -187,24 +187,45 @@ Per-block costs scale linearly with the chunk count (4 KiB / 15 B ≈
 no shared per-secret amortisation — the polynomial / matrix bank is
 re-randomised per chunk because each chunk is an independent secret.
 
-End-to-end ranking (split + reconstruct, ms / 4 KiB):
+End-to-end (split + reconstruct, per 4 KiB secret). The total-time
+CI propagates from the per-op CIs by Pythagorean addition assuming
+independence (`σ_total = √(σ_split² + σ_recon²)`); throughput is
+`4000 / total_ms` KiB/s with the delta-method CI
+`(throughput / total_ms) · σ_total`:
 
-| Scheme               | total | throughput (KiB/s) |
-|----------------------|------:|-------------------:|
-| `massey`             |  10.9 |        ≈   376     |
-| `shamir`             |  13.2 |        ≈   310     |
-| `kothari`            |  15.9 |        ≈   258     |
-| `karchmer_wigderson` |  21.0 |        ≈   195     |
-| `brickell`           |  21.0 |        ≈   195     |
-| `blakley`            |  86.9 |        ≈    47     |
+| Scheme               | total ms (±CI 95%) | throughput KiB/s (±CI 95%) |
+|----------------------|-------------------:|---------------------------:|
+| `massey`             |    10.93 ± 0.189   |        366.2 ± 6.3         |
+| `shamir`             |    13.24 ± 0.106   |        302.0 ± 2.4         |
+| `kothari`            |    15.91 ± 0.135   |        251.4 ± 2.1         |
+| `karchmer_wigderson` |    20.99 ± 0.214   |        190.6 ± 1.9         |
+| `brickell`           |    21.03 ± 0.203   |        190.2 ± 1.8         |
+| `blakley`            |    86.87 ± 0.424   |         46.05 ± 0.23       |
 
 `blakley` is the obvious outlier: both split (random hyperplane
 generation with a singularity guard) and reconstruct (k×k Gaussian
 elimination) pay quadratic field-multiply work that dominates at
 274 chunks. `kothari` / `karchmer_wigderson` / `brickell` cluster
 together because all three are linear schemes with comparable
-recovery-vector cost. `massey` wins for split because its CodeScheme
-constructs a single linear combination over a fixed generator matrix.
+recovery-vector cost. `massey` wins overall because its CodeScheme
+constructs a single linear combination over a fixed generator
+matrix on both split and reconstruct.
+
+The kiviat below visualises the same 4 KiB-block data, with one
+polygon for split throughput and one for reconstruct throughput on
+the same six-axis rosette. The polygons separate where the scheme is
+asymmetric: blakley is the only one whose reconstruct polygon sits
+appreciably outside (faster than) its split polygon, because split
+must sample fresh hyperplane coefficients and reject singular
+configurations on top of the same k×k linear work that reconstruct
+performs once. Every other scheme on the radar is split-faster, so
+its split polygon (teal) sits outside its reconstruct polygon (red).
+Source: `examples/bench.rs`, coarse `Instant`-based timer (5 warmup
++ 20 measured iterations of the full 274-chunk loop, median
+latency); the pilot-bench numbers above are the authoritative CI'd
+values.
+
+![4 KiB block radar](assets/four-kb-throughput-radar.svg)
 
 ## Kiviat charts
 

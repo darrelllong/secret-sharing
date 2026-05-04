@@ -799,6 +799,231 @@ fn emit_family_svg(
     Ok(())
 }
 
+// ── 4 KiB block radar ─────────────────────────────────────────────
+
+const FOUR_KIB_BYTES: usize = 4096;
+const FOUR_KIB_CHUNK: usize = 15; // safely fits in Mersenne-127
+
+/// Per-scheme 4 KiB block timing: split-ns and reconstruct-ns per
+/// 4 KiB secret, measured by chunking 4096 bytes into 15-byte
+/// Mersenne-127 elements and summing the per-chunk primitive cost
+/// inside one `time_block` measurement.
+struct FourKiBResult {
+    scheme: &'static str,
+    split_ns: u128,
+    recon_ns: u128,
+}
+
+fn random_4kb_chunks(rng: &mut ChaCha20Rng) -> Vec<BigUint> {
+    let mut bytes = vec![0u8; FOUR_KIB_BYTES];
+    rng.fill_bytes(&mut bytes);
+    let n = FOUR_KIB_BYTES.div_ceil(FOUR_KIB_CHUNK);
+    (0..n)
+        .map(|i| {
+            let s = i * FOUR_KIB_CHUNK;
+            let e = (s + FOUR_KIB_CHUNK).min(FOUR_KIB_BYTES);
+            BigUint::from_be_bytes(&bytes[s..e])
+        })
+        .collect()
+}
+
+fn bench_4kb_block() -> Vec<FourKiBResult> {
+    let f = mersenne127();
+    let field = PrimeField::new(f);
+    // Smaller iter count: each block already aggregates 274 chunks of
+    // primitive work, so ITERS=20 gives the same sample-volume budget
+    // as the per-element radars at ITERS=200.
+    const BLOCK_ITERS: usize = 20;
+    const BLOCK_WARMUP: usize = 5;
+
+    let mut out = Vec::new();
+
+    // shamir
+    {
+        let mut r = rng_for(0x42);
+        let chunks = random_4kb_chunks(&mut r);
+        let split_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for s in &chunks {
+                std::hint::black_box(shamir::split(&field, &mut r, s, K, N));
+            }
+        });
+        let share_chunks: Vec<Vec<shamir::Share>> = chunks
+            .iter()
+            .map(|s| shamir::split(&field, &mut r, s, K, N))
+            .collect();
+        let recon_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for shares in &share_chunks {
+                std::hint::black_box(shamir::reconstruct(&field, &shares[..K], K).unwrap());
+            }
+        });
+        out.push(FourKiBResult { scheme: "shamir", split_ns, recon_ns });
+    }
+    // blakley
+    {
+        let mut r = rng_for(0x19);
+        let chunks = random_4kb_chunks(&mut r);
+        let split_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for s in &chunks {
+                std::hint::black_box(blakley::split(&field, &mut r, s, K, N));
+            }
+        });
+        let share_chunks: Vec<_> = chunks
+            .iter()
+            .map(|s| blakley::split(&field, &mut r, s, K, N))
+            .collect();
+        let recon_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for shares in &share_chunks {
+                std::hint::black_box(blakley::reconstruct(&field, &shares[..K], K).unwrap());
+            }
+        });
+        out.push(FourKiBResult { scheme: "blakley", split_ns, recon_ns });
+    }
+    // kothari
+    {
+        let scheme = kothari::vandermonde(field.clone(), K, N);
+        let mut r = rng_for(0x4B);
+        let chunks = random_4kb_chunks(&mut r);
+        let split_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for s in &chunks {
+                std::hint::black_box(kothari::split(&scheme, &mut r, s));
+            }
+        });
+        let pair_chunks: Vec<Vec<(usize, BigUint)>> = chunks
+            .iter()
+            .map(|s| {
+                let shares = kothari::split(&scheme, &mut r, s);
+                (0..K).map(|c| (c, shares[c].clone())).collect()
+            })
+            .collect();
+        let recon_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for pairs in &pair_chunks {
+                std::hint::black_box(kothari::reconstruct(&scheme, pairs).unwrap());
+            }
+        });
+        out.push(FourKiBResult { scheme: "kothari", split_ns, recon_ns });
+    }
+    // karchmer-wigderson
+    {
+        let prog = kw::threshold_msp(field.clone(), K, N);
+        let mut r = rng_for(0x9C);
+        let chunks = random_4kb_chunks(&mut r);
+        let split_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for s in &chunks {
+                std::hint::black_box(kw::split(&prog, &mut r, s));
+            }
+        });
+        let coalition_chunks: Vec<Vec<_>> = chunks
+            .iter()
+            .map(|s| {
+                let shares = kw::split(&prog, &mut r, s);
+                shares.iter().take(K).cloned().collect()
+            })
+            .collect();
+        let recon_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for coalition in &coalition_chunks {
+                std::hint::black_box(kw::reconstruct(&prog, coalition).unwrap());
+            }
+        });
+        out.push(FourKiBResult { scheme: "karchmer_wigderson", split_ns, recon_ns });
+    }
+    // brickell (Vandermonde participants)
+    {
+        let vectors: Vec<Vec<BigUint>> = (1..=N)
+            .map(|j| {
+                let mut row = Vec::with_capacity(K);
+                let mut pow = BigUint::one();
+                let j_val = BigUint::from_u64(j as u64);
+                for _ in 0..K {
+                    row.push(pow.clone());
+                    pow = field.mul(&pow, &j_val);
+                }
+                row
+            })
+            .collect();
+        let scheme = brickell::Scheme::new(field.clone(), vectors);
+        let mut r = rng_for(0xB7);
+        let chunks = random_4kb_chunks(&mut r);
+        let split_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for s in &chunks {
+                std::hint::black_box(brickell::split(&scheme, &mut r, s));
+            }
+        });
+        let coalition_chunks: Vec<Vec<_>> = chunks
+            .iter()
+            .map(|s| {
+                let shares = brickell::split(&scheme, &mut r, s);
+                shares.iter().take(K).cloned().collect()
+            })
+            .collect();
+        let recon_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for coalition in &coalition_chunks {
+                std::hint::black_box(brickell::reconstruct(&scheme, coalition).unwrap());
+            }
+        });
+        out.push(FourKiBResult { scheme: "brickell", split_ns, recon_ns });
+    }
+    // massey
+    {
+        let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+        #[allow(clippy::needless_range_loop)]
+        for j in 1..=N {
+            g[1][j] = BigUint::from_u64(j as u64);
+        }
+        let scheme = massey::CodeScheme::new(field.clone(), g);
+        let mut r = rng_for(0x7E);
+        let chunks = random_4kb_chunks(&mut r);
+        let split_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for s in &chunks {
+                std::hint::black_box(massey::split(&scheme, &mut r, s));
+            }
+        });
+        let coalition_chunks: Vec<Vec<_>> = chunks
+            .iter()
+            .map(|s| {
+                let shares = massey::split(&scheme, &mut r, s);
+                shares.iter().take(2).cloned().collect()
+            })
+            .collect();
+        let recon_ns = time_block(BLOCK_ITERS, BLOCK_WARMUP, || {
+            for coalition in &coalition_chunks {
+                std::hint::black_box(massey::reconstruct(&scheme, coalition).unwrap());
+            }
+        });
+        out.push(FourKiBResult { scheme: "massey", split_ns, recon_ns });
+    }
+
+    out
+}
+
+fn emit_4kb_svg(results: &[FourKiBResult], file: &str) -> std::io::Result<()> {
+    if results.is_empty() {
+        return Ok(());
+    }
+    let axis_labels: Vec<&str> = results.iter().map(|r| r.scheme).collect();
+    let split_ops: Vec<f64> = results.iter().map(|r| ops_per_sec(r.split_ns)).collect();
+    let recon_ops: Vec<f64> = results.iter().map(|r| ops_per_sec(r.recon_ns)).collect();
+    let series: Vec<(&str, &str, Vec<f64>)> = vec![
+        ("split", "#0f766e", split_ops),
+        ("reconstruct", "#b91c1c", recon_ops),
+    ];
+
+    let mut all: Vec<f64> = series.iter().flat_map(|(_, _, v)| v.iter().copied()).collect();
+    all.retain(|v| v.is_finite() && *v > 0.0);
+    all.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let lo = all.first().copied().unwrap_or(1.0).max(1.0);
+    let hi = all.last().copied().unwrap_or(1_000_000.0).max(lo * 10.0);
+    let lo = 10f64.powf(lo.log10().floor());
+    let hi = 10f64.powf(hi.log10().ceil());
+
+    let title = "4 KiB block: split vs reconstruct (ops/sec, log scale)";
+    let subtitle =
+        "k=3, n=5, GF(2^127 − 1); 4096 B chunked into 274 × 15-byte field elements";
+    let svg = build_radar_svg(title, subtitle, &axis_labels, &series, lo, hi);
+    std::fs::write(file, svg)?;
+    eprintln!("wrote {file}");
+    Ok(())
+}
+
 // ── Non-radar benches: schemes whose perf model doesn't fit `bits` ─────────
 
 /// One sample point on a 1-D scaling curve: x-axis label + (split, recon) ns.
@@ -1699,6 +1924,10 @@ fn main() -> std::io::Result<()> {
         "assets/other-throughput-radar.svg",
         &results,
     )?;
+
+    eprintln!("\nbenching 4 KiB block radar...");
+    let four_kb = bench_4kb_block();
+    emit_4kb_svg(&four_kb, "assets/four-kb-throughput-radar.svg")?;
 
     // ── Non-radar dimensions ───────────────────────────────────────
     eprintln!("\nbenching non-radar dimensions...");
