@@ -1,3 +1,9 @@
 /target
 Cargo.lock
 .DS_Store
+
+# Pilot-bench writes one `pilot_result_<timestamp>/` directory per
+# round, with raw readings and session logs. The Markdown summary at
+# benchmarks/pilot_ss_latest.md is the artefact we keep; everything
+# else is recomputed by re-running scripts/bench_pilot.sh.
+/pilot_result_*
