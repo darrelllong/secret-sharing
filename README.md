@@ -504,6 +504,7 @@ For copy-pasteable examples covering every scheme, see
 ```sh
 cargo test # 236 unit + 7 integration + 2 doc
 cargo clippy --all-targets -- -D warnings # clean
+bash scripts/bench_pilot.sh # CI-backed pilot-bench numbers — see PERFORMANCE.md
 ```
 
 ## Choosing a field

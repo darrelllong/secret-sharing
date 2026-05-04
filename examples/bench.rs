@@ -1498,6 +1498,53 @@ fn build_bar_svg(title: &str, subtitle: &str, rows: &[(String, u128, u128)]) -> 
     s
 }
 
+fn print_vss_table(results: &[Result]) {
+    let in_family: Vec<&Result> = results
+        .iter()
+        .filter(|r| matches!(r.family, Family::Vss))
+        .collect();
+    if in_family.is_empty() {
+        return;
+    }
+    println!("\n## VSS family — split / reconstruct (k=3, n=5)\n");
+    println!(
+        "Two schemes only (`vss`, `cgma_vss`). A radar with two axes \
+         degenerates to a line; the table is the honest format here."
+    );
+    println!();
+    println!(
+        "| Scheme | op | 128-bit | 256-bit | 512-bit | 1024-bit |"
+    );
+    println!(
+        "|--------|----|---------|---------|---------|----------|"
+    );
+    for r in &in_family {
+        println!(
+            "| `{}` | split       | {} | {} | {} | {} |",
+            r.scheme,
+            human_ns(r.splits[0]),
+            human_ns(r.splits[1]),
+            human_ns(r.splits[2]),
+            human_ns(r.splits[3]),
+        );
+        println!(
+            "| `{}` | reconstruct | {} | {} | {} | {} |",
+            r.scheme,
+            human_ns(r.recons[0]),
+            human_ns(r.recons[1]),
+            human_ns(r.recons[2]),
+            human_ns(r.recons[3]),
+        );
+    }
+    println!();
+    println!(
+        "Caveat: `cgma_vss` columns are constant because the bench \
+         uses a fixed toy Schnorr group at every secret-bit setting. \
+         For the actual scaling with group size, see the \
+         `cgma-vss-scaling` chart and table below."
+    );
+}
+
 fn print_scaling_table(title: &str, points: &[ScalingPoint]) {
     println!("\n## {title}\n");
     println!("| Parameter | split | reconstruct |");
@@ -1644,12 +1691,10 @@ fn main() -> std::io::Result<()> {
         "assets/ramp-throughput-radar.svg",
         &results,
     )?;
-    emit_family_svg(
-        Family::Vss,
-        "Verifiable secret sharing",
-        "assets/vss-throughput-radar.svg",
-        &results,
-    )?;
+    // The VSS family has only two schemes (vss + cgma_vss), so a
+    // radar would degenerate to a 2-axis bowtie that conveys no
+    // shape. Emit a Markdown table to PERFORMANCE.md instead.
+    print_vss_table(&results);
     emit_family_svg(
         Family::Other,
         "Other schemes",

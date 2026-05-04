@@ -1,0 +1,830 @@
+1:[2026-05-03 23:13:16] <info> Saving results to directory pilot_result_20260504_061316
+2:[2026-05-03 23:13:16] <info> Pilot 0.14 (compiled by clang-21.0.0 (clang-2100.0.123.102) on Mar 27 2026)
+3:[2026-05-03 23:13:16] <debug> Program path and args: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+4:[2026-05-03 23:13:16] <debug> Total number of PIs: 1
+5:[2026-05-03 23:13:16] <debug> PI[0] name: shamir_reconstruct, unit: ms/op, reading must satisfy: yes, mean method: harmonic
+6:[2026-05-03 23:13:16] <info> Preset mode activated: quick
+7:[2026-05-03 23:13:16] <info> Setting the required width of confidence interval to 20% of mean
+8:[2026-05-03 23:13:16] <info> Setting the limit of autocorrelation coefficient to 0.8
+9:[2026-05-03 23:13:16] <info> Setting the required minimum subsession sample size to 30
+10:[2026-05-03 23:13:16] <info> Disabled short round detection because work amount information is not set.
+11:[2026-05-03 23:13:16] <info> Starting workload round 0 with work_amount 0
+12:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+13:[2026-05-03 23:13:16] <info> Got output from client program: 0.0331225
+14:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0331225
+15:[2026-05-03 23:13:16] <info> Finished workload round 0
+16:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 0
+17:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+18:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): need more than 3 rounds data for WPS analysis
+19:[2026-05-03 23:13:16] <info> 0   | shamir_reconstruct: 
+20:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+21:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+22:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+23:[2026-05-03 23:13:16] <info> Starting workload round 1 with work_amount 0
+24:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+25:[2026-05-03 23:13:16] <info> Got output from client program: 0.0323695
+26:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0323695
+27:[2026-05-03 23:13:16] <info> Finished workload round 1
+28:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 1
+29:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+30:[2026-05-03 23:13:16] <debug> Need more than 3 samples to calculate required sample size
+31:[2026-05-03 23:13:16] <debug> Need more than 3 samples to calculate required sample size
+32:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): need more than 3 rounds data for WPS analysis
+33:[2026-05-03 23:13:16] <info> 1   | shamir_reconstruct: 
+34:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+35:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+36:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+37:[2026-05-03 23:13:16] <info> Starting workload round 2 with work_amount 0
+38:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+39:[2026-05-03 23:13:16] <info> Got output from client program: 0.030908916
+40:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0309089
+41:[2026-05-03 23:13:16] <info> Finished workload round 2
+42:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 2
+43:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+44:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+45:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0219587
+46:[2026-05-03 23:13:16] <trace> optimal subsession size (q) = 1
+47:[2026-05-03 23:13:16] <trace> T score for 95% confidence level = 4.30265
+48:[2026-05-03 23:13:16] <trace> expected CI width: 0.00642673
+49:[2026-05-03 23:13:16] <trace> number of samples required: 3 (desired sample size 3 x opt. subsession size 1)
+50:[2026-05-03 23:13:16] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+51:[2026-05-03 23:13:16] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+52:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+53:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0219587
+54:[2026-05-03 23:13:16] <trace> optimal subsession size (q) = 1
+55:[2026-05-03 23:13:16] <trace> T score for 95% confidence level = 4.30265
+56:[2026-05-03 23:13:16] <trace> expected CI width: 0.00642673
+57:[2026-05-03 23:13:16] <trace> number of samples required: 3 (desired sample size 3 x opt. subsession size 1)
+58:[2026-05-03 23:13:16] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+59:[2026-05-03 23:13:16] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+60:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+61:[2026-05-03 23:13:16] <info> 2   | shamir_reconstruct: 
+62:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+63:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+64:[2026-05-03 23:13:16] <info> [PI 0] needs 27 more readings
+65:[2026-05-03 23:13:16] <info> Starting workload round 3 with work_amount 0
+66:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+67:[2026-05-03 23:13:16] <info> Got output from client program: 0.030969
+68:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.030969
+69:[2026-05-03 23:13:16] <info> Finished workload round 3
+70:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 3
+71:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+72:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+73:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.281081
+74:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+75:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+76:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.281081
+77:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+78:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+79:[2026-05-03 23:13:16] <info> 3   | shamir_reconstruct: 
+80:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+81:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+82:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+83:[2026-05-03 23:13:16] <info> Starting workload round 4 with work_amount 0
+84:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+85:[2026-05-03 23:13:16] <info> Got output from client program: 0.03178
+86:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.03178
+87:[2026-05-03 23:13:16] <info> Finished workload round 4
+88:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 4
+89:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+90:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+91:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.291646
+92:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+93:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+94:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.291646
+95:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+96:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+97:[2026-05-03 23:13:16] <info> 4   | shamir_reconstruct: R m0.03183 c v 
+98:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+99:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+100:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+101:[2026-05-03 23:13:16] <info> Starting workload round 5 with work_amount 0
+102:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+103:[2026-05-03 23:13:16] <info> Got output from client program: 0.033828418
+104:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0338284
+105:[2026-05-03 23:13:16] <info> Finished workload round 5
+106:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 5
+107:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+108:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+109:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.182526
+110:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.666165
+111:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+112:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+113:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.182526
+114:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.666165
+115:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+116:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+117:[2026-05-03 23:13:16] <info> 5   | shamir_reconstruct: R m0.03216 c v 
+118:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+119:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+120:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+121:[2026-05-03 23:13:16] <info> Starting workload round 6 with work_amount 0
+122:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+123:[2026-05-03 23:13:16] <info> Got output from client program: 0.03204375
+124:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0320438
+125:[2026-05-03 23:13:16] <info> Finished workload round 6
+126:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 6
+127:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+128:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+129:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.15097
+130:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.67492
+131:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+132:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+133:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.15097
+134:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.67492
+135:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+136:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+137:[2026-05-03 23:13:16] <info> 6   | shamir_reconstruct: R m0.03215 c v 
+138:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+139:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+140:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+141:[2026-05-03 23:13:16] <info> Starting workload round 7 with work_amount 0
+142:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+143:[2026-05-03 23:13:16] <info> Got output from client program: 0.031881084
+144:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0318811
+145:[2026-05-03 23:13:16] <info> Finished workload round 7
+146:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 7
+147:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+148:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+149:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.148725
+150:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.727706
+151:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+152:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+153:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.148725
+154:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.727706
+155:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+156:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+157:[2026-05-03 23:13:16] <info> 7   | shamir_reconstruct: R m0.03211 c v 
+158:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+159:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+160:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+161:[2026-05-03 23:13:16] <info> Starting workload round 8 with work_amount 0
+162:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+163:[2026-05-03 23:13:16] <info> Got output from client program: 0.03204175
+164:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0320418
+165:[2026-05-03 23:13:16] <info> Finished workload round 8
+166:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 8
+167:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+168:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+169:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.149843
+170:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.729217
+171:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.348503
+172:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+173:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+174:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.149843
+175:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.729217
+176:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.348503
+177:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+178:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+179:[2026-05-03 23:13:16] <info> 8   | shamir_reconstruct: R m0.0321 c v 
+180:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+181:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+182:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+183:[2026-05-03 23:13:16] <info> Starting workload round 9 with work_amount 0
+184:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+185:[2026-05-03 23:13:16] <info> Got output from client program: 0.032177666
+186:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0321777
+187:[2026-05-03 23:13:16] <info> Finished workload round 9
+188:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 9
+189:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+190:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+191:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.150135
+192:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.72767
+193:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.369975
+194:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+195:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+196:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.150135
+197:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.72767
+198:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.369975
+199:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+200:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+201:[2026-05-03 23:13:16] <info> 9   | shamir_reconstruct: R m0.03211 c v 
+202:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+203:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+204:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+205:[2026-05-03 23:13:16] <info> Starting workload round 10 with work_amount 0
+206:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+207:[2026-05-03 23:13:16] <info> Got output from client program: 0.032239582
+208:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0322396
+209:[2026-05-03 23:13:16] <info> Finished workload round 10
+210:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 10
+211:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+212:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+213:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.152667
+214:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.724017
+215:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.373133
+216:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+217:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+218:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.152667
+219:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.724017
+220:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.373133
+221:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+222:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+223:[2026-05-03 23:13:16] <info> 10  | shamir_reconstruct: R m0.03212 c v 
+224:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+225:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+226:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+227:[2026-05-03 23:13:16] <info> Starting workload round 11 with work_amount 0
+228:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+229:[2026-05-03 23:13:16] <info> Got output from client program: 0.030162666
+230:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0301627
+231:[2026-05-03 23:13:16] <info> Finished workload round 11
+232:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 11
+233:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+234:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+235:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0617429
+236:[2026-05-03 23:13:16] <trace> optimal subsession size (q) = 1
+237:[2026-05-03 23:13:16] <trace> T score for 95% confidence level = 2.20099
+238:[2026-05-03 23:13:16] <trace> expected CI width: 0.00639208
+239:[2026-05-03 23:13:16] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+240:[2026-05-03 23:13:16] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+241:[2026-05-03 23:13:16] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+242:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+243:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0617429
+244:[2026-05-03 23:13:16] <trace> optimal subsession size (q) = 1
+245:[2026-05-03 23:13:16] <trace> T score for 95% confidence level = 2.20099
+246:[2026-05-03 23:13:16] <trace> expected CI width: 0.00639208
+247:[2026-05-03 23:13:16] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+248:[2026-05-03 23:13:16] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+249:[2026-05-03 23:13:16] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+250:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+251:[2026-05-03 23:13:16] <info> 11  | shamir_reconstruct: R m0.03196 c0.001242 v9.55e-07 
+252:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+253:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+254:[2026-05-03 23:13:16] <info> [PI 0] needs 18 more readings
+255:[2026-05-03 23:13:16] <info> Starting workload round 12 with work_amount 0
+256:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+257:[2026-05-03 23:13:16] <info> Got output from client program: 0.029667166
+258:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.0296672
+259:[2026-05-03 23:13:16] <info> Finished workload round 12
+260:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 12
+261:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+262:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+263:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.295264
+264:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.514486
+265:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.437389
+266:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.110819
+267:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+268:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+269:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.295264
+270:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.514486
+271:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.437389
+272:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.110819
+273:[2026-05-03 23:13:16] <debug> Don't have enough data to calculate required readings sample size yet
+274:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+275:[2026-05-03 23:13:16] <info> 12  | shamir_reconstruct: R m0.03178 c v 
+276:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+277:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+278:[2026-05-03 23:13:16] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+279:[2026-05-03 23:13:16] <info> Starting workload round 13 with work_amount 0
+280:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+281:[2026-05-03 23:13:16] <info> Got output from client program: 0.034904
+282:[2026-05-03 23:13:16] <debug> [PI 0] new reading: 0.034904
+283:[2026-05-03 23:13:16] <info> Finished workload round 13
+284:[2026-05-03 23:13:16] <debug> [PI 0] has no unit readings data in round 13
+285:[2026-05-03 23:13:16] <info> [PI 0] analyzing results
+286:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+287:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0746248
+288:[2026-05-03 23:13:16] <trace> optimal subsession size (q) = 1
+289:[2026-05-03 23:13:16] <trace> T score for 95% confidence level = 2.16037
+290:[2026-05-03 23:13:16] <trace> expected CI width: 0.00640137
+291:[2026-05-03 23:13:16] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+292:[2026-05-03 23:13:16] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+293:[2026-05-03 23:13:16] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+294:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+295:[2026-05-03 23:13:16] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0746248
+296:[2026-05-03 23:13:16] <trace> optimal subsession size (q) = 1
+297:[2026-05-03 23:13:16] <trace> T score for 95% confidence level = 2.16037
+298:[2026-05-03 23:13:16] <trace> expected CI width: 0.00640137
+299:[2026-05-03 23:13:16] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+300:[2026-05-03 23:13:16] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+301:[2026-05-03 23:13:16] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+302:[2026-05-03 23:13:16] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+303:[2026-05-03 23:13:16] <info> 13  | shamir_reconstruct: R m0.03201 c0.001582 v1.877e-06 
+304:[2026-05-03 23:13:16] <debug> No need to refresh analytical result
+305:[2026-05-03 23:13:16] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+306:[2026-05-03 23:13:16] <info> [PI 0] needs 16 more readings
+307:[2026-05-03 23:13:16] <info> Starting workload round 14 with work_amount 0
+308:[2026-05-03 23:13:16] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+309:[2026-05-03 23:13:17] <info> Got output from client program: 0.030071334
+310:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0300713
+311:[2026-05-03 23:13:17] <info> Finished workload round 14
+312:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 14
+313:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+314:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+315:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.272048
+316:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.635429
+317:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.470261
+318:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.425458
+319:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.545859
+320:[2026-05-03 23:13:17] <debug> Don't have enough data to calculate required readings sample size yet
+321:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+322:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.272048
+323:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.635429
+324:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.470261
+325:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.425458
+326:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.545859
+327:[2026-05-03 23:13:17] <debug> Don't have enough data to calculate required readings sample size yet
+328:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+329:[2026-05-03 23:13:17] <info> 14  | shamir_reconstruct: R m0.03188 c v 
+330:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+331:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+332:[2026-05-03 23:13:17] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+333:[2026-05-03 23:13:17] <info> Starting workload round 15 with work_amount 0
+334:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+335:[2026-05-03 23:13:17] <info> Got output from client program: 0.03151225
+336:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0315122
+337:[2026-05-03 23:13:17] <info> Finished workload round 15
+338:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 15
+339:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+340:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+341:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.248297
+342:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.565548
+343:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.476484
+344:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.116706
+345:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.517928
+346:[2026-05-03 23:13:17] <debug> Don't have enough data to calculate required readings sample size yet
+347:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+348:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.248297
+349:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.565548
+350:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.476484
+351:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.116706
+352:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.517928
+353:[2026-05-03 23:13:17] <debug> Don't have enough data to calculate required readings sample size yet
+354:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+355:[2026-05-03 23:13:17] <info> 15  | shamir_reconstruct: R m0.03185 c v 
+356:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+357:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+358:[2026-05-03 23:13:17] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+359:[2026-05-03 23:13:17] <info> Starting workload round 16 with work_amount 0
+360:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+361:[2026-05-03 23:13:17] <info> Got output from client program: 0.031419834
+362:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0314198
+363:[2026-05-03 23:13:17] <info> Finished workload round 16
+364:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 16
+365:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+366:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+367:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.242613
+368:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.562805
+369:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.488027
+370:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.091368
+371:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 4
+372:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 3.18245
+373:[2026-05-03 23:13:17] <trace> expected CI width: 0.00636588
+374:[2026-05-03 23:13:17] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+375:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+376:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+377:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+378:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+379:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.242613
+380:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.562805
+381:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.488027
+382:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.091368
+383:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 4
+384:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 3.18245
+385:[2026-05-03 23:13:17] <trace> expected CI width: 0.00636588
+386:[2026-05-03 23:13:17] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+387:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+388:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+389:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+390:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+391:[2026-05-03 23:13:17] <info> 16  | shamir_reconstruct: R m0.03183 c0.001193 v1.406e-07 
+392:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+393:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+394:[2026-05-03 23:13:17] <info> [PI 0] needs 103 more readings
+395:[2026-05-03 23:13:17] <info> Starting workload round 17 with work_amount 0
+396:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+397:[2026-05-03 23:13:17] <info> Got output from client program: 0.03430525
+398:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0343053
+399:[2026-05-03 23:13:17] <info> Finished workload round 17
+400:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 17
+401:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+402:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+403:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.226444
+404:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.655663
+405:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0474157
+406:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+407:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.57058
+408:[2026-05-03 23:13:17] <trace> expected CI width: 0.00639339
+409:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+410:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+411:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+412:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+413:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+414:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.226444
+415:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.655663
+416:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0474157
+417:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+418:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.57058
+419:[2026-05-03 23:13:17] <trace> expected CI width: 0.00639339
+420:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+421:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+422:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+423:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+424:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+425:[2026-05-03 23:13:17] <info> 17  | shamir_reconstruct: R m0.03197 c0.0007552 v1.295e-07 
+426:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+427:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+428:[2026-05-03 23:13:17] <info> [PI 0] needs 72 more readings
+429:[2026-05-03 23:13:17] <info> Starting workload round 18 with work_amount 0
+430:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+431:[2026-05-03 23:13:17] <info> Got output from client program: 0.031703832
+432:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0317038
+433:[2026-05-03 23:13:17] <info> Finished workload round 18
+434:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 18
+435:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+436:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+437:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.244549
+438:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.659566
+439:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0357383
+440:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+441:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.57058
+442:[2026-05-03 23:13:17] <trace> expected CI width: 0.00639062
+443:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+444:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+445:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+446:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+447:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+448:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.244549
+449:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.659566
+450:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0357383
+451:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+452:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.57058
+453:[2026-05-03 23:13:17] <trace> expected CI width: 0.00639062
+454:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+455:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+456:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+457:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+458:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+459:[2026-05-03 23:13:17] <info> 18  | shamir_reconstruct: R m0.03195 c0.0007559 v1.297e-07 
+460:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+461:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+462:[2026-05-03 23:13:17] <info> [PI 0] needs 71 more readings
+463:[2026-05-03 23:13:17] <info> Starting workload round 19 with work_amount 0
+464:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+465:[2026-05-03 23:13:17] <info> Got output from client program: 0.031108166
+466:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0311082
+467:[2026-05-03 23:13:17] <info> Finished workload round 19
+468:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 19
+469:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+470:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+471:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.235184
+472:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.721294
+473:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0181415
+474:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+475:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.57058
+476:[2026-05-03 23:13:17] <trace> expected CI width: 0.00638217
+477:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+478:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+479:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+480:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+481:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+482:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.235184
+483:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.721294
+484:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0181415
+485:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+486:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.57058
+487:[2026-05-03 23:13:17] <trace> expected CI width: 0.00638217
+488:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+489:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+490:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+491:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+492:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+493:[2026-05-03 23:13:17] <info> 19  | shamir_reconstruct: R m0.03191 c0.0007662 v1.333e-07 
+494:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+495:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+496:[2026-05-03 23:13:17] <info> [PI 0] needs 70 more readings
+497:[2026-05-03 23:13:17] <info> Starting workload round 20 with work_amount 0
+498:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+499:[2026-05-03 23:13:17] <info> Got output from client program: 0.02947475
+500:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0294748
+501:[2026-05-03 23:13:17] <info> Finished workload round 20
+502:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 20
+503:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+504:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+505:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.157663
+506:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.689595
+507:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.298371
+508:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.191741
+509:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.527512
+510:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.119822
+511:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.0172158
+512:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 7
+513:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+514:[2026-05-03 23:13:17] <trace> expected CI width: 0.00635897
+515:[2026-05-03 23:13:17] <trace> number of samples required: 7 (desired sample size 1 x opt. subsession size 7)
+516:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+517:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 7 samples to reduce autocorrelation
+518:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (7) x required subsession sample size (30) = 210
+519:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+520:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.157663
+521:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.689595
+522:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.298371
+523:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.191741
+524:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.527512
+525:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.119822
+526:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.0172158
+527:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 7
+528:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+529:[2026-05-03 23:13:17] <trace> expected CI width: 0.00635897
+530:[2026-05-03 23:13:17] <trace> number of samples required: 7 (desired sample size 1 x opt. subsession size 7)
+531:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+532:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 7 samples to reduce autocorrelation
+533:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (7) x required subsession sample size (30) = 210
+534:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+535:[2026-05-03 23:13:17] <info> 20  | shamir_reconstruct: R m0.03179 c0.001951 v1.542e-07 
+536:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+537:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 210
+538:[2026-05-03 23:13:17] <info> [PI 0] needs 189 more readings
+539:[2026-05-03 23:13:17] <info> Starting workload round 21 with work_amount 0
+540:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+541:[2026-05-03 23:13:17] <info> Got output from client program: 0.031878
+542:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.031878
+543:[2026-05-03 23:13:17] <info> Finished workload round 21
+544:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 21
+545:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+546:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+547:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.162291
+548:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.50235
+549:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.299696
+550:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.198521
+551:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.535367
+552:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.133238
+553:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.0180138
+554:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 7
+555:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+556:[2026-05-03 23:13:17] <trace> expected CI width: 0.00635972
+557:[2026-05-03 23:13:17] <trace> number of samples required: 7 (desired sample size 1 x opt. subsession size 7)
+558:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+559:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 7 samples to reduce autocorrelation
+560:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (7) x required subsession sample size (30) = 210
+561:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+562:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.162291
+563:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.50235
+564:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.299696
+565:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.198521
+566:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.535367
+567:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.133238
+568:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.0180138
+569:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 7
+570:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+571:[2026-05-03 23:13:17] <trace> expected CI width: 0.00635972
+572:[2026-05-03 23:13:17] <trace> number of samples required: 7 (desired sample size 1 x opt. subsession size 7)
+573:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+574:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 7 samples to reduce autocorrelation
+575:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (7) x required subsession sample size (30) = 210
+576:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+577:[2026-05-03 23:13:17] <info> 21  | shamir_reconstruct: R m0.0318 c0.001951 v1.543e-07 
+578:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+579:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 210
+580:[2026-05-03 23:13:17] <info> [PI 0] needs 188 more readings
+581:[2026-05-03 23:13:17] <info> Starting workload round 22 with work_amount 0
+582:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+583:[2026-05-03 23:13:17] <info> Got output from client program: 0.031546668
+584:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0315467
+585:[2026-05-03 23:13:17] <info> Finished workload round 22
+586:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 22
+587:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+588:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+589:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.162903
+590:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.501805
+591:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.29552
+592:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.178474
+593:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.512168
+594:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.0949535
+595:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 6
+596:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+597:[2026-05-03 23:13:17] <trace> expected CI width: 0.00635753
+598:[2026-05-03 23:13:17] <trace> number of samples required: 6 (desired sample size 1 x opt. subsession size 6)
+599:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+600:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 6 samples to reduce autocorrelation
+601:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (6) x required subsession sample size (30) = 180
+602:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+603:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.162903
+604:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.501805
+605:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.29552
+606:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.178474
+607:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.512168
+608:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.0949535
+609:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 6
+610:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+611:[2026-05-03 23:13:17] <trace> expected CI width: 0.00635753
+612:[2026-05-03 23:13:17] <trace> number of samples required: 6 (desired sample size 1 x opt. subsession size 6)
+613:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+614:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 6 samples to reduce autocorrelation
+615:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (6) x required subsession sample size (30) = 180
+616:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+617:[2026-05-03 23:13:17] <info> 22  | shamir_reconstruct: R m0.03179 c0.001486 v8.94e-08 
+618:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+619:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 180
+620:[2026-05-03 23:13:17] <info> [PI 0] needs 157 more readings
+621:[2026-05-03 23:13:17] <info> Starting workload round 23 with work_amount 0
+622:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+623:[2026-05-03 23:13:17] <info> Got output from client program: 0.030205832
+624:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0302058
+625:[2026-05-03 23:13:17] <info> Finished workload round 23
+626:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 23
+627:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+628:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+629:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.147045
+630:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.327371
+631:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.00424195
+632:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+633:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.36462
+634:[2026-05-03 23:13:17] <trace> expected CI width: 0.00634435
+635:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+636:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+637:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+638:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+639:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+640:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.147045
+641:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.327371
+642:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.00424195
+643:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+644:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.36462
+645:[2026-05-03 23:13:17] <trace> expected CI width: 0.00634435
+646:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+647:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+648:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+649:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+650:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+651:[2026-05-03 23:13:17] <info> 23  | shamir_reconstruct: R m0.03172 c0.0009353 v3.129e-07 
+652:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+653:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+654:[2026-05-03 23:13:17] <info> [PI 0] needs 66 more readings
+655:[2026-05-03 23:13:17] <info> Starting workload round 24 with work_amount 0
+656:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+657:[2026-05-03 23:13:17] <info> Got output from client program: 0.030587166
+658:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0305872
+659:[2026-05-03 23:13:17] <info> Finished workload round 24
+660:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 24
+661:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+662:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+663:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.105398
+664:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.324443
+665:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0127931
+666:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+667:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.36462
+668:[2026-05-03 23:13:17] <trace> expected CI width: 0.00633527
+669:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+670:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+671:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+672:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+673:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+674:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.105398
+675:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.324443
+676:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0127931
+677:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 3
+678:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.36462
+679:[2026-05-03 23:13:17] <trace> expected CI width: 0.00633527
+680:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+681:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+682:[2026-05-03 23:13:17] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+683:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+684:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+685:[2026-05-03 23:13:17] <info> 24  | shamir_reconstruct: R m0.03168 c0.0009388 v3.153e-07 
+686:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+687:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+688:[2026-05-03 23:13:17] <info> [PI 0] needs 65 more readings
+689:[2026-05-03 23:13:17] <info> Starting workload round 25 with work_amount 0
+690:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+691:[2026-05-03 23:13:17] <info> Got output from client program: 0.031073582
+692:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0310736
+693:[2026-05-03 23:13:17] <info> Finished workload round 25
+694:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 25
+695:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+696:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+697:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0905601
+698:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+699:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.05954
+700:[2026-05-03 23:13:17] <trace> expected CI width: 0.00633064
+701:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+702:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+703:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+704:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+705:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0905601
+706:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+707:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.05954
+708:[2026-05-03 23:13:17] <trace> expected CI width: 0.00633064
+709:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+710:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+711:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+712:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+713:[2026-05-03 23:13:17] <info> 25  | shamir_reconstruct: R m0.03165 c0.001077 v1.777e-06 
+714:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+715:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+716:[2026-05-03 23:13:17] <info> [PI 0] needs 4 more readings
+717:[2026-05-03 23:13:17] <info> Starting workload round 26 with work_amount 0
+718:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+719:[2026-05-03 23:13:17] <info> Got output from client program: 0.03018325
+720:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0301832
+721:[2026-05-03 23:13:17] <info> Finished workload round 26
+722:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 26
+723:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+724:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+725:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0699767
+726:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+727:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.05553
+728:[2026-05-03 23:13:17] <trace> expected CI width: 0.00631975
+729:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+730:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+731:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+732:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+733:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0699767
+734:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+735:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.05553
+736:[2026-05-03 23:13:17] <trace> expected CI width: 0.00631975
+737:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+738:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+739:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+740:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+741:[2026-05-03 23:13:17] <info> 26  | shamir_reconstruct: R m0.0316 c0.001058 v1.789e-06 
+742:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+743:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+744:[2026-05-03 23:13:17] <info> [PI 0] needs 3 more readings
+745:[2026-05-03 23:13:17] <info> Starting workload round 27 with work_amount 0
+746:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+747:[2026-05-03 23:13:17] <info> Got output from client program: 0.029411082
+748:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0294111
+749:[2026-05-03 23:13:17] <info> Finished workload round 27
+750:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 27
+751:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+752:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+753:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.00554489
+754:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+755:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.05183
+756:[2026-05-03 23:13:17] <trace> expected CI width: 0.00630412
+757:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+758:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+759:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+760:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+761:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.00554489
+762:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+763:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.05183
+764:[2026-05-03 23:13:17] <trace> expected CI width: 0.00630412
+765:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+766:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+767:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+768:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+769:[2026-05-03 23:13:17] <info> 27  | shamir_reconstruct: R m0.03152 c0.001067 v1.894e-06 
+770:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+771:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+772:[2026-05-03 23:13:17] <info> [PI 0] needs 2 more readings
+773:[2026-05-03 23:13:17] <info> Starting workload round 28 with work_amount 0
+774:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+775:[2026-05-03 23:13:17] <info> Got output from client program: 0.030253334
+776:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0302533
+777:[2026-05-03 23:13:17] <info> Finished workload round 28
+778:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 28
+779:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+780:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+781:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0439998
+782:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+783:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.04841
+784:[2026-05-03 23:13:17] <trace> expected CI width: 0.00629538
+785:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+786:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+787:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+788:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+789:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0439998
+790:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+791:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.04841
+792:[2026-05-03 23:13:17] <trace> expected CI width: 0.00629538
+793:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+794:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+795:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+796:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+797:[2026-05-03 23:13:17] <info> 28  | shamir_reconstruct: R m0.03148 c0.001044 v1.881e-06 
+798:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+799:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+800:[2026-05-03 23:13:17] <info> [PI 0] needs 1 more readings
+801:[2026-05-03 23:13:17] <info> Starting workload round 29 with work_amount 0
+802:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss shamir_reconstruct
+803:[2026-05-03 23:13:17] <info> Got output from client program: 0.030289584
+804:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.0302896
+805:[2026-05-03 23:13:17] <info> Finished workload round 29
+806:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 29
+807:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+808:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+809:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0685381
+810:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+811:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.04523
+812:[2026-05-03 23:13:17] <trace> expected CI width: 0.00628747
+813:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+814:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+815:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+816:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+817:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0685381
+818:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+819:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.04523
+820:[2026-05-03 23:13:17] <trace> expected CI width: 0.00628747
+821:[2026-05-03 23:13:17] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+822:[2026-05-03 23:13:17] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+823:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+824:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+825:[2026-05-03 23:13:17] <info> 29  | shamir_reconstruct: R m0.03144 c0.001019 v1.864e-06 
+826:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+827:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+828:[2026-05-03 23:13:17] <info> [PI 0] already has enough readings
+829:[2026-05-03 23:13:17] <info> Analytical requirement achieved, exiting
+830:[2026-05-03 23:13:17] <debug> No need to refresh analytical result

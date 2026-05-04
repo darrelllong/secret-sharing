@@ -1,0 +1,1190 @@
+1:[2026-05-03 23:13:17] <info> Saving results to directory pilot_result_20260504_061317
+2:[2026-05-03 23:13:17] <info> Pilot 0.14 (compiled by clang-21.0.0 (clang-2100.0.123.102) on Mar 27 2026)
+3:[2026-05-03 23:13:17] <debug> Program path and args: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+4:[2026-05-03 23:13:17] <debug> Total number of PIs: 1
+5:[2026-05-03 23:13:17] <debug> PI[0] name: blakley_split, unit: ms/op, reading must satisfy: yes, mean method: harmonic
+6:[2026-05-03 23:13:17] <info> Preset mode activated: quick
+7:[2026-05-03 23:13:17] <info> Setting the required width of confidence interval to 20% of mean
+8:[2026-05-03 23:13:17] <info> Setting the limit of autocorrelation coefficient to 0.8
+9:[2026-05-03 23:13:17] <info> Setting the required minimum subsession sample size to 30
+10:[2026-05-03 23:13:17] <info> Disabled short round detection because work amount information is not set.
+11:[2026-05-03 23:13:17] <info> Starting workload round 0 with work_amount 0
+12:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+13:[2026-05-03 23:13:17] <info> Got output from client program: 0.22351325
+14:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.223513
+15:[2026-05-03 23:13:17] <info> Finished workload round 0
+16:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 0
+17:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+18:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): need more than 3 rounds data for WPS analysis
+19:[2026-05-03 23:13:17] <info> 0   | blakley_split: 
+20:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+21:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+22:[2026-05-03 23:13:17] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+23:[2026-05-03 23:13:17] <info> Starting workload round 1 with work_amount 0
+24:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+25:[2026-05-03 23:13:17] <info> Got output from client program: 0.239966082
+26:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.239966
+27:[2026-05-03 23:13:17] <info> Finished workload round 1
+28:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 1
+29:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+30:[2026-05-03 23:13:17] <debug> Need more than 3 samples to calculate required sample size
+31:[2026-05-03 23:13:17] <debug> Need more than 3 samples to calculate required sample size
+32:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): need more than 3 rounds data for WPS analysis
+33:[2026-05-03 23:13:17] <info> 1   | blakley_split: 
+34:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+35:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+36:[2026-05-03 23:13:17] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+37:[2026-05-03 23:13:17] <info> Starting workload round 2 with work_amount 0
+38:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+39:[2026-05-03 23:13:17] <info> Got output from client program: 0.251239
+40:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.251239
+41:[2026-05-03 23:13:17] <info> Finished workload round 2
+42:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 2
+43:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+44:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+45:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0076673
+46:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+47:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+48:[2026-05-03 23:13:17] <trace> expected CI width: 0.0476479
+49:[2026-05-03 23:13:17] <trace> number of samples required: 7 (desired sample size 7 x opt. subsession size 1)
+50:[2026-05-03 23:13:17] <debug> optimal sample size (7) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+51:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+52:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+53:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0076673
+54:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+55:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 4.30265
+56:[2026-05-03 23:13:17] <trace> expected CI width: 0.0476479
+57:[2026-05-03 23:13:17] <trace> number of samples required: 7 (desired sample size 7 x opt. subsession size 1)
+58:[2026-05-03 23:13:17] <debug> optimal sample size (7) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+59:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+60:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+61:[2026-05-03 23:13:17] <info> 2   | blakley_split: 
+62:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+63:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+64:[2026-05-03 23:13:17] <info> [PI 0] needs 27 more readings
+65:[2026-05-03 23:13:17] <info> Starting workload round 3 with work_amount 0
+66:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+67:[2026-05-03 23:13:17] <info> Got output from client program: 0.240539
+68:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.240539
+69:[2026-05-03 23:13:17] <info> Finished workload round 3
+70:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 3
+71:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+72:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+73:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0461193
+74:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+75:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 3.18245
+76:[2026-05-03 23:13:17] <trace> expected CI width: 0.0477629
+77:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 3 x opt. subsession size 1)
+78:[2026-05-03 23:13:17] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+79:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+80:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+81:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0461193
+82:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+83:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 3.18245
+84:[2026-05-03 23:13:17] <trace> expected CI width: 0.0477629
+85:[2026-05-03 23:13:17] <trace> number of samples required: 3 (desired sample size 3 x opt. subsession size 1)
+86:[2026-05-03 23:13:17] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+87:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+88:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+89:[2026-05-03 23:13:17] <info> 3   | blakley_split: 
+90:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+91:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+92:[2026-05-03 23:13:17] <info> [PI 0] needs 26 more readings
+93:[2026-05-03 23:13:17] <info> Starting workload round 4 with work_amount 0
+94:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+95:[2026-05-03 23:13:17] <info> Got output from client program: 0.232373084
+96:[2026-05-03 23:13:17] <debug> [PI 0] new reading: 0.232373
+97:[2026-05-03 23:13:17] <info> Finished workload round 4
+98:[2026-05-03 23:13:17] <debug> [PI 0] has no unit readings data in round 4
+99:[2026-05-03 23:13:17] <info> [PI 0] analyzing results
+100:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+101:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0588244
+102:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+103:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.77645
+104:[2026-05-03 23:13:17] <trace> expected CI width: 0.0475052
+105:[2026-05-03 23:13:17] <trace> number of samples required: 2 (desired sample size 2 x opt. subsession size 1)
+106:[2026-05-03 23:13:17] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+107:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+108:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+109:[2026-05-03 23:13:17] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0588244
+110:[2026-05-03 23:13:17] <trace> optimal subsession size (q) = 1
+111:[2026-05-03 23:13:17] <trace> T score for 95% confidence level = 2.77645
+112:[2026-05-03 23:13:17] <trace> expected CI width: 0.0475052
+113:[2026-05-03 23:13:17] <trace> number of samples required: 2 (desired sample size 2 x opt. subsession size 1)
+114:[2026-05-03 23:13:17] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+115:[2026-05-03 23:13:17] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+116:[2026-05-03 23:13:17] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+117:[2026-05-03 23:13:17] <info> 4   | blakley_split: R m0.2375 c0.02563 v0.0001065 
+118:[2026-05-03 23:13:17] <debug> No need to refresh analytical result
+119:[2026-05-03 23:13:17] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+120:[2026-05-03 23:13:17] <info> [PI 0] needs 25 more readings
+121:[2026-05-03 23:13:17] <info> Starting workload round 5 with work_amount 0
+122:[2026-05-03 23:13:17] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+123:[2026-05-03 23:13:18] <info> Got output from client program: 0.22469725
+124:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.224697
+125:[2026-05-03 23:13:18] <info> Finished workload round 5
+126:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 5
+127:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+128:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+129:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.206975
+130:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.646596
+131:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+132:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+133:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.206975
+134:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.646596
+135:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+136:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+137:[2026-05-03 23:13:18] <info> 5   | blakley_split: R m0.2354 c v 
+138:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+139:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+140:[2026-05-03 23:13:18] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+141:[2026-05-03 23:13:18] <info> Starting workload round 6 with work_amount 0
+142:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+143:[2026-05-03 23:13:18] <info> Got output from client program: 0.212898584
+144:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.212899
+145:[2026-05-03 23:13:18] <info> Finished workload round 6
+146:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 6
+147:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+148:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+149:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.386102
+150:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.277363
+151:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+152:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+153:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.386102
+154:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.277363
+155:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+156:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+157:[2026-05-03 23:13:18] <info> 6   | blakley_split: R m0.2322 c v 
+158:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+159:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+160:[2026-05-03 23:13:18] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+161:[2026-05-03 23:13:18] <info> Starting workload round 7 with work_amount 0
+162:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+163:[2026-05-03 23:13:18] <info> Got output from client program: 0.223585166
+164:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.223585
+165:[2026-05-03 23:13:18] <info> Finished workload round 7
+166:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 7
+167:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+168:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+169:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.526323
+170:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.0114829
+171:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 2
+172:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 3.18245
+173:[2026-05-03 23:13:18] <trace> expected CI width: 0.0462203
+174:[2026-05-03 23:13:18] <trace> number of samples required: 6 (desired sample size 3 x opt. subsession size 2)
+175:[2026-05-03 23:13:18] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+176:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 2 samples to reduce autocorrelation
+177:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (2) x required subsession sample size (30) = 60
+178:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+179:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.526323
+180:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.0114829
+181:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 2
+182:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 3.18245
+183:[2026-05-03 23:13:18] <trace> expected CI width: 0.0462203
+184:[2026-05-03 23:13:18] <trace> number of samples required: 6 (desired sample size 3 x opt. subsession size 2)
+185:[2026-05-03 23:13:18] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+186:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 2 samples to reduce autocorrelation
+187:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (2) x required subsession sample size (30) = 60
+188:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+189:[2026-05-03 23:13:18] <info> 7   | blakley_split: R m0.2311 c0.03633 v0.0001303 
+190:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+191:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): 60
+192:[2026-05-03 23:13:18] <info> [PI 0] needs 52 more readings
+193:[2026-05-03 23:13:18] <info> Starting workload round 8 with work_amount 0
+194:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+195:[2026-05-03 23:13:18] <info> Got output from client program: 0.215179334
+196:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.215179
+197:[2026-05-03 23:13:18] <info> Finished workload round 8
+198:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 8
+199:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+200:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+201:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.535157
+202:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.0879701
+203:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 2
+204:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 3.18245
+205:[2026-05-03 23:13:18] <trace> expected CI width: 0.0458665
+206:[2026-05-03 23:13:18] <trace> number of samples required: 6 (desired sample size 3 x opt. subsession size 2)
+207:[2026-05-03 23:13:18] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+208:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 2 samples to reduce autocorrelation
+209:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (2) x required subsession sample size (30) = 60
+210:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+211:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.535157
+212:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.0879701
+213:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 2
+214:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 3.18245
+215:[2026-05-03 23:13:18] <trace> expected CI width: 0.0458665
+216:[2026-05-03 23:13:18] <trace> number of samples required: 6 (desired sample size 3 x opt. subsession size 2)
+217:[2026-05-03 23:13:18] <debug> optimal sample size (3) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+218:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 2 samples to reduce autocorrelation
+219:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (2) x required subsession sample size (30) = 60
+220:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+221:[2026-05-03 23:13:18] <info> 8   | blakley_split: R m0.2293 c0.03691 v0.0001345 
+222:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+223:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): 60
+224:[2026-05-03 23:13:18] <info> [PI 0] needs 51 more readings
+225:[2026-05-03 23:13:18] <info> Starting workload round 9 with work_amount 0
+226:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+227:[2026-05-03 23:13:18] <info> Got output from client program: 0.22227175
+228:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.222272
+229:[2026-05-03 23:13:18] <info> Finished workload round 9
+230:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 9
+231:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+232:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+233:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.594887
+234:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.303628
+235:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.0294689
+236:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 3
+237:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 4.30265
+238:[2026-05-03 23:13:18] <trace> expected CI width: 0.0457252
+239:[2026-05-03 23:13:18] <trace> number of samples required: 15 (desired sample size 5 x opt. subsession size 3)
+240:[2026-05-03 23:13:18] <debug> optimal sample size (5) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+241:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+242:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+243:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+244:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.594887
+245:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.303628
+246:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.0294689
+247:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 3
+248:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 4.30265
+249:[2026-05-03 23:13:18] <trace> expected CI width: 0.0457252
+250:[2026-05-03 23:13:18] <trace> number of samples required: 15 (desired sample size 5 x opt. subsession size 3)
+251:[2026-05-03 23:13:18] <debug> optimal sample size (5) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+252:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+253:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+254:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+255:[2026-05-03 23:13:18] <info> 9   | blakley_split: R m0.2286 c0.05417 v0.0001189 
+256:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+257:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+258:[2026-05-03 23:13:18] <info> [PI 0] needs 80 more readings
+259:[2026-05-03 23:13:18] <info> Starting workload round 10 with work_amount 0
+260:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+261:[2026-05-03 23:13:18] <info> Got output from client program: 0.216684166
+262:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.216684
+263:[2026-05-03 23:13:18] <info> Finished workload round 10
+264:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 10
+265:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+266:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+267:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.597031
+268:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.323444
+269:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.00770471
+270:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 3
+271:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 4.30265
+272:[2026-05-03 23:13:18] <trace> expected CI width: 0.0455081
+273:[2026-05-03 23:13:18] <trace> number of samples required: 15 (desired sample size 5 x opt. subsession size 3)
+274:[2026-05-03 23:13:18] <debug> optimal sample size (5) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+275:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+276:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+277:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+278:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.597031
+279:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.323444
+280:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.00770471
+281:[2026-05-03 23:13:18] <trace> optimal subsession size (q) = 3
+282:[2026-05-03 23:13:18] <trace> T score for 95% confidence level = 4.30265
+283:[2026-05-03 23:13:18] <trace> expected CI width: 0.0455081
+284:[2026-05-03 23:13:18] <trace> number of samples required: 15 (desired sample size 5 x opt. subsession size 3)
+285:[2026-05-03 23:13:18] <debug> optimal sample size (5) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+286:[2026-05-03 23:13:18] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+287:[2026-05-03 23:13:18] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+288:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+289:[2026-05-03 23:13:18] <info> 10  | blakley_split: R m0.2275 c0.05509 v0.000123 
+290:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+291:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+292:[2026-05-03 23:13:18] <info> [PI 0] needs 79 more readings
+293:[2026-05-03 23:13:18] <info> Starting workload round 11 with work_amount 0
+294:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+295:[2026-05-03 23:13:18] <info> Got output from client program: 0.232735334
+296:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.232735
+297:[2026-05-03 23:13:18] <info> Finished workload round 11
+298:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 11
+299:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+300:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+301:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.547836
+302:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.365254
+303:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.161009
+304:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.118313
+305:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+306:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+307:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.547836
+308:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.365254
+309:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.161009
+310:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.118313
+311:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+312:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+313:[2026-05-03 23:13:18] <info> 11  | blakley_split: R m0.228 c v 
+314:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+315:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+316:[2026-05-03 23:13:18] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+317:[2026-05-03 23:13:18] <info> Starting workload round 12 with work_amount 0
+318:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+319:[2026-05-03 23:13:18] <info> Got output from client program: 0.22698975
+320:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.22699
+321:[2026-05-03 23:13:18] <info> Finished workload round 12
+322:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 12
+323:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+324:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+325:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.544579
+326:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.365212
+327:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.159249
+328:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.12019
+329:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+330:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+331:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.544579
+332:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.365212
+333:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.159249
+334:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.12019
+335:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+336:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+337:[2026-05-03 23:13:18] <info> 12  | blakley_split: R m0.2279 c v 
+338:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+339:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+340:[2026-05-03 23:13:18] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+341:[2026-05-03 23:13:18] <info> Starting workload round 13 with work_amount 0
+342:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+343:[2026-05-03 23:13:18] <info> Got output from client program: 0.21662074999999997
+344:[2026-05-03 23:13:18] <debug> [PI 0] new reading: 0.216621
+345:[2026-05-03 23:13:18] <info> Finished workload round 13
+346:[2026-05-03 23:13:18] <debug> [PI 0] has no unit readings data in round 13
+347:[2026-05-03 23:13:18] <info> [PI 0] analyzing results
+348:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+349:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.512684
+350:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.372634
+351:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.14715
+352:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.130599
+353:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+354:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+355:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.512684
+356:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.372634
+357:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.14715
+358:[2026-05-03 23:13:18] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.130599
+359:[2026-05-03 23:13:18] <debug> Don't have enough data to calculate required readings sample size yet
+360:[2026-05-03 23:13:18] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+361:[2026-05-03 23:13:18] <info> 13  | blakley_split: R m0.2271 c v 
+362:[2026-05-03 23:13:18] <debug> No need to refresh analytical result
+363:[2026-05-03 23:13:18] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+364:[2026-05-03 23:13:18] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+365:[2026-05-03 23:13:18] <info> Starting workload round 14 with work_amount 0
+366:[2026-05-03 23:13:18] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+367:[2026-05-03 23:13:19] <info> Got output from client program: 0.229431584
+368:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.229432
+369:[2026-05-03 23:13:19] <info> Finished workload round 14
+370:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 14
+371:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+372:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+373:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.49548
+374:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.372603
+375:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.180033
+376:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.129953
+377:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.333192
+378:[2026-05-03 23:13:19] <debug> Don't have enough data to calculate required readings sample size yet
+379:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+380:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.49548
+381:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.372603
+382:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.180033
+383:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.129953
+384:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.333192
+385:[2026-05-03 23:13:19] <debug> Don't have enough data to calculate required readings sample size yet
+386:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+387:[2026-05-03 23:13:19] <info> 14  | blakley_split: R m0.2272 c v 
+388:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+389:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+390:[2026-05-03 23:13:19] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+391:[2026-05-03 23:13:19] <info> Starting workload round 15 with work_amount 0
+392:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+393:[2026-05-03 23:13:19] <info> Got output from client program: 0.230484666
+394:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.230485
+395:[2026-05-03 23:13:19] <info> Finished workload round 15
+396:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 15
+397:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+398:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+399:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.496347
+400:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.343855
+401:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.186584
+402:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0766934
+403:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+404:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+405:[2026-05-03 23:13:19] <trace> expected CI width: 0.0454901
+406:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+407:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+408:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+409:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+410:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+411:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.496347
+412:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.343855
+413:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.186584
+414:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0766934
+415:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+416:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+417:[2026-05-03 23:13:19] <trace> expected CI width: 0.0454901
+418:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+419:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+420:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+421:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+422:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+423:[2026-05-03 23:13:19] <info> 15  | blakley_split: R m0.2275 c0.02472 v6.032e-05 
+424:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+425:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+426:[2026-05-03 23:13:19] <info> [PI 0] needs 104 more readings
+427:[2026-05-03 23:13:19] <info> Starting workload round 16 with work_amount 0
+428:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+429:[2026-05-03 23:13:19] <info> Got output from client program: 0.224893
+430:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.224893
+431:[2026-05-03 23:13:19] <info> Finished workload round 16
+432:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 16
+433:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+434:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+435:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.490045
+436:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.342219
+437:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.181623
+438:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.084419
+439:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+440:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+441:[2026-05-03 23:13:19] <trace> expected CI width: 0.04546
+442:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+443:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+444:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+445:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+446:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+447:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.490045
+448:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.342219
+449:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.181623
+450:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.084419
+451:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+452:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+453:[2026-05-03 23:13:19] <trace> expected CI width: 0.04546
+454:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+455:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+456:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+457:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+458:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+459:[2026-05-03 23:13:19] <info> 16  | blakley_split: R m0.2273 c0.02472 v6.035e-05 
+460:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+461:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+462:[2026-05-03 23:13:19] <info> [PI 0] needs 103 more readings
+463:[2026-05-03 23:13:19] <info> Starting workload round 17 with work_amount 0
+464:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+465:[2026-05-03 23:13:19] <info> Got output from client program: 0.226209666
+466:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.22621
+467:[2026-05-03 23:13:19] <info> Finished workload round 17
+468:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 17
+469:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+470:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+471:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.491459
+472:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.331886
+473:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.18024
+474:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0872913
+475:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+476:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+477:[2026-05-03 23:13:19] <trace> expected CI width: 0.0454479
+478:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+479:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+480:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+481:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+482:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+483:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.491459
+484:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.331886
+485:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.18024
+486:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0872913
+487:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+488:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+489:[2026-05-03 23:13:19] <trace> expected CI width: 0.0454479
+490:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+491:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+492:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+493:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+494:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+495:[2026-05-03 23:13:19] <info> 17  | blakley_split: R m0.2272 c0.02473 v6.038e-05 
+496:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+497:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+498:[2026-05-03 23:13:19] <info> [PI 0] needs 102 more readings
+499:[2026-05-03 23:13:19] <info> Starting workload round 18 with work_amount 0
+500:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+501:[2026-05-03 23:13:19] <info> Got output from client program: 0.24425775
+502:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.244258
+503:[2026-05-03 23:13:19] <info> Finished workload round 18
+504:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 18
+505:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+506:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+507:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.409144
+508:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.343229
+509:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.227567
+510:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0315363
+511:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+512:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+513:[2026-05-03 23:13:19] <trace> expected CI width: 0.045627
+514:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+515:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+516:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+517:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+518:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+519:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.409144
+520:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.343229
+521:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.227567
+522:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0315363
+523:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+524:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 3.18245
+525:[2026-05-03 23:13:19] <trace> expected CI width: 0.045627
+526:[2026-05-03 23:13:19] <trace> number of samples required: 8 (desired sample size 2 x opt. subsession size 4)
+527:[2026-05-03 23:13:19] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+528:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+529:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+530:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+531:[2026-05-03 23:13:19] <info> 18  | blakley_split: R m0.2281 c0.02484 v6.095e-05 
+532:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+533:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+534:[2026-05-03 23:13:19] <info> [PI 0] needs 101 more readings
+535:[2026-05-03 23:13:19] <info> Starting workload round 19 with work_amount 0
+536:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+537:[2026-05-03 23:13:19] <info> Got output from client program: 0.222892584
+538:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.222893
+539:[2026-05-03 23:13:19] <info> Finished workload round 19
+540:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 19
+541:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+542:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+543:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.360343
+544:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.298464
+545:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.211615
+546:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0681181
+547:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+548:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+549:[2026-05-03 23:13:19] <trace> expected CI width: 0.0455746
+550:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+551:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+552:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+553:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+554:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+555:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.360343
+556:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.298464
+557:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.211615
+558:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0681181
+559:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+560:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+561:[2026-05-03 23:13:19] <trace> expected CI width: 0.0455746
+562:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+563:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+564:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+565:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+566:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+567:[2026-05-03 23:13:19] <info> 19  | blakley_split: R m0.2279 c0.01687 v4.613e-05 
+568:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+569:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+570:[2026-05-03 23:13:19] <info> [PI 0] needs 100 more readings
+571:[2026-05-03 23:13:19] <info> Starting workload round 20 with work_amount 0
+572:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+573:[2026-05-03 23:13:19] <info> Got output from client program: 0.218082168
+574:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.218082
+575:[2026-05-03 23:13:19] <info> Finished workload round 20
+576:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 20
+577:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+578:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+579:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.369101
+580:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.293274
+581:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.185976
+582:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.094762
+583:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+584:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+585:[2026-05-03 23:13:19] <trace> expected CI width: 0.0454814
+586:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+587:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+588:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+589:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+590:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+591:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.369101
+592:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.293274
+593:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.185976
+594:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.094762
+595:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+596:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+597:[2026-05-03 23:13:19] <trace> expected CI width: 0.0454814
+598:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+599:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+600:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+601:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+602:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+603:[2026-05-03 23:13:19] <info> 20  | blakley_split: R m0.2274 c0.01692 v4.641e-05 
+604:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+605:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+606:[2026-05-03 23:13:19] <info> [PI 0] needs 99 more readings
+607:[2026-05-03 23:13:19] <info> Starting workload round 21 with work_amount 0
+608:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+609:[2026-05-03 23:13:19] <info> Got output from client program: 0.236254916
+610:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.236255
+611:[2026-05-03 23:13:19] <info> Finished workload round 21
+612:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 21
+613:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+614:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+615:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.31569
+616:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.291196
+617:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.206326
+618:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0724053
+619:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+620:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+621:[2026-05-03 23:13:19] <trace> expected CI width: 0.0455618
+622:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+623:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+624:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+625:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+626:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+627:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.31569
+628:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.291196
+629:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.206326
+630:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0724053
+631:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+632:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+633:[2026-05-03 23:13:19] <trace> expected CI width: 0.0455618
+634:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+635:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+636:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+637:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+638:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+639:[2026-05-03 23:13:19] <info> 21  | blakley_split: R m0.2278 c0.01687 v4.614e-05 
+640:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+641:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+642:[2026-05-03 23:13:19] <info> [PI 0] needs 98 more readings
+643:[2026-05-03 23:13:19] <info> Starting workload round 22 with work_amount 0
+644:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+645:[2026-05-03 23:13:19] <info> Got output from client program: 0.233942832
+646:[2026-05-03 23:13:19] <debug> [PI 0] new reading: 0.233943
+647:[2026-05-03 23:13:19] <info> Finished workload round 22
+648:[2026-05-03 23:13:19] <debug> [PI 0] has no unit readings data in round 22
+649:[2026-05-03 23:13:19] <info> [PI 0] analyzing results
+650:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+651:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.334111
+652:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.293439
+653:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.222639
+654:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0532981
+655:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+656:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+657:[2026-05-03 23:13:19] <trace> expected CI width: 0.0456151
+658:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+659:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+660:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+661:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+662:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+663:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.334111
+664:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.293439
+665:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.222639
+666:[2026-05-03 23:13:19] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0532981
+667:[2026-05-03 23:13:19] <trace> optimal subsession size (q) = 4
+668:[2026-05-03 23:13:19] <trace> T score for 95% confidence level = 2.77645
+669:[2026-05-03 23:13:19] <trace> expected CI width: 0.0456151
+670:[2026-05-03 23:13:19] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+671:[2026-05-03 23:13:19] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+672:[2026-05-03 23:13:19] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+673:[2026-05-03 23:13:19] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+674:[2026-05-03 23:13:19] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+675:[2026-05-03 23:13:19] <info> 22  | blakley_split: R m0.2281 c0.01688 v4.618e-05 
+676:[2026-05-03 23:13:19] <debug> No need to refresh analytical result
+677:[2026-05-03 23:13:19] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+678:[2026-05-03 23:13:19] <info> [PI 0] needs 97 more readings
+679:[2026-05-03 23:13:19] <info> Starting workload round 23 with work_amount 0
+680:[2026-05-03 23:13:19] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+681:[2026-05-03 23:13:20] <info> Got output from client program: 0.232914918
+682:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.232915
+683:[2026-05-03 23:13:20] <info> Finished workload round 23
+684:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 23
+685:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+686:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+687:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.343374
+688:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.274802
+689:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.210839
+690:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.022227
+691:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 4
+692:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.57058
+693:[2026-05-03 23:13:20] <trace> expected CI width: 0.0456555
+694:[2026-05-03 23:13:20] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+695:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+696:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+697:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+698:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+699:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.343374
+700:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.274802
+701:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.210839
+702:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.022227
+703:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 4
+704:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.57058
+705:[2026-05-03 23:13:20] <trace> expected CI width: 0.0456555
+706:[2026-05-03 23:13:20] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+707:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+708:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+709:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+710:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+711:[2026-05-03 23:13:20] <info> 23  | blakley_split: R m0.2283 c0.01292 v3.789e-05 
+712:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+713:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+714:[2026-05-03 23:13:20] <info> [PI 0] needs 96 more readings
+715:[2026-05-03 23:13:20] <info> Starting workload round 24 with work_amount 0
+716:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+717:[2026-05-03 23:13:20] <info> Got output from client program: 0.228943418
+718:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.228943
+719:[2026-05-03 23:13:20] <info> Finished workload round 24
+720:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 24
+721:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+722:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+723:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.344682
+724:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.275172
+725:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.21222
+726:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0204416
+727:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 4
+728:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.57058
+729:[2026-05-03 23:13:20] <trace> expected CI width: 0.0456608
+730:[2026-05-03 23:13:20] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+731:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+732:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+733:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+734:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+735:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.344682
+736:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.275172
+737:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.21222
+738:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0204416
+739:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 4
+740:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.57058
+741:[2026-05-03 23:13:20] <trace> expected CI width: 0.0456608
+742:[2026-05-03 23:13:20] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+743:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+744:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+745:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+746:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+747:[2026-05-03 23:13:20] <info> 24  | blakley_split: R m0.2283 c0.01292 v3.789e-05 
+748:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+749:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+750:[2026-05-03 23:13:20] <info> [PI 0] needs 95 more readings
+751:[2026-05-03 23:13:20] <info> Starting workload round 25 with work_amount 0
+752:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+753:[2026-05-03 23:13:20] <info> Got output from client program: 0.228042
+754:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.228042
+755:[2026-05-03 23:13:20] <info> Finished workload round 25
+756:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 25
+757:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+758:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+759:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.344616
+760:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.276621
+761:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.211695
+762:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0211214
+763:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 4
+764:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.57058
+765:[2026-05-03 23:13:20] <trace> expected CI width: 0.0456588
+766:[2026-05-03 23:13:20] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+767:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+768:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+769:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+770:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+771:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.344616
+772:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.276621
+773:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.211695
+774:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0211214
+775:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 4
+776:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.57058
+777:[2026-05-03 23:13:20] <trace> expected CI width: 0.0456588
+778:[2026-05-03 23:13:20] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+779:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+780:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+781:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+782:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+783:[2026-05-03 23:13:20] <info> 25  | blakley_split: R m0.2283 c0.01292 v3.789e-05 
+784:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+785:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+786:[2026-05-03 23:13:20] <info> [PI 0] needs 94 more readings
+787:[2026-05-03 23:13:20] <info> Starting workload round 26 with work_amount 0
+788:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+789:[2026-05-03 23:13:20] <info> Got output from client program: 0.212964582
+790:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.212965
+791:[2026-05-03 23:13:20] <info> Finished workload round 26
+792:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 26
+793:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+794:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+795:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.314462
+796:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.277622
+797:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0893419
+798:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 3
+799:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.306
+800:[2026-05-03 23:13:20] <trace> expected CI width: 0.0455452
+801:[2026-05-03 23:13:20] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+802:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+803:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+804:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+805:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+806:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.314462
+807:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.277622
+808:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0893419
+809:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 3
+810:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.306
+811:[2026-05-03 23:13:20] <trace> expected CI width: 0.0455452
+812:[2026-05-03 23:13:20] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+813:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+814:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+815:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+816:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+817:[2026-05-03 23:13:20] <info> 26  | blakley_split: R m0.2277 c0.00994 v4.181e-05 
+818:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+819:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+820:[2026-05-03 23:13:20] <info> [PI 0] needs 63 more readings
+821:[2026-05-03 23:13:20] <info> Starting workload round 27 with work_amount 0
+822:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+823:[2026-05-03 23:13:20] <info> Got output from client program: 0.213667832
+824:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.213668
+825:[2026-05-03 23:13:20] <info> Finished workload round 27
+826:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 27
+827:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+828:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+829:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.372632
+830:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.199025
+831:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0856279
+832:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 3
+833:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.306
+834:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454448
+835:[2026-05-03 23:13:20] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+836:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+837:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+838:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+839:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+840:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.372632
+841:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.199025
+842:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0856279
+843:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 3
+844:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.306
+845:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454448
+846:[2026-05-03 23:13:20] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+847:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+848:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+849:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+850:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+851:[2026-05-03 23:13:20] <info> 27  | blakley_split: R m0.2272 c0.009974 v4.209e-05 
+852:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+853:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+854:[2026-05-03 23:13:20] <info> [PI 0] needs 62 more readings
+855:[2026-05-03 23:13:20] <info> Starting workload round 28 with work_amount 0
+856:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+857:[2026-05-03 23:13:20] <info> Got output from client program: 0.22403825
+858:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.224038
+859:[2026-05-03 23:13:20] <info> Finished workload round 28
+860:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 28
+861:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+862:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+863:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.388115
+864:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.200395
+865:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0862619
+866:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 3
+867:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.306
+868:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454228
+869:[2026-05-03 23:13:20] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+870:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+871:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+872:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+873:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+874:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.388115
+875:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.200395
+876:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.0862619
+877:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 3
+878:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 2.306
+879:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454228
+880:[2026-05-03 23:13:20] <trace> number of samples required: 3 (desired sample size 1 x opt. subsession size 3)
+881:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+882:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 3 samples to reduce autocorrelation
+883:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (3) x required subsession sample size (30) = 90
+884:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+885:[2026-05-03 23:13:20] <info> 28  | blakley_split: R m0.2271 c0.00999 v4.223e-05 
+886:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+887:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 90
+888:[2026-05-03 23:13:20] <info> [PI 0] needs 61 more readings
+889:[2026-05-03 23:13:20] <info> Starting workload round 29 with work_amount 0
+890:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+891:[2026-05-03 23:13:20] <info> Got output from client program: 0.22466225
+892:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.224662
+893:[2026-05-03 23:13:20] <info> Finished workload round 29
+894:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 29
+895:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+896:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+897:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.390272
+898:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.243133
+899:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.139492
+900:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.135898
+901:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.334858
+902:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.465463
+903:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.591341
+904:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.63613
+905:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.64353
+906:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: -0.00142232
+907:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 10
+908:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 4.30265
+909:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454065
+910:[2026-05-03 23:13:20] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+911:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+912:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+913:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+914:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+915:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.390272
+916:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.243133
+917:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.139492
+918:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.135898
+919:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.334858
+920:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.465463
+921:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.591341
+922:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.63613
+923:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.64353
+924:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: -0.00142232
+925:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 10
+926:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 4.30265
+927:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454065
+928:[2026-05-03 23:13:20] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+929:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+930:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+931:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+932:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+933:[2026-05-03 23:13:20] <info> 29  | blakley_split: R m0.227 c0.008144 v2.687e-06 
+934:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+935:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 300
+936:[2026-05-03 23:13:20] <info> [PI 0] needs 270 more readings
+937:[2026-05-03 23:13:20] <info> Starting workload round 30 with work_amount 0
+938:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+939:[2026-05-03 23:13:20] <info> Got output from client program: 0.238362334
+940:[2026-05-03 23:13:20] <debug> [PI 0] new reading: 0.238362
+941:[2026-05-03 23:13:20] <info> Finished workload round 30
+942:[2026-05-03 23:13:20] <debug> [PI 0] has no unit readings data in round 30
+943:[2026-05-03 23:13:20] <info> [PI 0] analyzing results
+944:[2026-05-03 23:13:20] <debug> refresh_analytical_result(): readings have no changepoint detected
+945:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+946:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.361939
+947:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.245622
+948:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.146957
+949:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.127934
+950:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.324099
+951:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.452285
+952:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.561515
+953:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.678387
+954:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.693535
+955:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: 0.0394045
+956:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 10
+957:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 4.30265
+958:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454796
+959:[2026-05-03 23:13:20] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+960:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+961:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+962:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+963:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+964:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.361939
+965:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.245622
+966:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.146957
+967:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.127934
+968:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.324099
+969:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.452285
+970:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.561515
+971:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.678387
+972:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.693535
+973:[2026-05-03 23:13:20] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: 0.0394045
+974:[2026-05-03 23:13:20] <trace> optimal subsession size (q) = 10
+975:[2026-05-03 23:13:20] <trace> T score for 95% confidence level = 4.30265
+976:[2026-05-03 23:13:20] <trace> expected CI width: 0.0454796
+977:[2026-05-03 23:13:20] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+978:[2026-05-03 23:13:20] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+979:[2026-05-03 23:13:20] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+980:[2026-05-03 23:13:20] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+981:[2026-05-03 23:13:20] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+982:[2026-05-03 23:13:20] <info> 30  | blakley_split: R m0.2274 c0.008442 v2.887e-06 
+983:[2026-05-03 23:13:20] <debug> No need to refresh analytical result
+984:[2026-05-03 23:13:20] <debug> [PI 0] required readings sample size (-1 means not enough data): 300
+985:[2026-05-03 23:13:20] <info> [PI 0] needs 269 more readings
+986:[2026-05-03 23:13:20] <info> Starting workload round 31 with work_amount 0
+987:[2026-05-03 23:13:20] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+988:[2026-05-03 23:13:21] <info> Got output from client program: 0.215739582
+989:[2026-05-03 23:13:21] <debug> [PI 0] new reading: 0.21574
+990:[2026-05-03 23:13:21] <info> Finished workload round 31
+991:[2026-05-03 23:13:21] <debug> [PI 0] has no unit readings data in round 31
+992:[2026-05-03 23:13:21] <info> [PI 0] analyzing results
+993:[2026-05-03 23:13:21] <debug> refresh_analytical_result(): readings have no changepoint detected
+994:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+995:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.300619
+996:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.243081
+997:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.139507
+998:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.10055
+999:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.334837
+1000:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.465438
+1001:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.59129
+1002:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.675882
+1003:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.643815
+1004:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: -0.00144059
+1005:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 10
+1006:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 4.30265
+1007:[2026-05-03 23:13:21] <trace> expected CI width: 0.0454067
+1008:[2026-05-03 23:13:21] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+1009:[2026-05-03 23:13:21] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1010:[2026-05-03 23:13:21] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+1011:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+1012:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1013:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.300619
+1014:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.243081
+1015:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.139507
+1016:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.10055
+1017:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.334837
+1018:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.465438
+1019:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.59129
+1020:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.675882
+1021:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.643815
+1022:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: -0.00144059
+1023:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 10
+1024:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 4.30265
+1025:[2026-05-03 23:13:21] <trace> expected CI width: 0.0454067
+1026:[2026-05-03 23:13:21] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+1027:[2026-05-03 23:13:21] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1028:[2026-05-03 23:13:21] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+1029:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+1030:[2026-05-03 23:13:21] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+1031:[2026-05-03 23:13:21] <info> 31  | blakley_split: R m0.227 c0.008144 v2.687e-06 
+1032:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1033:[2026-05-03 23:13:21] <debug> [PI 0] required readings sample size (-1 means not enough data): 300
+1034:[2026-05-03 23:13:21] <info> [PI 0] needs 268 more readings
+1035:[2026-05-03 23:13:21] <info> Starting workload round 32 with work_amount 0
+1036:[2026-05-03 23:13:21] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+1037:[2026-05-03 23:13:21] <info> Got output from client program: 0.212147584
+1038:[2026-05-03 23:13:21] <debug> [PI 0] new reading: 0.212148
+1039:[2026-05-03 23:13:21] <info> Finished workload round 32
+1040:[2026-05-03 23:13:21] <debug> [PI 0] has no unit readings data in round 32
+1041:[2026-05-03 23:13:21] <info> [PI 0] analyzing results
+1042:[2026-05-03 23:13:21] <debug> refresh_analytical_result(): readings have no changepoint detected
+1043:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1044:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.334952
+1045:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.243234
+1046:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.195858
+1047:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.113587
+1048:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.336797
+1049:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.466968
+1050:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.590785
+1051:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.655762
+1052:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.495437
+1053:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: 0.0729903
+1054:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 10
+1055:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 4.30265
+1056:[2026-05-03 23:13:21] <trace> expected CI width: 0.0453165
+1057:[2026-05-03 23:13:21] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+1058:[2026-05-03 23:13:21] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1059:[2026-05-03 23:13:21] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+1060:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+1061:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1062:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.334952
+1063:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.243234
+1064:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.195858
+1065:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.113587
+1066:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.336797
+1067:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.466968
+1068:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.590785
+1069:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.655762
+1070:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.495437
+1071:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: 0.0729903
+1072:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 10
+1073:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 4.30265
+1074:[2026-05-03 23:13:21] <trace> expected CI width: 0.0453165
+1075:[2026-05-03 23:13:21] <trace> number of samples required: 10 (desired sample size 1 x opt. subsession size 10)
+1076:[2026-05-03 23:13:21] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1077:[2026-05-03 23:13:21] <debug> High autocorrelation detected, merging every 10 samples to reduce autocorrelation
+1078:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (10) x required subsession sample size (30) = 300
+1079:[2026-05-03 23:13:21] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+1080:[2026-05-03 23:13:21] <info> 32  | blakley_split: R m0.2266 c0.008592 v2.991e-06 
+1081:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1082:[2026-05-03 23:13:21] <debug> [PI 0] required readings sample size (-1 means not enough data): 300
+1083:[2026-05-03 23:13:21] <info> [PI 0] needs 267 more readings
+1084:[2026-05-03 23:13:21] <info> Starting workload round 33 with work_amount 0
+1085:[2026-05-03 23:13:21] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+1086:[2026-05-03 23:13:21] <info> Got output from client program: 0.212319666
+1087:[2026-05-03 23:13:21] <debug> [PI 0] new reading: 0.21232
+1088:[2026-05-03 23:13:21] <info> Finished workload round 33
+1089:[2026-05-03 23:13:21] <debug> [PI 0] has no unit readings data in round 33
+1090:[2026-05-03 23:13:21] <info> [PI 0] analyzing results
+1091:[2026-05-03 23:13:21] <debug> refresh_analytical_result(): readings have no changepoint detected
+1092:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1093:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.378252
+1094:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.19084
+1095:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.191823
+1096:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.113578
+1097:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.327497
+1098:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.453978
+1099:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.556089
+1100:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.598909
+1101:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.331162
+1102:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: 0.206784
+1103:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 11, auto. cor. coef.: -0.129486
+1104:[2026-05-03 23:13:21] <debug> Don't have enough data to calculate required readings sample size yet
+1105:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1106:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.378252
+1107:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.19084
+1108:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.191823
+1109:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.113578
+1110:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.327497
+1111:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.453978
+1112:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 7, auto. cor. coef.: -0.556089
+1113:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 8, auto. cor. coef.: -0.598909
+1114:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 9, auto. cor. coef.: -0.331162
+1115:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 10, auto. cor. coef.: 0.206784
+1116:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 11, auto. cor. coef.: -0.129486
+1117:[2026-05-03 23:13:21] <debug> Don't have enough data to calculate required readings sample size yet
+1118:[2026-05-03 23:13:21] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+1119:[2026-05-03 23:13:21] <info> 33  | blakley_split: R m0.2262 c v 
+1120:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1121:[2026-05-03 23:13:21] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+1122:[2026-05-03 23:13:21] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+1123:[2026-05-03 23:13:21] <info> Starting workload round 34 with work_amount 0
+1124:[2026-05-03 23:13:21] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+1125:[2026-05-03 23:13:21] <info> Got output from client program: 0.270062916
+1126:[2026-05-03 23:13:21] <debug> [PI 0] new reading: 0.270063
+1127:[2026-05-03 23:13:21] <info> Finished workload round 34
+1128:[2026-05-03 23:13:21] <debug> [PI 0] has no unit readings data in round 34
+1129:[2026-05-03 23:13:21] <info> [PI 0] analyzing results
+1130:[2026-05-03 23:13:21] <debug> refresh_analytical_result(): readings have no changepoint detected
+1131:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1132:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.120557
+1133:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.199689
+1134:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.223924
+1135:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0789916
+1136:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 4
+1137:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 2.36462
+1138:[2026-05-03 23:13:21] <trace> expected CI width: 0.0454835
+1139:[2026-05-03 23:13:21] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+1140:[2026-05-03 23:13:21] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1141:[2026-05-03 23:13:21] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+1142:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+1143:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1144:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.120557
+1145:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: 0.199689
+1146:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: 0.223924
+1147:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0789916
+1148:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 4
+1149:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 2.36462
+1150:[2026-05-03 23:13:21] <trace> expected CI width: 0.0454835
+1151:[2026-05-03 23:13:21] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+1152:[2026-05-03 23:13:21] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1153:[2026-05-03 23:13:21] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+1154:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+1155:[2026-05-03 23:13:21] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+1156:[2026-05-03 23:13:21] <info> 34  | blakley_split: R m0.2274 c0.009775 v3.418e-05 
+1157:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1158:[2026-05-03 23:13:21] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+1159:[2026-05-03 23:13:21] <info> [PI 0] needs 85 more readings
+1160:[2026-05-03 23:13:21] <info> Starting workload round 35 with work_amount 0
+1161:[2026-05-03 23:13:21] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss blakley_split
+1162:[2026-05-03 23:13:21] <info> Got output from client program: 0.221725834
+1163:[2026-05-03 23:13:21] <debug> [PI 0] new reading: 0.221726
+1164:[2026-05-03 23:13:21] <info> Finished workload round 35
+1165:[2026-05-03 23:13:21] <debug> [PI 0] has no unit readings data in round 35
+1166:[2026-05-03 23:13:21] <info> [PI 0] analyzing results
+1167:[2026-05-03 23:13:21] <debug> refresh_analytical_result(): readings have no changepoint detected
+1168:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1169:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0728674
+1170:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 1
+1171:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 2.03011
+1172:[2026-05-03 23:13:21] <trace> expected CI width: 0.0454518
+1173:[2026-05-03 23:13:21] <trace> number of samples required: 2 (desired sample size 2 x opt. subsession size 1)
+1174:[2026-05-03 23:13:21] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1175:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+1176:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1177:[2026-05-03 23:13:21] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0728674
+1178:[2026-05-03 23:13:21] <trace> optimal subsession size (q) = 1
+1179:[2026-05-03 23:13:21] <trace> T score for 95% confidence level = 2.03011
+1180:[2026-05-03 23:13:21] <trace> expected CI width: 0.0454518
+1181:[2026-05-03 23:13:21] <trace> number of samples required: 2 (desired sample size 2 x opt. subsession size 1)
+1182:[2026-05-03 23:13:21] <debug> optimal sample size (2) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+1183:[2026-05-03 23:13:21] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+1184:[2026-05-03 23:13:21] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+1185:[2026-05-03 23:13:21] <info> 35  | blakley_split: R m0.2273 c0.008214 v0.0001473 
+1186:[2026-05-03 23:13:21] <debug> No need to refresh analytical result
+1187:[2026-05-03 23:13:21] <debug> [PI 0] required readings sample size (-1 means not enough data): 36
+1188:[2026-05-03 23:13:21] <info> [PI 0] already has enough readings
+1189:[2026-05-03 23:13:21] <info> Analytical requirement achieved, exiting
+1190:[2026-05-03 23:13:21] <debug> No need to refresh analytical result

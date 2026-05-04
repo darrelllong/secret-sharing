@@ -1,0 +1,754 @@
+1:[2026-05-03 23:13:54] <info> Saving results to directory pilot_result_20260504_061354
+2:[2026-05-03 23:13:54] <info> Pilot 0.14 (compiled by clang-21.0.0 (clang-2100.0.123.102) on Mar 27 2026)
+3:[2026-05-03 23:13:54] <debug> Program path and args: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+4:[2026-05-03 23:13:54] <debug> Total number of PIs: 1
+5:[2026-05-03 23:13:54] <debug> PI[0] name: massey_reconstruct, unit: ms/op, reading must satisfy: yes, mean method: harmonic
+6:[2026-05-03 23:13:54] <info> Preset mode activated: quick
+7:[2026-05-03 23:13:54] <info> Setting the required width of confidence interval to 20% of mean
+8:[2026-05-03 23:13:54] <info> Setting the limit of autocorrelation coefficient to 0.8
+9:[2026-05-03 23:13:54] <info> Setting the required minimum subsession sample size to 30
+10:[2026-05-03 23:13:54] <info> Disabled short round detection because work amount information is not set.
+11:[2026-05-03 23:13:54] <info> Starting workload round 0 with work_amount 0
+12:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+13:[2026-05-03 23:13:54] <info> Got output from client program: 0.02660625
+14:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0266063
+15:[2026-05-03 23:13:54] <info> Finished workload round 0
+16:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 0
+17:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+18:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): need more than 3 rounds data for WPS analysis
+19:[2026-05-03 23:13:54] <info> 0   | massey_reconstruct: 
+20:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+21:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+22:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+23:[2026-05-03 23:13:54] <info> Starting workload round 1 with work_amount 0
+24:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+25:[2026-05-03 23:13:54] <info> Got output from client program: 0.026393
+26:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.026393
+27:[2026-05-03 23:13:54] <info> Finished workload round 1
+28:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 1
+29:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+30:[2026-05-03 23:13:54] <debug> Need more than 3 samples to calculate required sample size
+31:[2026-05-03 23:13:54] <debug> Need more than 3 samples to calculate required sample size
+32:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): need more than 3 rounds data for WPS analysis
+33:[2026-05-03 23:13:54] <info> 1   | massey_reconstruct: 
+34:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+35:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+36:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+37:[2026-05-03 23:13:54] <info> Starting workload round 2 with work_amount 0
+38:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+39:[2026-05-03 23:13:54] <info> Got output from client program: 0.02731125
+40:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0273112
+41:[2026-05-03 23:13:54] <info> Finished workload round 2
+42:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 2
+43:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+44:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+45:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.307981
+46:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+47:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+48:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.307981
+49:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+50:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+51:[2026-05-03 23:13:54] <info> 2   | massey_reconstruct: 
+52:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+53:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+54:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+55:[2026-05-03 23:13:54] <info> Starting workload round 3 with work_amount 0
+56:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+57:[2026-05-03 23:13:54] <info> Got output from client program: 0.02846225
+58:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0284623
+59:[2026-05-03 23:13:54] <info> Finished workload round 3
+60:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 3
+61:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+62:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+63:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.201213
+64:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+65:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+66:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.201213
+67:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+68:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+69:[2026-05-03 23:13:54] <info> 3   | massey_reconstruct: 
+70:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+71:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+72:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+73:[2026-05-03 23:13:54] <info> Starting workload round 4 with work_amount 0
+74:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+75:[2026-05-03 23:13:54] <info> Got output from client program: 0.026605332000000002
+76:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0266053
+77:[2026-05-03 23:13:54] <info> Finished workload round 4
+78:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 4
+79:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+80:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+81:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0574641
+82:[2026-05-03 23:13:54] <trace> optimal subsession size (q) = 1
+83:[2026-05-03 23:13:54] <trace> T score for 95% confidence level = 2.77645
+84:[2026-05-03 23:13:54] <trace> expected CI width: 0.00541512
+85:[2026-05-03 23:13:54] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+86:[2026-05-03 23:13:54] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+87:[2026-05-03 23:13:54] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+88:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+89:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0574641
+90:[2026-05-03 23:13:54] <trace> optimal subsession size (q) = 1
+91:[2026-05-03 23:13:54] <trace> T score for 95% confidence level = 2.77645
+92:[2026-05-03 23:13:54] <trace> expected CI width: 0.00541512
+93:[2026-05-03 23:13:54] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+94:[2026-05-03 23:13:54] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+95:[2026-05-03 23:13:54] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+96:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+97:[2026-05-03 23:13:54] <info> 4   | massey_reconstruct: R m0.02708 c0.002109 v7.214e-07 
+98:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+99:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+100:[2026-05-03 23:13:54] <info> [PI 0] needs 25 more readings
+101:[2026-05-03 23:13:54] <info> Starting workload round 5 with work_amount 0
+102:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+103:[2026-05-03 23:13:54] <info> Got output from client program: 0.027486416
+104:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0274864
+105:[2026-05-03 23:13:54] <info> Finished workload round 5
+106:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 5
+107:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+108:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+109:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.130798
+110:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.564813
+111:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+112:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+113:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.130798
+114:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.564813
+115:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+116:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+117:[2026-05-03 23:13:54] <info> 5   | massey_reconstruct: R m0.02714 c v 
+118:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+119:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+120:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+121:[2026-05-03 23:13:54] <info> Starting workload round 6 with work_amount 0
+122:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+123:[2026-05-03 23:13:54] <info> Got output from client program: 0.025375166
+124:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0253752
+125:[2026-05-03 23:13:54] <info> Finished workload round 6
+126:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 6
+127:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+128:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+129:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.162803
+130:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.202177
+131:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+132:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+133:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.162803
+134:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.202177
+135:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+136:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+137:[2026-05-03 23:13:54] <info> 6   | massey_reconstruct: R m0.02689 c v 
+138:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+139:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+140:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+141:[2026-05-03 23:13:54] <info> Starting workload round 7 with work_amount 0
+142:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+143:[2026-05-03 23:13:54] <info> Got output from client program: 0.027829582
+144:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0278296
+145:[2026-05-03 23:13:54] <info> Finished workload round 7
+146:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 7
+147:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+148:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+149:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.370305
+150:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.358861
+151:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+152:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+153:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.370305
+154:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.358861
+155:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+156:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+157:[2026-05-03 23:13:54] <info> 7   | massey_reconstruct: R m0.02701 c v 
+158:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+159:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+160:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+161:[2026-05-03 23:13:54] <info> Starting workload round 8 with work_amount 0
+162:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+163:[2026-05-03 23:13:54] <info> Got output from client program: 0.02547625
+164:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0254762
+165:[2026-05-03 23:13:54] <info> Finished workload round 8
+166:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 8
+167:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+168:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+169:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.422314
+170:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.14216
+171:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.549636
+172:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+173:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+174:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.422314
+175:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.14216
+176:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.549636
+177:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+178:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+179:[2026-05-03 23:13:54] <info> 8   | massey_reconstruct: R m0.02684 c v 
+180:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+181:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+182:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+183:[2026-05-03 23:13:54] <info> Starting workload round 9 with work_amount 0
+184:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+185:[2026-05-03 23:13:54] <info> Got output from client program: 0.028089
+186:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.028089
+187:[2026-05-03 23:13:54] <info> Finished workload round 9
+188:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 9
+189:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+190:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+191:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.537992
+192:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.255856
+193:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.581107
+194:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+195:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+196:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.537992
+197:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.255856
+198:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.581107
+199:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+200:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+201:[2026-05-03 23:13:54] <info> 9   | massey_reconstruct: R m0.02696 c v 
+202:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+203:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+204:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+205:[2026-05-03 23:13:54] <info> Starting workload round 10 with work_amount 0
+206:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+207:[2026-05-03 23:13:54] <info> Got output from client program: 0.02613
+208:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.02613
+209:[2026-05-03 23:13:54] <info> Finished workload round 10
+210:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 10
+211:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+212:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+213:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.592402
+214:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.193344
+215:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.578699
+216:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+217:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+218:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.592402
+219:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.193344
+220:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.578699
+221:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+222:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+223:[2026-05-03 23:13:54] <info> 10  | massey_reconstruct: R m0.02689 c v 
+224:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+225:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+226:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+227:[2026-05-03 23:13:54] <info> Starting workload round 11 with work_amount 0
+228:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+229:[2026-05-03 23:13:54] <info> Got output from client program: 0.02672725
+230:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0267273
+231:[2026-05-03 23:13:54] <info> Finished workload round 11
+232:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 11
+233:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+234:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+235:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.579314
+236:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.126374
+237:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.646717
+238:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0142798
+239:[2026-05-03 23:13:54] <trace> optimal subsession size (q) = 4
+240:[2026-05-03 23:13:54] <trace> T score for 95% confidence level = 4.30265
+241:[2026-05-03 23:13:54] <trace> expected CI width: 0.00537486
+242:[2026-05-03 23:13:54] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+243:[2026-05-03 23:13:54] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+244:[2026-05-03 23:13:54] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+245:[2026-05-03 23:13:54] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+246:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+247:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.579314
+248:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.126374
+249:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.646717
+250:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.0142798
+251:[2026-05-03 23:13:54] <trace> optimal subsession size (q) = 4
+252:[2026-05-03 23:13:54] <trace> T score for 95% confidence level = 4.30265
+253:[2026-05-03 23:13:54] <trace> expected CI width: 0.00537486
+254:[2026-05-03 23:13:54] <trace> number of samples required: 4 (desired sample size 1 x opt. subsession size 4)
+255:[2026-05-03 23:13:54] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+256:[2026-05-03 23:13:54] <debug> High autocorrelation detected, merging every 4 samples to reduce autocorrelation
+257:[2026-05-03 23:13:54] <debug> Required reading size = subsession size (4) x required subsession sample size (30) = 120
+258:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+259:[2026-05-03 23:13:54] <info> 11  | massey_reconstruct: R m0.02687 c0.001475 v8.82e-08 
+260:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+261:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): 120
+262:[2026-05-03 23:13:54] <info> [PI 0] needs 108 more readings
+263:[2026-05-03 23:13:54] <info> Starting workload round 12 with work_amount 0
+264:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+265:[2026-05-03 23:13:54] <info> Got output from client program: 0.02905275
+266:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0290527
+267:[2026-05-03 23:13:54] <info> Finished workload round 12
+268:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 12
+269:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+270:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+271:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.436445
+272:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.111643
+273:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.484044
+274:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: 0.238081
+275:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+276:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+277:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.436445
+278:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.111643
+279:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.484044
+280:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: 0.238081
+281:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+282:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+283:[2026-05-03 23:13:54] <info> 12  | massey_reconstruct: R m0.02704 c v 
+284:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+285:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+286:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+287:[2026-05-03 23:13:54] <info> Starting workload round 13 with work_amount 0
+288:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+289:[2026-05-03 23:13:54] <info> Got output from client program: 0.029050584
+290:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0290506
+291:[2026-05-03 23:13:54] <info> Finished workload round 13
+292:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 13
+293:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+294:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+295:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.138333
+296:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.247358
+297:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.210876
+298:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: 0.442724
+299:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+300:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+301:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.138333
+302:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.247358
+303:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.210876
+304:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: 0.442724
+305:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+306:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+307:[2026-05-03 23:13:54] <info> 13  | massey_reconstruct: R m0.02719 c v 
+308:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+309:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+310:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+311:[2026-05-03 23:13:54] <info> Starting workload round 14 with work_amount 0
+312:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+313:[2026-05-03 23:13:54] <info> Got output from client program: 0.027077168
+314:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0270772
+315:[2026-05-03 23:13:54] <info> Finished workload round 14
+316:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 14
+317:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+318:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+319:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.148786
+320:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.248822
+321:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.190108
+322:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: 0.435352
+323:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.354087
+324:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+325:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+326:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.148786
+327:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.248822
+328:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.190108
+329:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: 0.435352
+330:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.354087
+331:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+332:[2026-05-03 23:13:54] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+333:[2026-05-03 23:13:54] <info> 14  | massey_reconstruct: R m0.02718 c v 
+334:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+335:[2026-05-03 23:13:54] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+336:[2026-05-03 23:13:54] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+337:[2026-05-03 23:13:54] <info> Starting workload round 15 with work_amount 0
+338:[2026-05-03 23:13:54] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+339:[2026-05-03 23:13:54] <info> Got output from client program: 0.02764825
+340:[2026-05-03 23:13:54] <debug> [PI 0] new reading: 0.0276482
+341:[2026-05-03 23:13:54] <info> Finished workload round 15
+342:[2026-05-03 23:13:54] <debug> [PI 0] has no unit readings data in round 15
+343:[2026-05-03 23:13:54] <info> [PI 0] analyzing results
+344:[2026-05-03 23:13:54] <debug> No need to refresh analytical result
+345:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.150594
+346:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.189499
+347:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.179764
+348:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.242194
+349:[2026-05-03 23:13:54] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.313843
+350:[2026-05-03 23:13:54] <debug> Don't have enough data to calculate required readings sample size yet
+351:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+352:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.150594
+353:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.189499
+354:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.179764
+355:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.242194
+356:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.313843
+357:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+358:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+359:[2026-05-03 23:13:55] <info> 15  | massey_reconstruct: R m0.02721 c v 
+360:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+361:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+362:[2026-05-03 23:13:55] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+363:[2026-05-03 23:13:55] <info> Starting workload round 16 with work_amount 0
+364:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+365:[2026-05-03 23:13:55] <info> Got output from client program: 0.025550668
+366:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0255507
+367:[2026-05-03 23:13:55] <info> Finished workload round 16
+368:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 16
+369:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+370:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+371:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.16414
+372:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.165618
+373:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.201857
+374:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.279905
+375:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.379621
+376:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+377:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+378:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.16414
+379:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.165618
+380:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.201857
+381:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.279905
+382:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.379621
+383:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+384:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+385:[2026-05-03 23:13:55] <info> 16  | massey_reconstruct: R m0.02711 c v 
+386:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+387:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+388:[2026-05-03 23:13:55] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+389:[2026-05-03 23:13:55] <info> Starting workload round 17 with work_amount 0
+390:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+391:[2026-05-03 23:13:55] <info> Got output from client program: 0.027660332
+392:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0276603
+393:[2026-05-03 23:13:55] <info> Finished workload round 17
+394:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 17
+395:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+396:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+397:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.202022
+398:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.187715
+399:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.281792
+400:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.273733
+401:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.380078
+402:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.503212
+403:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+404:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+405:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.202022
+406:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.187715
+407:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.281792
+408:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.273733
+409:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.380078
+410:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.503212
+411:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+412:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+413:[2026-05-03 23:13:55] <info> 17  | massey_reconstruct: R m0.02714 c v 
+414:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+415:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+416:[2026-05-03 23:13:55] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+417:[2026-05-03 23:13:55] <info> Starting workload round 18 with work_amount 0
+418:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+419:[2026-05-03 23:13:55] <info> Got output from client program: 0.029780416
+420:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0297804
+421:[2026-05-03 23:13:55] <info> Finished workload round 18
+422:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 18
+423:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+424:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+425:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.110196
+426:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.183818
+427:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.263743
+428:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.182318
+429:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.159698
+430:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.277106
+431:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+432:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+433:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.110196
+434:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 2, auto. cor. coef.: -0.183818
+435:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 3, auto. cor. coef.: -0.263743
+436:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 4, auto. cor. coef.: -0.182318
+437:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 5, auto. cor. coef.: -0.159698
+438:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 6, auto. cor. coef.: -0.277106
+439:[2026-05-03 23:13:55] <debug> Don't have enough data to calculate required readings sample size yet
+440:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+441:[2026-05-03 23:13:55] <info> 18  | massey_reconstruct: R m0.02728 c v 
+442:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+443:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): -1
+444:[2026-05-03 23:13:55] <info> [PI 0] doesn't have enough readings for calculating required sample size, continuing to next round
+445:[2026-05-03 23:13:55] <info> Starting workload round 19 with work_amount 0
+446:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+447:[2026-05-03 23:13:55] <info> Got output from client program: 0.0279075
+448:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0279075
+449:[2026-05-03 23:13:55] <info> Finished workload round 19
+450:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 19
+451:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+452:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+453:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0550438
+454:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+455:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.09302
+456:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546219
+457:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+458:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+459:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+460:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+461:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0550438
+462:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+463:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.09302
+464:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546219
+465:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+466:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+467:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+468:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+469:[2026-05-03 23:13:55] <info> 19  | massey_reconstruct: R m0.02731 c0.001153 v1.517e-06 
+470:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+471:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+472:[2026-05-03 23:13:55] <info> [PI 0] needs 10 more readings
+473:[2026-05-03 23:13:55] <info> Starting workload round 20 with work_amount 0
+474:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+475:[2026-05-03 23:13:55] <info> Got output from client program: 0.027904418
+476:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0279044
+477:[2026-05-03 23:13:55] <info> Finished workload round 20
+478:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 20
+479:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+480:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+481:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0429789
+482:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+483:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.08596
+484:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546785
+485:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+486:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+487:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+488:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+489:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0429789
+490:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+491:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.08596
+492:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546785
+493:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+494:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+495:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+496:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+497:[2026-05-03 23:13:55] <info> 20  | massey_reconstruct: R m0.02734 c0.001099 v1.458e-06 
+498:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+499:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+500:[2026-05-03 23:13:55] <info> [PI 0] needs 9 more readings
+501:[2026-05-03 23:13:55] <info> Starting workload round 21 with work_amount 0
+502:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+503:[2026-05-03 23:13:55] <info> Got output from client program: 0.027887834
+504:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0278878
+505:[2026-05-03 23:13:55] <info> Finished workload round 21
+506:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 21
+507:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+508:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+509:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0326703
+510:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+511:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.07961
+512:[2026-05-03 23:13:55] <trace> expected CI width: 0.00547283
+513:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+514:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+515:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+516:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+517:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0326703
+518:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+519:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.07961
+520:[2026-05-03 23:13:55] <trace> expected CI width: 0.00547283
+521:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+522:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+523:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+524:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+525:[2026-05-03 23:13:55] <info> 21  | massey_reconstruct: R m0.02736 c0.00105 v1.402e-06 
+526:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+527:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+528:[2026-05-03 23:13:55] <info> [PI 0] needs 8 more readings
+529:[2026-05-03 23:13:55] <info> Starting workload round 22 with work_amount 0
+530:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+531:[2026-05-03 23:13:55] <info> Got output from client program: 0.026793834
+532:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0267938
+533:[2026-05-03 23:13:55] <info> Finished workload round 22
+534:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 22
+535:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+536:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+537:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0417556
+538:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+539:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.07387
+540:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546787
+541:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+542:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+543:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+544:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+545:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0417556
+546:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+547:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.07387
+548:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546787
+549:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+550:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+551:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+552:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+553:[2026-05-03 23:13:55] <info> 22  | massey_reconstruct: R m0.02734 c0.001006 v1.352e-06 
+554:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+555:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+556:[2026-05-03 23:13:55] <info> [PI 0] needs 7 more readings
+557:[2026-05-03 23:13:55] <info> Starting workload round 23 with work_amount 0
+558:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+559:[2026-05-03 23:13:55] <info> Got output from client program: 0.026480082
+560:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0264801
+561:[2026-05-03 23:13:55] <info> Finished workload round 23
+562:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 23
+563:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+564:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+565:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0245769
+566:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+567:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.06866
+568:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546071
+569:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+570:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+571:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+572:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+573:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: -0.0245769
+574:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+575:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.06866
+576:[2026-05-03 23:13:55] <trace> expected CI width: 0.00546071
+577:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+578:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+579:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+580:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+581:[2026-05-03 23:13:55] <info> 23  | massey_reconstruct: R m0.0273 c0.0009719 v1.324e-06 
+582:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+583:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+584:[2026-05-03 23:13:55] <info> [PI 0] needs 6 more readings
+585:[2026-05-03 23:13:55] <info> Starting workload round 24 with work_amount 0
+586:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+587:[2026-05-03 23:13:55] <info> Got output from client program: 0.025881084
+588:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0258811
+589:[2026-05-03 23:13:55] <info> Finished workload round 24
+590:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 24
+591:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+592:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+593:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0141707
+594:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+595:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.0639
+596:[2026-05-03 23:13:55] <trace> expected CI width: 0.00544933
+597:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+598:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+599:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+600:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+601:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0141707
+602:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+603:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.0639
+604:[2026-05-03 23:13:55] <trace> expected CI width: 0.00544933
+605:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+606:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+607:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+608:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+609:[2026-05-03 23:13:55] <info> 24  | massey_reconstruct: R m0.02725 c0.0009593 v1.35e-06 
+610:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+611:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+612:[2026-05-03 23:13:55] <info> [PI 0] needs 5 more readings
+613:[2026-05-03 23:13:55] <info> Starting workload round 25 with work_amount 0
+614:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+615:[2026-05-03 23:13:55] <info> Got output from client program: 0.025623666
+616:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0256237
+617:[2026-05-03 23:13:55] <info> Finished workload round 25
+618:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 25
+619:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+620:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+621:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0776149
+622:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+623:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.05954
+624:[2026-05-03 23:13:55] <trace> expected CI width: 0.00543685
+625:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+626:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+627:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+628:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+629:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0776149
+630:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+631:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.05954
+632:[2026-05-03 23:13:55] <trace> expected CI width: 0.00543685
+633:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+634:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+635:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+636:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+637:[2026-05-03 23:13:55] <info> 25  | massey_reconstruct: R m0.02718 c0.000955 v1.397e-06 
+638:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+639:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+640:[2026-05-03 23:13:55] <info> [PI 0] needs 4 more readings
+641:[2026-05-03 23:13:55] <info> Starting workload round 26 with work_amount 0
+642:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+643:[2026-05-03 23:13:55] <info> Got output from client program: 0.02779875
+644:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0277988
+645:[2026-05-03 23:13:55] <info> Finished workload round 26
+646:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 26
+647:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+648:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+649:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0492616
+650:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+651:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.05553
+652:[2026-05-03 23:13:55] <trace> expected CI width: 0.0054414
+653:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+654:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+655:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+656:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+657:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0492616
+658:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+659:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.05553
+660:[2026-05-03 23:13:55] <trace> expected CI width: 0.0054414
+661:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+662:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+663:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+664:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+665:[2026-05-03 23:13:55] <info> 26  | massey_reconstruct: R m0.02721 c0.0009219 v1.358e-06 
+666:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+667:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+668:[2026-05-03 23:13:55] <info> [PI 0] needs 3 more readings
+669:[2026-05-03 23:13:55] <info> Starting workload round 27 with work_amount 0
+670:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+671:[2026-05-03 23:13:55] <info> Got output from client program: 0.02564175
+672:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0256418
+673:[2026-05-03 23:13:55] <info> Finished workload round 27
+674:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 27
+675:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+676:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+677:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0223874
+678:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+679:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.05183
+680:[2026-05-03 23:13:55] <trace> expected CI width: 0.00543022
+681:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+682:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+683:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+684:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+685:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0223874
+686:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+687:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.05183
+688:[2026-05-03 23:13:55] <trace> expected CI width: 0.00543022
+689:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+690:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+691:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+692:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+693:[2026-05-03 23:13:55] <info> 27  | massey_reconstruct: R m0.02715 c0.0009159 v1.395e-06 
+694:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+695:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+696:[2026-05-03 23:13:55] <info> [PI 0] needs 2 more readings
+697:[2026-05-03 23:13:55] <info> Starting workload round 28 with work_amount 0
+698:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+699:[2026-05-03 23:13:55] <info> Got output from client program: 0.02678275
+700:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0267828
+701:[2026-05-03 23:13:55] <info> Finished workload round 28
+702:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 28
+703:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+704:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+705:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0371993
+706:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+707:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.04841
+708:[2026-05-03 23:13:55] <trace> expected CI width: 0.00542768
+709:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+710:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+711:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+712:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+713:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.0371993
+714:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+715:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.04841
+716:[2026-05-03 23:13:55] <trace> expected CI width: 0.00542768
+717:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+718:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+719:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+720:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+721:[2026-05-03 23:13:55] <info> 28  | massey_reconstruct: R m0.02714 c0.0008839 v1.35e-06 
+722:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+723:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+724:[2026-05-03 23:13:55] <info> [PI 0] needs 1 more readings
+725:[2026-05-03 23:13:55] <info> Starting workload round 29 with work_amount 0
+726:[2026-05-03 23:13:55] <debug> Executing client program: /Users/darrell/secret-sharing/target/release/pilot_ss massey_reconstruct
+727:[2026-05-03 23:13:55] <info> Got output from client program: 0.02545025
+728:[2026-05-03 23:13:55] <debug> [PI 0] new reading: 0.0254503
+729:[2026-05-03 23:13:55] <info> Finished workload round 29
+730:[2026-05-03 23:13:55] <debug> [PI 0] has no unit readings data in round 29
+731:[2026-05-03 23:13:55] <info> [PI 0] analyzing results
+732:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+733:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.050139
+734:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+735:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.04523
+736:[2026-05-03 23:13:55] <trace> expected CI width: 0.00541643
+737:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+738:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+739:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+740:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+741:[2026-05-03 23:13:55] <trace> pilot_optimal_subsession_size(): subsession size: 1, auto. cor. coef.: 0.050139
+742:[2026-05-03 23:13:55] <trace> optimal subsession size (q) = 1
+743:[2026-05-03 23:13:55] <trace> T score for 95% confidence level = 2.04523
+744:[2026-05-03 23:13:55] <trace> expected CI width: 0.00541643
+745:[2026-05-03 23:13:55] <trace> number of samples required: 1 (desired sample size 1 x opt. subsession size 1)
+746:[2026-05-03 23:13:55] <debug> optimal sample size (1) is smaller than the sample size lower threshold (30). Using the lower threshold instead.
+747:[2026-05-03 23:13:55] <debug> Required reading size = subsession size (1) x required subsession sample size (30) = 30
+748:[2026-05-03 23:13:55] <debug> refresh_wps_analysis_results(): WPS analysis is disabled
+749:[2026-05-03 23:13:55] <info> 29  | massey_reconstruct: R m0.02708 c0.0008831 v1.398e-06 
+750:[2026-05-03 23:13:55] <debug> No need to refresh analytical result
+751:[2026-05-03 23:13:55] <debug> [PI 0] required readings sample size (-1 means not enough data): 30
+752:[2026-05-03 23:13:55] <info> [PI 0] already has enough readings
+753:[2026-05-03 23:13:55] <info> Analytical requirement achieved, exiting
+754:[2026-05-03 23:13:55] <debug> No need to refresh analytical result

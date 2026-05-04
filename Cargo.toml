@@ -7,5 +7,9 @@ edition = "2021"
 name = "secret_sharing"
 path = "src/lib.rs"
 
+[[bin]]
+name = "pilot_ss"
+path = "src/bin/pilot_ss.rs"
+
 [dependencies]
 

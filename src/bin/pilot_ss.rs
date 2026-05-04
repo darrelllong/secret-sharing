@@ -1,0 +1,687 @@
+//! Per-operation latency benchmark for pilot-bench.
+//!
+//! Usage: `pilot_ss <operation>` — runs the named operation N times
+//! (scaled by `PILOT_SS_ITERS_PERCENT`, default 25) and prints
+//! `ms/op` to stdout in CSV form so pilot-bench can read it as the
+//! single performance index. Pilot-bench drives this binary
+//! repeatedly until the requested confidence-interval width is
+//! reached; see `scripts/bench_pilot.sh`.
+//!
+//! Operations available — every scheme in the crate at a fixed
+//! representative parameterisation:
+//!
+//! Threshold (k=3, n=5, Mersenne-127 unless noted):
+//!   shamir_split, shamir_reconstruct
+//!   blakley_split, blakley_reconstruct
+//!   kothari_split, kothari_reconstruct
+//!   karchmer_wigderson_split, karchmer_wigderson_reconstruct
+//!   brickell_split, brickell_reconstruct
+//!   massey_split, massey_reconstruct
+//!
+//! Ramp / vector (k=3, n=5):
+//!   ramp_split, ramp_reconstruct
+//!   yamamoto_split, yamamoto_reconstruct
+//!   blakley_meadows_split, blakley_meadows_reconstruct
+//!   kgh_split, kgh_reconstruct
+//!
+//! VSS:
+//!   vss_split, vss_reconstruct
+//!   cgma_vss_split, cgma_vss_reconstruct  (toy 23/11/4 group)
+//!
+//! CRT (small example sequences):
+//!   mignotte_split, mignotte_reconstruct
+//!   asmuth_bloom_split, asmuth_bloom_reconstruct
+//!
+//! Other:
+//!   trivial_split, trivial_reconstruct
+//!   ito_split, ito_reconstruct
+//!   benaloh_leichter_split, benaloh_leichter_reconstruct
+//!   proactive_refresh, proactive_recover
+//!   bytes_split_16, bytes_reconstruct_16  (16-byte secret)
+//!   ida_split_16, ida_reconstruct_16
+//!   decode_reconstruct_t1                 (n=11, t=1, Berlekamp-Welch)
+//!   visual_split_3_8, visual_decode_3_8   (n=3, 8x8 image)
+
+use std::hint::black_box;
+use std::sync::OnceLock;
+use std::time::Instant;
+
+use secret_sharing::{
+    asmuth_bloom, benaloh_leichter as bl, blakley, blakley_meadows, brickell, bytes, cgma_vss,
+    csprng::OsRng,
+    decode::reconstruct_with_errors,
+    field::{mersenne127, PrimeField},
+    ida, ito, karchmer_wigderson as kw, kgh, kothari, massey, mignotte, proactive, ramp, shamir,
+    trivial, visual, vss, yamamoto, BigUint, ChaCha20Rng,
+};
+
+const K: usize = 3;
+const N: usize = 5;
+
+fn ms_per_op(elapsed: std::time::Duration, n: usize) -> f64 {
+    elapsed.as_secs_f64() * 1000.0 / n as f64
+}
+
+fn iters(base: usize) -> usize {
+    static SCALE_PERCENT: OnceLock<usize> = OnceLock::new();
+    let scale = *SCALE_PERCENT.get_or_init(|| {
+        std::env::var("PILOT_SS_ITERS_PERCENT")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .map(|v| v.clamp(1, 100))
+            .unwrap_or(25)
+    });
+    base.saturating_mul(scale).div_ceil(100).max(1)
+}
+
+fn rng() -> ChaCha20Rng {
+    // Production seeding via OsRng; the bench is not measuring
+    // throughput where ChaCha20 startup dominates, so seeding once
+    // per pilot-bench round is fine.
+    let mut os = OsRng::new().expect("/dev/urandom");
+    ChaCha20Rng::from_os_entropy(&mut os)
+}
+
+fn field() -> PrimeField {
+    PrimeField::new_unchecked(mersenne127())
+}
+
+fn main() {
+    let op = std::env::args().nth(1).unwrap_or_else(|| {
+        eprintln!("usage: pilot_ss <operation>");
+        std::process::exit(1);
+    });
+
+    let ms: f64 = match op.as_str() {
+        // ── shamir ──
+        "shamir_split" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(shamir::split(&f, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "shamir_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = shamir::split(&f, &mut r, &s, K, N);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(shamir::reconstruct(&f, &shares[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── blakley ──
+        "blakley_split" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(blakley::split(&f, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "blakley_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = blakley::split(&f, &mut r, &s, K, N);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(blakley::reconstruct(&f, &shares[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── kothari (Vandermonde) ──
+        "kothari_split" => {
+            let scheme = kothari::vandermonde(field(), K, N);
+            let mut r = rng();
+            let s = scheme.field().random(&mut r);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(kothari::split(&scheme, &mut r, &s));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "kothari_reconstruct" => {
+            let scheme = kothari::vandermonde(field(), K, N);
+            let mut r = rng();
+            let s = scheme.field().random(&mut r);
+            let shares = kothari::split(&scheme, &mut r, &s);
+            let pairs: Vec<(usize, BigUint)> = (0..K).map(|c| (c, shares[c].clone())).collect();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(kothari::reconstruct(&scheme, &pairs).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── karchmer-wigderson ──
+        "karchmer_wigderson_split" => {
+            let prog = kw::threshold_msp(field(), K, N);
+            let mut r = rng();
+            let s = prog.field().random(&mut r);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(kw::split(&prog, &mut r, &s));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "karchmer_wigderson_reconstruct" => {
+            let prog = kw::threshold_msp(field(), K, N);
+            let mut r = rng();
+            let s = prog.field().random(&mut r);
+            let shares = kw::split(&prog, &mut r, &s);
+            let coalition: Vec<_> = shares.iter().take(K).cloned().collect();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(kw::reconstruct(&prog, &coalition).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── brickell ──
+        "brickell_split" => {
+            let f = field();
+            let vectors: Vec<Vec<BigUint>> = (1..=N)
+                .map(|j| {
+                    let mut row = Vec::with_capacity(K);
+                    let mut pow = BigUint::one();
+                    let j_val = BigUint::from_u64(j as u64);
+                    for _ in 0..K {
+                        row.push(pow.clone());
+                        pow = f.mul(&pow, &j_val);
+                    }
+                    row
+                })
+                .collect();
+            let scheme = brickell::Scheme::new(f.clone(), vectors);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(brickell::split(&scheme, &mut r, &s));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "brickell_reconstruct" => {
+            let f = field();
+            let vectors: Vec<Vec<BigUint>> = (1..=N)
+                .map(|j| {
+                    let mut row = Vec::with_capacity(K);
+                    let mut pow = BigUint::one();
+                    let j_val = BigUint::from_u64(j as u64);
+                    for _ in 0..K {
+                        row.push(pow.clone());
+                        pow = f.mul(&pow, &j_val);
+                    }
+                    row
+                })
+                .collect();
+            let scheme = brickell::Scheme::new(f.clone(), vectors);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = brickell::split(&scheme, &mut r, &s);
+            let coalition: Vec<_> = shares.iter().take(K).cloned().collect();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(brickell::reconstruct(&scheme, &coalition).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── massey ──
+        "massey_split" => {
+            let f = field();
+            let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+            #[allow(clippy::needless_range_loop)]
+            for j in 1..=N {
+                g[1][j] = BigUint::from_u64(j as u64);
+            }
+            let scheme = massey::CodeScheme::new(f.clone(), g);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(massey::split(&scheme, &mut r, &s));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "massey_reconstruct" => {
+            let f = field();
+            let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+            #[allow(clippy::needless_range_loop)]
+            for j in 1..=N {
+                g[1][j] = BigUint::from_u64(j as u64);
+            }
+            let scheme = massey::CodeScheme::new(f.clone(), g);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = massey::split(&scheme, &mut r, &s);
+            let coalition: Vec<_> = shares.iter().take(2).cloned().collect();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(massey::reconstruct(&scheme, &coalition).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── ramp ──
+        "ramp_split" => {
+            let f = field();
+            let mut r = rng();
+            let s: Vec<BigUint> = (0..K).map(|_| f.random(&mut r)).collect();
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(ramp::split(&f, &s, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "ramp_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s: Vec<BigUint> = (0..K).map(|_| f.random(&mut r)).collect();
+            let shares = ramp::split(&f, &s, N);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(ramp::reconstruct(&f, &shares[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── yamamoto ──
+        "yamamoto_split" => {
+            let f = field();
+            let mut r = rng();
+            let s: Vec<BigUint> = (0..K).map(|_| f.random(&mut r)).collect();
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(yamamoto::split(&f, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "yamamoto_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s: Vec<BigUint> = (0..K).map(|_| f.random(&mut r)).collect();
+            let shares = yamamoto::split(&f, &mut r, &s, K, N);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(yamamoto::reconstruct(&f, &shares[..K], K, K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── blakley_meadows ──
+        "blakley_meadows_split" => {
+            let f = field();
+            let mut r = rng();
+            let l = K - 1;
+            let s: Vec<BigUint> = (0..l).map(|_| f.random(&mut r)).collect();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(blakley_meadows::split(&f, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "blakley_meadows_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let l = K - 1;
+            let s: Vec<BigUint> = (0..l).map(|_| f.random(&mut r)).collect();
+            let shares = blakley_meadows::split(&f, &mut r, &s, K, N);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(blakley_meadows::reconstruct(&f, &shares[..K], K, l).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── kgh ──
+        "kgh_split" => {
+            let f = field();
+            let mut r = rng();
+            let s: Vec<BigUint> = (0..K).map(|_| f.random(&mut r)).collect();
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(kgh::split(&f, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "kgh_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s: Vec<BigUint> = (0..K).map(|_| f.random(&mut r)).collect();
+            let shares = kgh::split(&f, &mut r, &s, K, N);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(kgh::reconstruct(&f, &shares[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── vss (Rabin-Ben-Or) ──
+        "vss_split" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(vss::deal(&f, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "vss_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = vss::deal(&f, &mut r, &s, K, N);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(vss::reconstruct(&f, &shares[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── cgma_vss (toy group) ──
+        "cgma_vss_split" => {
+            let group = cgma_vss::small_test_group();
+            let mut r = rng();
+            let s = BigUint::from_u64(7); // < q = 11
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(cgma_vss::deal(&group, &mut r, &s, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "cgma_vss_reconstruct" => {
+            let group = cgma_vss::small_test_group();
+            let mut r = rng();
+            let s = BigUint::from_u64(7);
+            let (shares, commits) = cgma_vss::deal(&group, &mut r, &s, K, N);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for sh in &shares {
+                    black_box(cgma_vss::verify_share(&group, &commits, sh));
+                }
+                black_box(cgma_vss::reconstruct(&group, &shares[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── mignotte (small example) ──
+        "mignotte_split" => {
+            let seq = mignotte::small_example_3_of_5();
+            let s = seq.alpha().add_ref(&BigUint::from_u64(1));
+            let n_iter = iters(5000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(mignotte::split(&seq, &s));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "mignotte_reconstruct" => {
+            let seq = mignotte::small_example_3_of_5();
+            let s = seq.alpha().add_ref(&BigUint::from_u64(1));
+            let shares = mignotte::split(&seq, &s);
+            let n_iter = iters(5000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(mignotte::reconstruct(&seq, &shares[..K]).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── asmuth_bloom (small example) ──
+        "asmuth_bloom_split" => {
+            let params = asmuth_bloom::small_example_3_of_5();
+            let mut r = rng();
+            let s = BigUint::from_u64(1);
+            let n_iter = iters(5000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(asmuth_bloom::split(&params, &mut r, &s));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "asmuth_bloom_reconstruct" => {
+            let params = asmuth_bloom::small_example_3_of_5();
+            let mut r = rng();
+            let s = BigUint::from_u64(1);
+            let shares = asmuth_bloom::split(&params, &mut r, &s);
+            let n_iter = iters(5000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(asmuth_bloom::reconstruct(&params, &shares[..K]).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── trivial ──
+        "trivial_split" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(10_000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(trivial::split(&f, &mut r, &s, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "trivial_reconstruct" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = trivial::split(&f, &mut r, &s, N);
+            let n_iter = iters(20_000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(trivial::reconstruct(&f, &shares));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── ito ──
+        "ito_split" => {
+            let f = field();
+            let structure = ito::threshold_access_structure(N, K);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(5000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(ito::split(&f, &mut r, &s, &structure));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "ito_reconstruct" => {
+            let f = field();
+            let structure = ito::threshold_access_structure(N, K);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = ito::split(&f, &mut r, &s, &structure);
+            let coalition: Vec<_> = shares.iter().take(K).cloned().collect();
+            let n_iter = iters(10_000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(ito::reconstruct(&f, &structure, &coalition).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── benaloh-leichter (2-of-3 formula) ──
+        "benaloh_leichter_split" => {
+            let f = field();
+            let formula = bl::Formula::or(vec![
+                bl::Formula::and(vec![bl::Formula::party(1), bl::Formula::party(2)]),
+                bl::Formula::and(vec![bl::Formula::party(1), bl::Formula::party(3)]),
+                bl::Formula::and(vec![bl::Formula::party(2), bl::Formula::party(3)]),
+            ]);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let n_iter = iters(20_000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(bl::split(&f, &mut r, &s, &formula));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "benaloh_leichter_reconstruct" => {
+            let f = field();
+            let formula = bl::Formula::or(vec![
+                bl::Formula::and(vec![bl::Formula::party(1), bl::Formula::party(2)]),
+                bl::Formula::and(vec![bl::Formula::party(1), bl::Formula::party(3)]),
+                bl::Formula::and(vec![bl::Formula::party(2), bl::Formula::party(3)]),
+            ]);
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = bl::split(&f, &mut r, &s, &formula);
+            let pair: Vec<_> = shares.iter().take(2).cloned().collect();
+            let n_iter = iters(20_000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(bl::reconstruct(&f, &formula, &pair).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── proactive ──
+        "proactive_refresh" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = shamir::split(&f, &mut r, &s, K, N);
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(proactive::refresh(&f, &mut r, &shares, K));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "proactive_recover" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let shares = shamir::split(&f, &mut r, &s, K, N);
+            let live = vec![shares[0].clone(), shares[1].clone(), shares[3].clone()];
+            let lost_x = shares[2].x.clone();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(proactive::recover_share(&f, &live, K, &lost_x).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── bytes (16-byte secret) ──
+        "bytes_split_16" => {
+            let f = field();
+            let mut r = rng();
+            let secret = vec![0xC3u8; 16];
+            let n_iter = iters(1000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(bytes::split(&f, &mut r, &secret, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "bytes_reconstruct_16" => {
+            let f = field();
+            let mut r = rng();
+            let secret = vec![0xC3u8; 16];
+            let shares = bytes::split(&f, &mut r, &secret, K, N);
+            let refs: Vec<&[u8]> = shares.iter().map(Vec::as_slice).collect();
+            let n_iter = iters(1000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(bytes::reconstruct(&f, &refs[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── ida (16-byte file) ──
+        "ida_split_16" => {
+            let f = field();
+            let data = vec![0x5Au8; 16];
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(ida::split(&f, &data, K, N));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "ida_reconstruct_16" => {
+            let f = field();
+            let data = vec![0x5Au8; 16];
+            let shares = ida::split(&f, &data, K, N);
+            let refs: Vec<&[u8]> = shares.iter().map(Vec::as_slice).collect();
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(ida::reconstruct(&f, &refs[..K], K).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── decode (Berlekamp-Welch, t=1, n=11) ──
+        "decode_reconstruct_t1" => {
+            let f = field();
+            let mut r = rng();
+            let s = f.random(&mut r);
+            let mut shares = shamir::split(&f, &mut r, &s, K, 11);
+            shares[3].y = f.add(&shares[3].y, &BigUint::from_u64(1));
+            let n_iter = iters(200);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(reconstruct_with_errors(&f, &shares, K, 1).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        // ── visual (n=3, 8x8) ──
+        "visual_split_3_8" => {
+            let mut r = rng();
+            let secret: Vec<Vec<bool>> = (0..8)
+                .map(|y| (0..8).map(|x| (x + y) % 2 == 0).collect())
+                .collect();
+            let n_iter = iters(500);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(visual::split_n_of_n(&mut r, &secret, 3));
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "visual_decode_3_8" => {
+            let mut r = rng();
+            let secret: Vec<Vec<bool>> = (0..8)
+                .map(|y| (0..8).map(|x| (x + y) % 2 == 0).collect())
+                .collect();
+            let shares = visual::split_n_of_n(&mut r, &secret, 3);
+            let n_iter = iters(2000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                let stacked = visual::stack(&shares).unwrap();
+                black_box(visual::decode(&stacked, 3).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        other => {
+            eprintln!("unknown operation: {other}");
+            std::process::exit(2);
+        }
+    };
+
+    // Pilot-bench reads CSV from stdout: column 0 is the PI value.
+    println!("{ms}");
+}
