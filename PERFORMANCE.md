@@ -217,9 +217,11 @@ iterations, median latency) and exist for at-a-glance shape rather
 than confidence-interval rigour. The pilot-bench tables above are
 the authoritative numbers.
 
-- [Threshold throughput radar](assets/threshold-throughput-radar.svg)
-- [Ramp / vector throughput radar](assets/ramp-throughput-radar.svg)
-- [Other-schemes throughput radar](assets/other-throughput-radar.svg)
+![Threshold throughput radar](assets/threshold-throughput-radar.svg)
+
+![Ramp / vector throughput radar](assets/ramp-throughput-radar.svg)
+
+![Other-schemes throughput radar](assets/other-throughput-radar.svg)
 
 ## Non-radar scaling charts
 
