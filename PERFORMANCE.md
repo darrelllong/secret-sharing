@@ -158,6 +158,54 @@ Visual cryptography is image-domain. The single-image numbers above
 are at a fixed configuration; for scaling with `n` and image area
 see `assets/visual-by-n.svg` and `assets/visual-by-pixels.svg`.
 
+### 4 KiB block (k=3, n=5, GF(2^127 − 1))
+
+The threshold tables above measure a single Mersenne-127 element
+(~16 bytes). Real callers wrap a longer secret. The `*_4kb` ops chunk
+4096 bytes into 274 × 15-byte field elements and call the per-element
+`split` / `reconstruct` over each chunk inside the timed region; one
+`ms/op` value is therefore the latency of one full 4 KiB secret.
+
+| Operation                                |   ms/op    | ±CI (95%)  | Runs  |
+|------------------------------------------|------------|------------|-------|
+| `shamir_split_4kb`                       |     5.762  | ±0.06048   |   45  |
+| `shamir_reconstruct_4kb`                 |     7.481  | ±0.0865    |   30  |
+| `blakley_split_4kb`                      |    53.85   | ±0.2891    |   72  |
+| `blakley_reconstruct_4kb`                |    33.02   | ±0.3106    |   30  |
+| `kothari_split_4kb`                      |     5.729  | ±0.07609   |   66  |
+| `kothari_reconstruct_4kb`                |    10.18   | ±0.1114    |  105  |
+| `karchmer_wigderson_split_4kb`           |     5.889  | ±0.1712    |   30  |
+| `karchmer_wigderson_reconstruct_4kb`     |    15.10   | ±0.1287    |   45  |
+| `brickell_split_4kb`                     |     5.832  | ±0.05842   |  103  |
+| `brickell_reconstruct_4kb`               |    15.20   | ±0.1940    |   30  |
+| `massey_split_4kb`                       |     4.394  | ±0.04171   |   73  |
+| `massey_reconstruct_4kb`                 |     6.531  | ±0.1838    |   94  |
+
+Per-block costs scale linearly with the chunk count (4 KiB / 15 B ≈
+274 chunks): each entry above lands within run-to-run variance of
+274 × the single-element number from the threshold table. There is
+no shared per-secret amortisation — the polynomial / matrix bank is
+re-randomised per chunk because each chunk is an independent secret.
+
+End-to-end ranking (split + reconstruct, ms / 4 KiB):
+
+| Scheme               | total | throughput (KiB/s) |
+|----------------------|------:|-------------------:|
+| `massey`             |  10.9 |        ≈   376     |
+| `shamir`             |  13.2 |        ≈   310     |
+| `kothari`            |  15.9 |        ≈   258     |
+| `karchmer_wigderson` |  21.0 |        ≈   195     |
+| `brickell`           |  21.0 |        ≈   195     |
+| `blakley`            |  86.9 |        ≈    47     |
+
+`blakley` is the obvious outlier: both split (random hyperplane
+generation with a singularity guard) and reconstruct (k×k Gaussian
+elimination) pay quadratic field-multiply work that dominates at
+274 chunks. `kothari` / `karchmer_wigderson` / `brickell` cluster
+together because all three are linear schemes with comparable
+recovery-vector cost. `massey` wins for split because its CodeScheme
+constructs a single linear combination over a fixed generator matrix.
+
 ## Kiviat charts
 
 Operations that share a "single integer secret of N bits" model also
@@ -202,9 +250,11 @@ size) the legacy `examples/bench` driver also emits scaling charts:
   process invocation; pilot-bench launches a new process per round,
   so seed-derived state does not persist across measurements.
 - **What we do not bench yet.** Multi-`(k, n)` sweeps for each
-  scheme, byte-string secrets larger than 16 bytes, and the full
-  cold-cache numbers (the current `cold-cache-*.svg` charts use the
-  legacy `examples/bench` first-iteration sampler). Adding any of
-  these is a matter of dispatching a new operation in
-  `src/bin/pilot_ss.rs` and a new `measure …` line in
-  `scripts/bench_pilot.sh`.
+  scheme and the full cold-cache numbers (the current
+  `cold-cache-*.svg` charts use the legacy `examples/bench`
+  first-iteration sampler). Adding either is a matter of dispatching
+  a new operation in `src/bin/pilot_ss.rs` and a new `measure …`
+  line in `scripts/bench_pilot.sh`. The 4 KiB block table above
+  closes a previously-open item ("byte-string secrets larger than
+  16 bytes"); arbitrary secret sizes are now a one-line constant
+  change in `pilot_ss::SECRET_BYTES`.

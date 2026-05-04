@@ -48,7 +48,7 @@ use std::time::Instant;
 
 use secret_sharing::{
     asmuth_bloom, benaloh_leichter as bl, blakley, blakley_meadows, brickell, bytes, cgma_vss,
-    csprng::OsRng,
+    csprng::{Csprng, OsRng},
     decode::reconstruct_with_errors,
     field::{mersenne127, PrimeField},
     ida, ito, karchmer_wigderson as kw, kgh, kothari, massey, mignotte, proactive, ramp, shamir,
@@ -84,6 +84,26 @@ fn rng() -> ChaCha20Rng {
 
 fn field() -> PrimeField {
     PrimeField::new_unchecked(mersenne127())
+}
+
+// 4 KiB block experiment: chunk 4096 bytes into 15-byte pieces (120 bits,
+// safely under the Mersenne-127 modulus 2^127 − 1). Each `*_4kb` op
+// processes ⌈4096 / 15⌉ = 274 chunks per call so its ms/op number is the
+// per-block latency for a 4 KiB secret.
+const SECRET_BYTES: usize = 4096;
+const CHUNK_BYTES: usize = 15;
+
+fn chunks_4kb(rng: &mut ChaCha20Rng) -> Vec<BigUint> {
+    let mut bytes = vec![0u8; SECRET_BYTES];
+    rng.fill_bytes(&mut bytes);
+    let n_chunks = SECRET_BYTES.div_ceil(CHUNK_BYTES);
+    (0..n_chunks)
+        .map(|i| {
+            let start = i * CHUNK_BYTES;
+            let end = (start + CHUNK_BYTES).min(SECRET_BYTES);
+            BigUint::from_be_bytes(&bytes[start..end])
+        })
+        .collect()
 }
 
 fn main() {
@@ -651,6 +671,236 @@ fn main() {
             for _ in 0..n_iter {
                 let stacked = visual::stack(&shares).unwrap();
                 black_box(visual::decode(&stacked, 3).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "shamir_split_4kb" => {
+            let f = field();
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for s in &chunks {
+                    black_box(shamir::split(&f, &mut r, s, K, N));
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "shamir_reconstruct_4kb" => {
+            let f = field();
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let share_chunks: Vec<Vec<shamir::Share>> = chunks
+                .iter()
+                .map(|s| shamir::split(&f, &mut r, s, K, N))
+                .collect();
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for shares in &share_chunks {
+                    black_box(shamir::reconstruct(&f, &shares[..K], K).unwrap());
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "blakley_split_4kb" => {
+            let f = field();
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for s in &chunks {
+                    black_box(blakley::split(&f, &mut r, s, K, N));
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "blakley_reconstruct_4kb" => {
+            let f = field();
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let share_chunks: Vec<_> = chunks
+                .iter()
+                .map(|s| blakley::split(&f, &mut r, s, K, N))
+                .collect();
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for shares in &share_chunks {
+                    black_box(blakley::reconstruct(&f, &shares[..K], K).unwrap());
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "kothari_split_4kb" => {
+            let scheme = kothari::vandermonde(field(), K, N);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for s in &chunks {
+                    black_box(kothari::split(&scheme, &mut r, s));
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "kothari_reconstruct_4kb" => {
+            let scheme = kothari::vandermonde(field(), K, N);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let share_chunks: Vec<Vec<(usize, BigUint)>> = chunks
+                .iter()
+                .map(|s| {
+                    let shares = kothari::split(&scheme, &mut r, s);
+                    (0..K).map(|c| (c, shares[c].clone())).collect()
+                })
+                .collect();
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for pairs in &share_chunks {
+                    black_box(kothari::reconstruct(&scheme, pairs).unwrap());
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "karchmer_wigderson_split_4kb" => {
+            let prog = kw::threshold_msp(field(), K, N);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for s in &chunks {
+                    black_box(kw::split(&prog, &mut r, s));
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "karchmer_wigderson_reconstruct_4kb" => {
+            let prog = kw::threshold_msp(field(), K, N);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let coalition_chunks: Vec<Vec<_>> = chunks
+                .iter()
+                .map(|s| {
+                    let shares = kw::split(&prog, &mut r, s);
+                    shares.iter().take(K).cloned().collect()
+                })
+                .collect();
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for coalition in &coalition_chunks {
+                    black_box(kw::reconstruct(&prog, coalition).unwrap());
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "brickell_split_4kb" => {
+            let f = field();
+            let vectors: Vec<Vec<BigUint>> = (1..=N)
+                .map(|j| {
+                    let mut row = Vec::with_capacity(K);
+                    let mut pow = BigUint::one();
+                    let j_val = BigUint::from_u64(j as u64);
+                    for _ in 0..K {
+                        row.push(pow.clone());
+                        pow = f.mul(&pow, &j_val);
+                    }
+                    row
+                })
+                .collect();
+            let scheme = brickell::Scheme::new(f.clone(), vectors);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for s in &chunks {
+                    black_box(brickell::split(&scheme, &mut r, s));
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "brickell_reconstruct_4kb" => {
+            let f = field();
+            let vectors: Vec<Vec<BigUint>> = (1..=N)
+                .map(|j| {
+                    let mut row = Vec::with_capacity(K);
+                    let mut pow = BigUint::one();
+                    let j_val = BigUint::from_u64(j as u64);
+                    for _ in 0..K {
+                        row.push(pow.clone());
+                        pow = f.mul(&pow, &j_val);
+                    }
+                    row
+                })
+                .collect();
+            let scheme = brickell::Scheme::new(f.clone(), vectors);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let coalition_chunks: Vec<Vec<_>> = chunks
+                .iter()
+                .map(|s| {
+                    let shares = brickell::split(&scheme, &mut r, s);
+                    shares.iter().take(K).cloned().collect()
+                })
+                .collect();
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for coalition in &coalition_chunks {
+                    black_box(brickell::reconstruct(&scheme, coalition).unwrap());
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "massey_split_4kb" => {
+            let f = field();
+            let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+            #[allow(clippy::needless_range_loop)]
+            for j in 1..=N {
+                g[1][j] = BigUint::from_u64(j as u64);
+            }
+            let scheme = massey::CodeScheme::new(f.clone(), g);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for s in &chunks {
+                    black_box(massey::split(&scheme, &mut r, s));
+                }
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "massey_reconstruct_4kb" => {
+            let f = field();
+            let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+            #[allow(clippy::needless_range_loop)]
+            for j in 1..=N {
+                g[1][j] = BigUint::from_u64(j as u64);
+            }
+            let scheme = massey::CodeScheme::new(f.clone(), g);
+            let mut r = rng();
+            let chunks = chunks_4kb(&mut r);
+            let coalition_chunks: Vec<Vec<_>> = chunks
+                .iter()
+                .map(|s| {
+                    let shares = massey::split(&scheme, &mut r, s);
+                    shares.iter().take(2).cloned().collect()
+                })
+                .collect();
+            let n_iter = iters(20);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                for coalition in &coalition_chunks {
+                    black_box(massey::reconstruct(&scheme, coalition).unwrap());
+                }
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
