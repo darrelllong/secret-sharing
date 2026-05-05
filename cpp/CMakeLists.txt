@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(secret_sharing_cpp
-    VERSION 0.1.0
+    VERSION 1.0.0
     LANGUAGES CXX
     DESCRIPTION "Bit-compatible C++ port of secret-sharing")
 

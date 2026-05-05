@@ -132,6 +132,133 @@ fn build_large_mignotte_3_of_5() -> mignotte::MignotteSequence {
     mignotte::MignotteSequence::new(found, 3).expect("valid 130-bit sequence")
 }
 
+// ── (k, n) sweep helpers ──────────────────────────────────────────
+//
+// Shamir's split is O(k + n) field operations and reconstruct is
+// O(k²) (Lagrange denominators), so a sweep across several (k, n)
+// configurations exposes the scaling that the fixed (3, 5) bench
+// hides. Helper functions parameterised on (k, n) keep the dispatch
+// arms thin.
+
+fn shamir_split_kn(k: usize, n: usize) -> f64 {
+    let f = field();
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let n_iter = iters(2000);
+    let t0 = Instant::now();
+    for _ in 0..n_iter {
+        black_box(shamir::split(&f, &mut r, &s, k, n));
+    }
+    ms_per_op(t0.elapsed(), n_iter)
+}
+
+fn shamir_reconstruct_kn(k: usize, n: usize) -> f64 {
+    let f = field();
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let shares = shamir::split(&f, &mut r, &s, k, n);
+    let n_iter = iters(2000);
+    let t0 = Instant::now();
+    for _ in 0..n_iter {
+        black_box(shamir::reconstruct(&f, &shares[..k], k).unwrap());
+    }
+    ms_per_op(t0.elapsed(), n_iter)
+}
+
+// ── Cold-cache helpers ────────────────────────────────────────────
+//
+// pilot-bench launches the binary fresh on every round, so the
+// first call to a scheme inside one round IS the cold-cache call.
+// These helpers do exactly one operation inside the timed region;
+// the per-binary process startup cost is excluded by Instant::now()
+// being captured AFTER the field/RNG setup.
+//
+// Pilot-bench averages the per-round samples to give a cold-cache
+// distribution. The "warm" rows in the same table use the standard
+// 2000-iter loop where the cold call is amortised to nothing.
+
+fn shamir_cold_split() -> f64 {
+    let f = field();
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let t0 = Instant::now();
+    let shares = shamir::split(&f, &mut r, &s, K, N);
+    let elapsed = t0.elapsed();
+    black_box(shares);
+    ms_per_op(elapsed, 1)
+}
+
+fn shamir_cold_reconstruct() -> f64 {
+    let f = field();
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let shares = shamir::split(&f, &mut r, &s, K, N);
+    let t0 = Instant::now();
+    let recovered = shamir::reconstruct(&f, &shares[..K], K).unwrap();
+    let elapsed = t0.elapsed();
+    black_box(recovered);
+    ms_per_op(elapsed, 1)
+}
+
+fn blakley_cold_split() -> f64 {
+    let f = field();
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let t0 = Instant::now();
+    let shares = blakley::split(&f, &mut r, &s, K, N);
+    let elapsed = t0.elapsed();
+    black_box(shares);
+    ms_per_op(elapsed, 1)
+}
+
+fn blakley_cold_reconstruct() -> f64 {
+    let f = field();
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let shares = blakley::split(&f, &mut r, &s, K, N);
+    let t0 = Instant::now();
+    let recovered = blakley::reconstruct(&f, &shares[..K], K).unwrap();
+    let elapsed = t0.elapsed();
+    black_box(recovered);
+    ms_per_op(elapsed, 1)
+}
+
+fn massey_cold_split() -> f64 {
+    let f = field();
+    let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+    #[allow(clippy::needless_range_loop)]
+    for j in 1..=N {
+        g[1][j] = BigUint::from_u64(j as u64);
+    }
+    let scheme = massey::CodeScheme::new(f.clone(), g);
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let t0 = Instant::now();
+    let shares = massey::split(&scheme, &mut r, &s);
+    let elapsed = t0.elapsed();
+    black_box(shares);
+    ms_per_op(elapsed, 1)
+}
+
+fn massey_cold_reconstruct() -> f64 {
+    let f = field();
+    let mut g = vec![vec![BigUint::one(); N + 1], vec![BigUint::zero(); N + 1]];
+    #[allow(clippy::needless_range_loop)]
+    for j in 1..=N {
+        g[1][j] = BigUint::from_u64(j as u64);
+    }
+    let scheme = massey::CodeScheme::new(f.clone(), g);
+    let mut r = rng();
+    let s = f.random(&mut r);
+    let shares = massey::split(&scheme, &mut r, &s);
+    let coalition: Vec<_> = shares.iter().take(2).cloned().collect();
+    let t0 = Instant::now();
+    let recovered = massey::reconstruct(&scheme, &coalition).unwrap();
+    let elapsed = t0.elapsed();
+    black_box(recovered);
+    ms_per_op(elapsed, 1)
+}
+
 fn main() {
     let op = std::env::args().nth(1).unwrap_or_else(|| {
         eprintln!("usage: pilot_ss <operation>");
@@ -945,6 +1072,27 @@ fn main() {
             }
             ms_per_op(t0.elapsed(), n_iter)
         }
+        // (k, n) sweep — fixed scheme (Shamir), varying threshold params.
+        "shamir_split_2_3"   => shamir_split_kn(2, 3),
+        "shamir_split_3_5"   => shamir_split_kn(3, 5),
+        "shamir_split_5_9"   => shamir_split_kn(5, 9),
+        "shamir_split_7_15"  => shamir_split_kn(7, 15),
+        "shamir_split_10_20" => shamir_split_kn(10, 20),
+        "shamir_reconstruct_2_3"   => shamir_reconstruct_kn(2, 3),
+        "shamir_reconstruct_3_5"   => shamir_reconstruct_kn(3, 5),
+        "shamir_reconstruct_5_9"   => shamir_reconstruct_kn(5, 9),
+        "shamir_reconstruct_7_15"  => shamir_reconstruct_kn(7, 15),
+        "shamir_reconstruct_10_20" => shamir_reconstruct_kn(10, 20),
+
+        // Cold-cache: one operation inside the timed region; pilot-bench
+        // averages over fresh-process rounds. See helper docstrings.
+        "shamir_cold_split"        => shamir_cold_split(),
+        "shamir_cold_reconstruct"  => shamir_cold_reconstruct(),
+        "blakley_cold_split"       => blakley_cold_split(),
+        "blakley_cold_reconstruct" => blakley_cold_reconstruct(),
+        "massey_cold_split"        => massey_cold_split(),
+        "massey_cold_reconstruct"  => massey_cold_reconstruct(),
+
         other => {
             eprintln!("unknown operation: {other}");
             std::process::exit(2);

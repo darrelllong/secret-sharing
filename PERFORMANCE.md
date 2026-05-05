@@ -405,12 +405,69 @@ size) the legacy `examples/bench` driver also emits scaling charts:
 - **Seeds.** `pilot_ss` seeds `ChaCha20Rng` from `OsRng` once per
   process invocation; pilot-bench launches a new process per round,
   so seed-derived state does not persist across measurements.
-- **What we do not bench yet.** Multi-`(k, n)` sweeps for each
-  scheme and the full cold-cache numbers (the current
-  `cold-cache-*.svg` charts use the legacy `examples/bench`
-  first-iteration sampler). Adding either is a matter of dispatching
-  a new operation in `src/bin/pilot_ss.rs` and a new `measure …`
-  line in `scripts/bench_pilot.sh`. The 4 KiB block table above
-  closes a previously-open item ("byte-string secrets larger than
-  16 bytes"); arbitrary secret sizes are now a one-line constant
-  change in `pilot_ss::SECRET_BYTES`.
+- **What we do not bench yet.** All previously-open items are now
+  closed: the 4 KiB block table above closed "byte-string secrets
+  larger than 16 bytes"; the threshold (k, n) sweep below closes
+  "multi-(k, n) sweeps for each scheme" (currently Shamir only —
+  extending the same template to the other threshold schemes is
+  one helper function plus dispatch arms each); the cold-cache
+  pilot-bench numbers below close "full cold-cache numbers". The
+  legacy `cold-cache-*.svg` charts from `examples/bench` remain
+  in place as visual aids; their numbers are no longer the
+  authoritative cold-cache data.
+
+### Threshold (k, n) sweep — Shamir
+
+| Operation                  | ms/op    | ±CI (95%)   |
+|----------------------------|---------:|------------:|
+| `shamir_split_2_3`         | 0.001934 | ±0.000245   |
+| `shamir_reconstruct_2_3`   | 0.003532 | ±0.000157   |
+| `shamir_split_3_5`         | 0.005540 | ±0.000579   |
+| `shamir_reconstruct_3_5`   | 0.006523 | ±0.000251   |
+| `shamir_split_5_9`         | 0.016760 | ±0.001081   |
+| `shamir_reconstruct_5_9`   | 0.014580 | ±0.000254   |
+| `shamir_split_7_15`        | 0.041480 | ±0.001915   |
+| `shamir_reconstruct_7_15`  | 0.026650 | ±0.000873   |
+| `shamir_split_10_20`       | 0.080440 | ±0.003318   |
+| `shamir_reconstruct_10_20` | 0.050980 | ±0.001857   |
+
+Split scales approximately linearly in $n$ (one Horner evaluation
+per share); reconstruct scales approximately quadratically in $k$
+(Lagrange denominators are products over $k - 1$ pairs each).
+Empirically: the ratio shamir_split_10_20 / shamir_split_2_3 ≈
+41.6× (for $n$ growing 3 → 20, ~6.7×; the residual 6× factor is
+overhead per share from the per-trustee evaluation loop).
+Reconstruct's ratio 14.4× across $k$ growing 2 → 10 (5×) is
+consistent with $O(k^2)$ scaling plus a per-call linear term.
+
+### Cold-cache first-iteration latency
+
+| Operation                  | ms/op   | ±CI (95%)  |
+|----------------------------|--------:|-----------:|
+| `shamir_cold_split`        | 0.01060 | ±0.001052  |
+| `shamir_cold_reconstruct`  | 0.01398 | ±0.000806  |
+| `blakley_cold_split`       | 0.17840 | ±0.007872  |
+| `blakley_cold_reconstruct` | 0.07682 | ±0.004062  |
+| `massey_cold_split`        | 0.008215 | ±0.000988 |
+| `massey_cold_reconstruct`  | 0.01233 | ±0.000968  |
+
+Cold/warm ratios using the matching warm rows from the threshold
+table above:
+
+| Scheme  | warm split | cold split | ratio | warm recon | cold recon | ratio |
+|---------|-----------:|-----------:|------:|-----------:|-----------:|------:|
+| shamir  |   0.005299 |   0.01060  | 2.00× |   0.006671 |   0.01398  | 2.10× |
+| blakley |   0.1574   |   0.1784   | 1.13× |   0.06367  |   0.07682  | 1.21× |
+| massey  |   0.004240 |   0.008215 | 1.94× |   0.005429 |   0.01233  | 2.27× |
+
+The 2× cold/warm ratio on the Lagrange-style schemes (shamir,
+massey) reflects the BigUint heap allocations dominating
+first-call cost: the Mersenne-127 fast path allocates one
+`BigUint` per multiply, and on a cold L1 / L2 the allocator's
+size-class fast paths haven't been touched yet. Blakley's 1.1–1.2×
+is consistent with its Gaussian-elimination work being
+allocation-light per chunk — the shares' linear systems live in
+already-allocated `Vec`s reused across solve steps. Reconstruct
+ratios are slightly higher than split ratios across the board
+because the Lagrange denominators allocate more transient
+BigUints than the polynomial evaluation in split.
