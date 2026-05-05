@@ -5,7 +5,11 @@
 //! constants.
 
 use secret_sharing::{
-    field::{mersenne127, PrimeField},
+    field::{
+        curve25519_field, curve448_field, mersenne127, mersenne521, nist_p192_field,
+        nist_p224_field, nist_p256_field, nist_p384_field, poly1305_field, secp256k1_field,
+        PrimeField,
+    },
     shamir, BigUint, ChaCha20Rng, Csprng,
 };
 
@@ -40,6 +44,33 @@ fn main() {
         let prod = a.mul_ref(&b);
         let bytes = prod.to_be_bytes();
         print_bytes(&format!("MUL {a_hex} x {b_hex} = "), &bytes);
+    }
+
+    // Per-prime mul-mod vectors. Each entry is (prime_name, a_hex,
+    // b_hex, a*b mod p as hex). Operands are deterministic across
+    // primes so the C++ side can pin the same residues. The C++ test
+    // builds the same prime via its constructor and verifies the
+    // fast path produces the exact byte string Rust did.
+    let prime_table: &[(&str, BigUint)] = &[
+        ("mersenne127", mersenne127()),
+        ("mersenne521", mersenne521()),
+        ("curve25519", curve25519_field()),
+        ("poly1305", poly1305_field()),
+        ("secp256k1", secp256k1_field()),
+        ("curve448", curve448_field()),
+        ("nist_p192", nist_p192_field()),
+        ("nist_p224", nist_p224_field()),
+        ("nist_p256", nist_p256_field()),
+        ("nist_p384", nist_p384_field()),
+    ];
+    let operand_a_hex = "deadbeefcafebabe0123456789abcdef";
+    let operand_b_hex = "fedcba9876543210cafef00dba5eba11";
+    for (name, p) in prime_table {
+        let f = PrimeField::new_unchecked(p.clone());
+        let a = BigUint::from_be_bytes(&hex_decode(operand_a_hex)).modulo(p);
+        let b = BigUint::from_be_bytes(&hex_decode(operand_b_hex)).modulo(p);
+        let prod = f.mul(&a, &b);
+        print_bytes(&format!("FIELD_MUL {name} = "), &prod.to_be_bytes());
     }
 
     // Shamir shares with seed [0xC1; 32], secret = 0xC0FFEEDEADBEEF,

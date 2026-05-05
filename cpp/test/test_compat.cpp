@@ -124,6 +124,66 @@ TEST(compat, biguint_multiplication_vectors) {
 }
 
 // --------------------------------------------------------------------
+// Per-prime field multiplication. Same operands across all primes;
+// each prime's mul reduces to its own residue. Pinning these byte
+// strings catches any divergence between the Rust catalogue and the
+// C++ catalogue — in particular, a sign error in a Solinas term or
+// a constant-table typo in either constructor.
+
+struct field_mul_vector {
+    char const* name;
+    char const* product_hex;
+    ss::big_uint (*p_ctor)();
+};
+
+constexpr char const* OPERAND_A_HEX = "deadbeefcafebabe0123456789abcdef";
+constexpr char const* OPERAND_B_HEX = "fedcba9876543210cafef00dba5eba11";
+
+inline std::vector<field_mul_vector> field_mul_vectors() {
+    return {
+        {"mersenne127", "0cd1b5cb7a62014b0a5cd1ae2444a70c", &ss::mersenne127},
+        {"mersenne521",
+         "ddb06310dc4c1aa054508af7743d2a14d170efa9c1c9cc0a61bbbbbf3bca52df", &ss::mersenne521},
+        {"curve25519",
+         "5db06310dc4c1aa054508af7743d2a14d170efa9c1c9cc0a61bbbbbf3bca52f2",
+         &ss::curve25519_field},
+        {"poly1305", "01e68d6b7ed528ed52cb2069748d16c778", &ss::poly1305_field},
+        {"secp256k1",
+         "ddb06310dc4c1aa054508af7743d2a14d170efa9c1c9cc0a61bbbbbf3bca52df",
+         &ss::secp256k1_field},
+        {"curve448",
+         "ddb06310dc4c1aa054508af7743d2a14d170efa9c1c9cc0a61bbbbbf3bca52df",
+         &ss::curve448_field},
+        {"nist_p192", "54508af7743d2a15af2152ba9e15e6ab3f6c1ed018166d7f", &ss::nist_p192_field},
+        {"nist_p224",
+         "dc4c1aa054508af7743d2a15af2152b9c1c9cc0a61bbbbbe5e19efcf", &ss::nist_p224_field},
+        {"nist_p256",
+         "ddb06310dc4c1aa054508af7743d2a14d170efa9c1c9cc0a61bbbbbf3bca52df",
+         &ss::nist_p256_field},
+        {"nist_p384",
+         "ddb06310dc4c1aa054508af7743d2a14d170efa9c1c9cc0a61bbbbbf3bca52df",
+         &ss::nist_p384_field},
+    };
+}
+
+TEST(compat, per_prime_field_mul_matches_rust) {
+    auto a_bytes = hex_decode(OPERAND_A_HEX);
+    auto b_bytes = hex_decode(OPERAND_B_HEX);
+    auto a = ss::big_uint::from_be_bytes({a_bytes.data(), a_bytes.size()});
+    auto b = ss::big_uint::from_be_bytes({b_bytes.data(), b_bytes.size()});
+    for (auto const& v : field_mul_vectors()) {
+        auto p = v.p_ctor();
+        auto f = ss::prime_field::new_unchecked(p);
+        auto a_red = a.modulo(p);
+        auto b_red = b.modulo(p);
+        auto prod = f.mul(a_red, b_red);
+        auto bytes = prod.to_be_bytes();
+        EXPECT_EQ(bytes, hex_decode(v.product_hex)) << "prime: " << v.name;
+        EXPECT_LT(prod, p) << v.name;
+    }
+}
+
+// --------------------------------------------------------------------
 // Shamir round trip across the FFI boundary.
 //
 // Vectors below come from running the Rust impl with seed [0xC1; 32],
