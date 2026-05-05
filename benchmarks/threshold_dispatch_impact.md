@@ -16,17 +16,36 @@ Two threshold-driven dispatches landed in this commit:
    the setup cost outweighs the per-step extended-Euclidean
    saving; the cost flips at ~130 bits.
 
-All measurements: macOS, Apple silicon, release build, pilot-bench
-`quick` preset, `PILOT_SS_ITERS_PERCENT=100`. The "before" binary
-is built from commit `cfbf31b` in a worktree with the new pilot
-ops backported (so the harness is identical and only the dispatch
-logic differs).
+All measurements: pilot-bench `quick` preset,
+`PILOT_SS_ITERS_PERCENT=100`. The "before" binary is built from
+commit `cfbf31b` (which had unconditional window-method exp but no
+CRT precomp) in a worktree with the new pilot ops backported. The
+"after" is `b0a350d` with both threshold dispatches.
 
 ## Where the threshold dispatch makes a measured difference
 
-| Operation                          | before (ms)        | after (ms)         | speedup |
-|------------------------------------|-------------------:|-------------------:|--------:|
+### macOS (Apple silicon)
+
+| Operation                              | before (ms)        | after (ms)         | speedup |
+|----------------------------------------|-------------------:|-------------------:|--------:|
 | `mignotte_reconstruct_large` (130-bit) | 0.04688 ± 3.87e-04 | 0.01266 ± 8.18e-05 | **3.70×** |
+
+### Linux x86 (moore, AMD EPYC 7452)
+
+| Operation                              | before (ms)       | after (ms)        | speedup |
+|----------------------------------------|------------------:|------------------:|--------:|
+| `mignotte_reconstruct_large` (130-bit) | 0.1176 ± 9.7e-04  | 0.02382 ± 1.3e-04 | **4.94×** |
+| `cgma_vss_reconstruct` (256-bit exp)   | 21.68 ± 0.077     | 20.03 ± 0.131     | 1.08×  |
+| `cgma_vss_split` (256-bit exp)         | 2.235 ± 0.011     | 2.112 ± 0.008     | 1.06×  |
+
+The 4.94× win on Linux x86 is larger than the 3.70× on macOS
+because EPYC's per-`mod_inverse` cost at 130-bit moduli is higher
+in absolute terms while the precomp branch's `mod_mul` cost is
+similar — so the saving is proportionally larger. The cgma_vss
+rows on Linux drift modestly below their CIs even though both
+versions use the window method, suggesting the threshold-dispatch
+branch (`if exponent.bits() < 64`) costs essentially nothing
+inside an already long-running modexp.
 
 This is the headline. A 130-bit Mignotte sequence is the smallest
 modulus class that crosses the 128-bit threshold, and the precomp
@@ -38,7 +57,7 @@ multiplications.
 
 Below the thresholds, the dispatch routes to the historical path
 and the change is bit-for-bit identical to `cfbf31b`. Within-noise
-deltas confirm no regression:
+deltas confirm no regression. macOS sample:
 
 | Operation                         | before (ms)         | after (ms)          | Δ |
 |-----------------------------------|--------------------:|--------------------:|---|
@@ -49,6 +68,10 @@ deltas confirm no regression:
 | `asmuth_bloom_split`              | 0.0005934 ± 1.8e-05 | 0.0006074 ± 1.3e-05 | within ±CI |
 | `asmuth_bloom_reconstruct`        | 0.002791 ± 7.5e-05  | 0.002815 ± 8.2e-05  | within ±CI |
 | `shamir_split` (no exp involved)  | 0.006138 ± 6.0e-04  | 0.005853 ± 5.8e-04  | within ±CI |
+
+Linux confirms the same shape (asmuth_bloom_reconstruct 5.33 →
+5.17 µs, mignotte_reconstruct 4.93 → 4.87 µs, shamir_split 10.39
+→ 9.75 µs — all within their CIs).
 
 `cgma_vss` exponents are 256-bit, so both branches take the
 window path; the small drift is run-to-run noise, not the
