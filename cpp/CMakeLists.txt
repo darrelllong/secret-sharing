@@ -46,10 +46,18 @@ target_compile_features(secret_sharing PUBLIC cxx_std_20)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
-include(CheckIPOSupported)
-check_ipo_supported(RESULT _ipo_ok)
-if(_ipo_ok AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    set_target_properties(secret_sharing PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+option(SECRET_SHARING_LTO "Enable link-time optimisation in Release builds" ON)
+if(SECRET_SHARING_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT _ipo_ok)
+    # System `ld` on Ubuntu 20.04 cannot link clang's LLVM-bitcode
+    # `.o` files, so only enable LTO when both the compiler claims
+    # support and a compatible linker is available. `gold` and `lld`
+    # both work; we don't probe explicitly — the user can disable LTO
+    # with `-DSECRET_SHARING_LTO=OFF` if their toolchain mismatches.
+    if(_ipo_ok AND CMAKE_BUILD_TYPE STREQUAL "Release")
+        set_target_properties(secret_sharing PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif()
 endif()
 
 # Tests + fuzz are opt-in via cache flags so a downstream `add_subdirectory`
