@@ -42,6 +42,11 @@ add_library(secret_sharing STATIC
 target_include_directories(secret_sharing PUBLIC include)
 target_compile_features(secret_sharing PUBLIC cxx_std_20)
 
+# `std::call_once` in field.cpp's reduction-table cache needs
+# pthread on Linux. Propagate the dependency to every consumer.
+find_package(Threads REQUIRED)
+target_link_libraries(secret_sharing PUBLIC Threads::Threads)
+
 # Production build: -O3 + LTO. Override with `-DCMAKE_BUILD_TYPE=Debug`.
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
