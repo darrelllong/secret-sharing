@@ -1,3 +1,4 @@
 build/
 build-*/
 pilot_result_*/
+.cache/
