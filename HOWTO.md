@@ -134,7 +134,7 @@ assert_eq!(recovered, secret);
 ```
 
 To build your own sequence, use `MignotteSequence::new(moduli, k)` with
-pairwise-coprime, strictly-increasing `moduli` satisfying `α < β`.
+pairwise-coprime, strictly-increasing `moduli` satisfying $\alpha < \beta$.
 
 ## `asmuth_bloom` — modular CRT `(k, n)`
 
@@ -486,7 +486,7 @@ assert_eq!(recovered_share, shares[2]);
 ## `visual` — Naor–Shamir visual cryptography (n, n)
 
 Black-and-white image as `Vec<Vec<bool>>`; reconstruction by stacking
-(bitwise OR) all `n` shares. Per-pixel expansion is `2^(n-1)`.
+(bitwise OR) all `n` shares. Per-pixel expansion is $2^{n-1}$.
 
 ```rust
 use secret_sharing::{csprng::OsRng, visual, ChaCha20Rng};
@@ -551,8 +551,8 @@ runtime failures.
 
 | Helper | Modulus | Plaintext block | Share-element width |
 |--------|---------|-----------------|---------------------|
-| `field::mersenne127()` | `2^127 − 1` | 15 bytes | 16 bytes |
-| `field::mersenne521()` | `2^521 − 1` | 65 bytes | 66 bytes |
+| `field::mersenne127()` | $2^{127} - 1$ | 15 bytes | 16 bytes |
+| `field::mersenne521()` | $2^{521} - 1$ | 65 bytes | 66 bytes |
 
 Any user-supplied prime works — `PrimeField::new(p)` accepts an
 arbitrary `BigUint`. The caller is responsible for choosing a value

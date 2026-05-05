@@ -96,22 +96,26 @@ degenerates to a line, so the right honest format is the table:
 | `vss`                 | split        | 0.03456  | ±0.001524  |  60  |
 | `vss`                 | reconstruct  | 0.01905  | ±0.000852  |  30  |
 | `cgma_vss`            | split        | 1.255    | ±0.006247  |  36  |
-| `cgma_vss`            | reconstruct  | 12.04    | ±0.04553   |  48  |
+| `cgma_vss`            | reconstruct  | 10.77    | ±0.246     |  60  |
 
 `vss::deal` builds a full bivariate `k × k` polynomial matrix, so
 splits cost ~5× a single Shamir secret. Reconstruction is dominated
 by the `n²` pairwise consistency check.
 
 `cgma_vss` is now benched against the **RFC 5114 §2.3 group**
-(2048-bit `p`, 256-bit prime-order subgroup `q`) — the canonical
+(2048-bit $p$, 256-bit prime-order subgroup $q$) — the canonical
 Schnorr-style group from the IETF standard, ~112-bit symmetric-
 equivalent security per NIST SP 800-57. Numbers are dominated by
-2048-bit modular exponentiation: `deal` performs `k = 3` group
-exponentiations to commit, `reconstruct` performs `n × k = 15`
-exponentiations across the per-share `verify` calls plus the
-final Lagrange interpolation in `GF(q)`. Constructor
+2048-bit modular exponentiation: `deal` performs $k = 3$ group
+exponentiations to commit, `reconstruct` performs $n \cdot k = 15$
+exponentiations across the per-share `verify` calls plus the final
+Lagrange interpolation in $\mathrm{GF}(q)$. Constructor
 [`rfc5114_modp_2048_256`](src/cgma_vss.rs) returns the validated
-group. For the scaling curve across group sizes (toy → 167 → 1024
+group. The reconstruct cost dropped from 12.04 ms to 10.77 ms (~11%)
+when `MontgomeryCtx::pow` switched from bit-by-bit
+square-and-multiply to a 4-bit fixed-window scan; see the
+"Window-Method Modular Exponentiation" section in
+[`THEORY.md`](THEORY.md) for the algebra. For the scaling curve across group sizes (toy → 167 → 1024
 OAKLEY → 2048 RFC 5114) see `assets/cgma-vss-scaling.svg`.
 
 ### CRT schemes (small example sequences)
@@ -244,38 +248,40 @@ multiplier for its modulus structure. The catalogue covers ten
 RFC- or FIPS-blessed primes; one BigUint comparison per
 `PrimeField::new*` call selects the dispatch.
 
-| Prime             | Form                                                              | Standard         |
-|-------------------|-------------------------------------------------------------------|------------------|
-| `mersenne127`     | `2^127 − 1` (Mersenne)                                            | this crate       |
-| `mersenne521`     | `2^521 − 1` (Mersenne; = NIST P-521 base field)                   | FIPS 186-4       |
-| `curve25519`      | `2^255 − 19` (pseudo-Mersenne)                                    | RFC 7748         |
-| `poly1305`        | `2^130 − 5` (pseudo-Mersenne)                                     | RFC 8439         |
-| `secp256k1`       | `2^256 − 2^32 − 977` (pseudo-Mersenne, 2 terms)                   | SEC 2 / RFC 6979 |
-| `curve448`        | `2^448 − 2^224 − 1` (Solinas, 2 terms)                            | RFC 7748         |
-| `nist_p192`       | `2^192 − 2^64 − 1` (Solinas, 2 terms)                             | FIPS 186-4       |
-| `nist_p224`       | `2^224 − 2^96 + 1` (Solinas, 2 terms, mixed signs)                | FIPS 186-4       |
-| `nist_p256`       | `2^256 − 2^224 + 2^192 + 2^96 − 1` (Solinas, 4 terms, mixed signs) | FIPS 186-4       |
-| `nist_p384`       | `2^384 − 2^128 − 2^96 + 2^32 − 1` (Solinas, 4 terms, mixed signs) | FIPS 186-4       |
+| Prime             | Form                                                                          | Standard         |
+|-------------------|-------------------------------------------------------------------------------|------------------|
+| `mersenne127`     | $2^{127} - 1$ (Mersenne)                                                      | this crate       |
+| `mersenne521`     | $2^{521} - 1$ (Mersenne; = NIST P-521 base field)                             | FIPS 186-4       |
+| `curve25519`      | $2^{255} - 19$ (pseudo-Mersenne)                                              | RFC 7748         |
+| `poly1305`        | $2^{130} - 5$ (pseudo-Mersenne)                                               | RFC 8439         |
+| `secp256k1`       | $2^{256} - 2^{32} - 977$ (pseudo-Mersenne, 2 terms)                           | SEC 2 / RFC 6979 |
+| `curve448`        | $2^{448} - 2^{224} - 1$ (Solinas, 2 terms)                                    | RFC 7748         |
+| `nist_p192`       | $2^{192} - 2^{64} - 1$ (Solinas, 2 terms)                                     | FIPS 186-4       |
+| `nist_p224`       | $2^{224} - 2^{96} + 1$ (Solinas, 2 terms, mixed signs)                        | FIPS 186-4       |
+| `nist_p256`       | $2^{256} - 2^{224} + 2^{192} + 2^{96} - 1$ (Solinas, 4 terms, mixed signs)    | FIPS 186-4       |
+| `nist_p384`       | $2^{384} - 2^{128} - 2^{96} + 2^{32} - 1$ (Solinas, 4 terms, mixed signs)     | FIPS 186-4       |
 
 The same parametric reducer handles all ten. Each prime is
-described by `δ = 2^k − p` decomposed into signed terms
-`(offset, coef)`; the multiplier:
+described by $\delta = 2^k - p$ decomposed into signed terms
+$(e_i, s_i)$ such that $\delta = \sum_i s_i \cdot 2^{e_i}$; the
+multiplier:
 
-1. Pre-reduces each operand to `≤ k` bits (slow path, unreached
+1. Pre-reduces each operand to $\le k$ bits (slow path, unreached
    when callers feed reduced values).
-2. Computes `prod = a · b` via `BigUint::mul_ref` (Karatsuba above
-   32 limbs).
-3. Iteratively folds: `t' = low + high · δ`, accumulated as
-   positive and negative `BigUint` running sums. Construction-time
-   validation (`validate_reduction_params`) requires `δ > 0`, which
-   guarantees the running sum stays non-negative across every fold
-   so the BigInt machinery is never reached for the registered primes.
+2. Computes $\text{prod} = a \cdot b$ via `BigUint::mul_ref`
+   (Karatsuba above 32 limbs).
+3. Iteratively folds: $t' = \text{low} + \text{high} \cdot \delta$,
+   accumulated as positive and negative `BigUint` running sums.
+   Construction-time validation (`validate_reduction_params`)
+   requires $\delta > 0$, which guarantees the running sum stays
+   non-negative across every fold so the BigInt machinery is
+   never reached for the registered primes.
 4. Hard-asserts a 32-fold cap (panic on overrun, never silent
    partial reduction). NIST P-256 is the worst case in the catalogue
    at ~8 folds; everything else converges in 1–3.
 
 `mersenne127` keeps a separate hand-rolled `u128` fast path because
-its operands fit in two `u64`s and a 2 × 2 schoolbook + Mersenne
+its operands fit in two `u64`s and a 2 × 2 schoolbook plus Mersenne
 fold stays entirely in registers — measurably faster than going
 through the parametric reducer.
 
@@ -334,8 +340,8 @@ commit because the `mersenne127` fast path itself is unchanged:
 fuzz test (`field::tests::fuzz_<name>`) running 16 384 random
 multiplies through the fast path and the generic Montgomery path
 and asserting exact equality on every input. Edge cases (`0`, `1`,
-`p−1`, `p`, `p+1`, `2^(k−1)`), unreduced-input handling, and the
-`(p−1)²` worst-case convergence path are exercised independently.
+$p - 1$, $p$, $p + 1$, $2^{k-1}$), unreduced-input handling, and the
+$(p - 1)^2$ worst-case convergence path are exercised independently.
 Construction-time validation rejects malformed table entries
 (zero coefficient, offset ≥ k, δ ≤ 0, δ ≠ 2^k − p), with negative
 unit tests pinning each contract.

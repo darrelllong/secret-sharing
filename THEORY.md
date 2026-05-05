@@ -1651,3 +1651,198 @@ when the supplied points have enough agreement with a competing
 codeword. Robust decoding also does not authenticate the dealer or
 prove that a sharing was generated honestly; use `vss` or a
 protocol-level verification mechanism for that.
+
+
+## Field-Arithmetic Optimisations
+
+This section documents the algebra behind the two optimisation paths
+the BigUint and field layers exploit. Both are textbook techniques
+adapted to the project's conventions (no external dependencies, no
+constant-time claims on the bigint backend, all operations matched
+bit-for-bit between the Rust and C++ ports).
+
+### Pseudo-Mersenne and Solinas Reduction
+
+The standardised primes that ECC and authenticated-encryption papers
+use are not arbitrary; they are chosen so that reduction modulo $p$
+is far cheaper than the generic Montgomery reduction.
+
+A *pseudo-Mersenne* prime has the form
+
+$$
+p = 2^k - c, \qquad 0 < c \ll 2^k.
+$$
+
+Examples: $2^{127} - 1$ (Mersenne, $c = 1$), $2^{255} - 19$
+(Curve25519, $c = 19$), $2^{130} - 5$ (Poly1305).
+
+A *Solinas* (or *generalised Mersenne*) prime is the same shape with
+$c$ replaced by a short signed sum of powers of two:
+
+$$
+p = 2^k - \delta, \qquad \delta = \sum_i s_i \cdot 2^{e_i}, \quad s_i \in \{-1, +1\}, \quad e_i < k.
+$$
+
+Examples (FIPS 186-4 NIST primes):
+
+* P-192: $p = 2^{192} - 2^{64} - 1$, so $\delta = 2^{64} + 1$.
+* P-224: $p = 2^{224} - 2^{96} + 1$, so $\delta = 2^{96} - 1$.
+* P-256: $p = 2^{256} - 2^{224} + 2^{192} + 2^{96} - 1$, so
+  $\delta = 2^{224} - 2^{192} - 2^{96} + 1$.
+* P-384: $p = 2^{384} - 2^{128} - 2^{96} + 2^{32} - 1$, so
+  $\delta = 2^{128} + 2^{96} - 2^{32} + 1$.
+* secp256k1: $p = 2^{256} - 2^{32} - 977$, so $\delta = 2^{32} + 977$.
+* Curve448: $p = 2^{448} - 2^{224} - 1$, so $\delta = 2^{224} + 1$.
+
+The fundamental identity in $\mathbb{Z}/p\mathbb{Z}$ is
+
+$$
+2^k \equiv \delta \pmod{p}.
+$$
+
+Given a product $t = a \cdot b$ with $0 \le a, b < p < 2^k$, we have
+$0 \le t < 2^{2k}$. Splitting into low and high halves at bit $k$:
+
+$$
+t = \text{high} \cdot 2^k + \text{low}, \qquad 0 \le \text{low} < 2^k, \quad 0 \le \text{high} < 2^k.
+$$
+
+Substituting the identity yields
+
+$$
+t \equiv \text{low} + \text{high} \cdot \delta \pmod{p}.
+$$
+
+For pseudo-Mersenne $\delta$ with $\log_2 \delta \ll k$, the new value
+fits in roughly $k + \log_2 \delta$ bits, so one or two folds of this
+form drive $t$ below $2^{k+1}$, after which a single conditional
+subtract pins it to $[0, p)$. For Solinas $\delta$ with terms
+$s_i \cdot 2^{e_i}$, the fold becomes
+
+$$
+t \equiv \text{low} + \sum_i s_i \cdot \text{high} \cdot 2^{e_i} \pmod{p}.
+$$
+
+Each shift $\text{high} \cdot 2^{e_i}$ is a limb-level left shift —
+no multiplication required when $|s_i| = 1$.
+
+#### Convergence
+
+Let $b(x)$ denote $\lceil \log_2 (x+1) \rceil$. After one fold step
+on a value with $b(t) > k$,
+
+$$
+b(\text{result}) \le \max\left(b(\text{low}),\ b(\text{high}) + \max_i e_i + \lceil \log_2 |s_i \cdot \text{num\_terms}|\rceil\right),
+$$
+
+so each fold strips at least $k - \max_i e_i$ bits from the magnitude
+when $\delta > 0$ and the sum is taken with appropriate sign-tracking.
+In the catalogue, the worst case is NIST P-256 ($\max e_i = 224$,
+$k = 256$), which strips ~32 bits per fold and converges from a
+$2k = 512$-bit product in roughly $\lceil 256 / 32 \rceil = 8$
+iterations. The implementation hard-asserts a generous cap of 32
+folds; reaching it indicates a corrupted parameter table rather than
+a numerical issue.
+
+#### The δ > 0 Invariant
+
+The implementation accumulates positive and negative term
+contributions into separate $\mathtt{BigUint}$ running sums and
+returns $\text{pos} - \text{neg}$ at the end of each fold. This is
+correct precisely when $\text{pos} \ge \text{neg}$ at every step.
+Since
+
+$$
+\text{pos} - \text{neg} = \text{low} + \text{high} \cdot \delta
+$$
+
+and $\text{low}, \text{high} \ge 0$, a sufficient condition is
+$\delta > 0$. Construction-time validation
+(`validate_reduction_params`) checks this for every catalogue entry
+by computing $\delta$ from its term decomposition and rejecting if
+$\delta \le 0$ or if $\delta \ne 2^k - p$. The validation runs once
+behind a `OnceLock`, so its cost is amortised over every subsequent
+`PrimeField::mul`.
+
+#### Why nist_p256 Routes to Generic
+
+NIST P-256's polynomial has four terms with mixed signs and
+$\max e_i = 224$ (close to $k = 256$), so each fold strips only ~32
+bits — the algorithm needs ~8 iterations, each doing 4 BigUint
+shifts and adds. Empirically that costs more than Montgomery's
+4 mont-muls on 4 limbs. The catalogue still recognises P-256
+(with the entry's `prefer_fast` flag set to `false`) so the
+parametric reducer's correctness for that polynomial is exercised
+by the per-prime fuzz harness, but production callers route to
+Montgomery via the dispatch.
+
+### Window-Method Modular Exponentiation
+
+Modular exponentiation $\text{base}^e \bmod n$ is the inner loop of
+verifiable-secret-sharing schemes that commit via a discrete-log
+group (Feldman / CGMA-VSS). The textbook *square-and-multiply*
+algorithm is the natural baseline:
+
+> Walk the bits of $e$ MSB to LSB. Square the running result on
+> every bit. When the bit is 1, multiply by the base.
+
+For a uniformly random $n$-bit exponent this costs
+
+$$
+n \text{ squarings} + \tfrac{n}{2} \text{ multiplies} \approx 1.5 n \text{ Montgomery multiplications.}
+$$
+
+The *fixed-window* variant with window size $w$ improves the
+multiply count. Precompute a table
+
+$$
+T[i] = \text{base}^i \pmod{n}, \qquad 0 \le i < 2^w,
+$$
+
+at a one-time cost of $2^w - 2$ multiplications (since $T[0] = 1$
+and $T[1] = \text{base}$). Then walk the exponent in $w$-bit
+windows, MSB first: square the running result $w$ times, look up
+the next $w$-bit window of $e$ as an index $i$, and multiply by
+$T[i]$. The total cost becomes
+
+$$
+n \text{ squarings} + \frac{n}{w} \text{ multiplies} + (2^w - 2) \text{ setup multiplies}.
+$$
+
+Setting $w = 4$ (the implementation choice) gives a 16-entry table
+costing 14 setup multiplies and reduces the body cost from
+$\tfrac{n}{2}$ to $\tfrac{n}{4}$ multiplies. For a 256-bit exponent
+this saves $(128 - 64 - 14) = 50$ Montgomery multiplications
+($\approx 13\%$ of the total $1.5n = 384$); for 2048-bit it saves
+$(1024 - 512 - 14) = 498$ ($\approx 16\%$). The empirical win on
+`cgma_vss_reconstruct` is 12 ms → 10.77 ms, $\approx 11\%$.
+
+#### Skip-on-Zero and Side Channel
+
+The implementation skips the multiply step entirely when a window
+index is 0, recovering more time on exponents with many zero
+windows. This and the data-dependent table indexing make the
+operation **non-constant-time on the exponent**. The current callers
+in this crate all use *public* exponents (the player abscissa $j$
+in CGMA-VSS verification, treated as a small public integer), so the
+leakage is benign. The docstrings on `MontgomeryCtx::pow` and
+`pow_encoded` flag the surface and direct callers with secret
+exponents (RSA, DH, signing) to a constant-time alternative — which
+would have to read all $2^w$ table entries unconditionally and
+multiply on every window using $T[0] = 1$ as a no-op for the zero
+case.
+
+#### Underflow Hazard at Short Exponents
+
+A subtle hazard in the MSB-first scan: the natural index variable is
+"position of the bit just below the most-recently-consumed window."
+For an $n$-bit exponent with leading partial window of width
+$\ell \in [1, w-1]$, the position after the partial window is
+$n - 1 - \ell$, which can be 0 (when $n = \ell$) or — if computed as
+$\text{top} - \ell$ on `usize` — wrap to `usize::MAX` when
+$\text{top} < \ell$. The implementation drives the scan from a
+monotonically-decreasing `remaining = n` counter that's checked in
+the loop guard rather than from a `top - width` subtraction, so the
+unsigned arithmetic cannot underflow even for $n \in \{1, 2, 3\}$.
+Regression tests pin this for every exponent in $[0, 20]$ and for
+the all-zero-windows case $2^{16}$.
