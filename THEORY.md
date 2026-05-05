@@ -7,16 +7,17 @@ match the public modules in `src/`, not just the abstract papers in
 
 All field-based proofs below are conditional on the modulus actually
 being prime, so arithmetic is in
-$F = \mathbb{F}_p$. The crate's `PrimeField::new` checks only
-$p > 1$; it does not run a primality test. With a composite modulus,
-inverses may not exist and the interpolation, linear-algebra, and
-privacy proofs below do not apply. Trustee labels are assumed to be
-distinct non-zero field elements, user-supplied field values are meant
-as representatives modulo $p$, and random values are assumed to be
-sampled uniformly from the stated domain. The Rust implementation uses
-variable-time `BigUint` arithmetic, so these are information-theoretic
-statements about the mathematical schemes, not side-channel claims
-about a particular deployment.
+$F = \mathbb{F}_p$. The safe constructor `PrimeField::new` validates
+primality with Miller-Rabin; `PrimeField::new_unchecked` only checks
+$p > 1$ and relies on the caller's proof that $p$ is prime. With a
+composite modulus, inverses may not exist and the interpolation,
+linear-algebra, and privacy proofs below do not apply. Trustee labels
+are assumed to be distinct non-zero field elements, user-supplied field
+values are meant as representatives modulo $p$, and random values are
+assumed to be sampled uniformly from the stated domain. The Rust
+implementation uses variable-time `BigUint` arithmetic, so these are
+information-theoretic statements about the mathematical schemes, not
+side-channel claims about a particular deployment.
 
 For a perfect secret-sharing scheme with secret $S$ and shares $V_i$,
 an unauthorized coalition $C$ has perfect privacy when
@@ -385,9 +386,25 @@ $$
 a_T \in \mathrm{rowspan}(B_T).
 $$
 
-If this holds, changing $s$ only shifts the random vector $r$ by a
-field-linear bijection, so every candidate secret induces the same
-distribution on $v_T$.
+If this holds, choose $\lambda$ with $\lambda B_T = a_T$. Then
+
+$$
+v_T = (r + s\lambda)B_T.
+$$
+
+The map $r \mapsto r + s\lambda$ is a bijection of $F^{k-1}$, so
+uniform $r$ gives the same distribution for every $s$.
+
+Conversely, if $a_T$ is not in the row span of $B_T$, there exists a
+column vector $c$ with $B_T c = 0$ but $a_T c \ne 0$. The coalition can
+compute
+
+$$
+v_T c = s(a_T c),
+$$
+
+which determines $s$. Thus the row-span condition is necessary and
+sufficient for perfect privacy of that coalition.
 
 For the Vandermonde specialization, this condition holds for every
 $t < k$: for any selected non-zero labels, there is a polynomial
@@ -457,13 +474,17 @@ secret coordinate is all of $F$.
 
 ### Caveats
 
-The implementation samples random hyperplanes and does not retry until
-all relevant matrices are in general position. Honest reconstruction
-can fail if the first $k$ hyperplanes are singular, and privacy against
-a particular unauthorized set relies on the random-coordinate matrix
-for that set having full row rank. These failures occur with small
-probability for large $p$, but they are not impossible. Use Shamir or
-KGH when deterministic MDS-style threshold guarantees are required.
+The implementation rejection-samples only while building the first
+$k$ hyperplanes, so the common reconstruction path from the first
+$k$ generated shares is guarded against singularity. It does not force
+every possible $k$-subset, or every unauthorized random-coordinate
+matrix, into general position. Reconstruction from an arbitrary
+$k$-subset can still fail if that subset is singular, and privacy
+against a particular unauthorized set relies on the random-coordinate
+matrix for that set having full row rank. These failures occur with
+small probability for large $p$, but they are not impossible. Use
+Shamir or KGH when deterministic MDS-style threshold guarantees are
+required.
 
 ## `blakley_meadows`: Geometric $(k, L, n)$ Ramp Scheme
 
@@ -526,11 +547,13 @@ Meadows.
 ### Caveats
 
 The implementation rejects $L = k$ because there would be no padding.
-Like `blakley`, it samples random hyperplanes and does not force every
-possible submatrix into general position. Reconstruction can fail on a
-singular first-$k$ set, and exactly $k$ tampered shares can solve to a
-wrong secret. Use extras for consistency checks, or use a verifiable
-layer when parties are malicious.
+Like `blakley`, it rejection-samples the first $k$ generated
+hyperplanes until that leading reconstruction matrix is nonsingular,
+but it does not force every possible submatrix into general position.
+Reconstruction from another $k$-subset can fail if that subset is
+singular, and exactly $k$ tampered shares can solve to a wrong secret.
+Use extras for consistency checks, or use a verifiable layer when
+parties are malicious.
 
 ## `mignotte`: CRT Reconstruction-Uniqueness Scheme
 
@@ -684,15 +707,22 @@ S + A m_0 \equiv r \pmod P.
 $$
 
 Because $\mathrm{gcd}(m_0,P)=1$, this picks exactly one residue class for
-$A \bmod P$. Over the interval
-$0 \le A < \lfloor M_{\mathrm{bot}}/m_0 \rfloor$, the number of
-solutions in each residue class differs by at most one. Thus the
-coalition's view is statistically close to independent of $S$, with
-distance controlled by the ratio of $P$ to the mask range.
+$A \bmod P$. Put
 
-The inequality $m_0 P < M_{\mathrm{bot}}$ guarantees at least one full
-secret modulus worth of masking room for every unauthorized product
-$P$.
+$$
+N = \left\lfloor M_{\mathrm{bot}}/m_0 \right\rfloor.
+$$
+
+Over the interval $0 \le A < N$, the number of solutions in each
+residue class modulo $P$ is either $\lfloor N/P \rfloor$ or
+$\lceil N/P \rceil$. Thus the coalition's view is statistically close
+to independent of $S$: changing $S$ only permutes which residues get
+the extra one count, so the total variation distance between two
+candidate-secret views is at most $P/N$.
+
+The inequality $m_0 P < M_{\mathrm{bot}}$ gives $P < M_{\mathrm{bot}}/m_0$,
+so the mask interval contains at least one complete period modulo every
+unauthorized product $P$.
 
 ### Caveats
 
@@ -738,16 +768,20 @@ $$
 
 ### Ramp Privacy
 
-A coalition of $t < k$ shares imposes $t$ independent linear
-constraints on the $k$-element secret vector. Therefore the candidate
-set has size
+A coalition of $t < k$ generated shares evaluates the degree $< k$
+polynomial at $t$ public points outside the secret anchor slots. The
+Reed-Solomon evaluation map from the $k$ anchor values to those $t$
+share values has rank $t$, so the coalition learns $t$ independent
+linear constraints on the $k$-element secret vector. Therefore the
+number of secret vectors compatible with any observed view is
 
 $$
 p^{k-t}.
 $$
 
-For $t = k - 1$, the coalition narrows the secret to $p$ possible
-vectors. This is information-theoretic leakage, but not full recovery.
+For $t = k - 1$, the coalition narrows the secret to
+$p$ possible vectors. This is information-theoretic leakage, but not
+full recovery.
 
 ### Caveats
 
@@ -757,12 +791,13 @@ learn nothing. Its benefit is storage rate: one field element per share
 protects a $k$-field-element secret with partial privacy.
 
 The correctness and privacy statements assume labels outside the secret
-anchor slots, namely $k+1,\ldots,k+n$ for shares produced by `split`.
-The `ramp::reconstruct` API accepts arbitrary `Share` values and does
-not authenticate labels, enforce the generated label range, or validate
-extra shares. If an untrusted caller supplies forged points at
-positions $1,\ldots,k$, reconstruction can read attacker-chosen anchor
-values. Validate labels and share authenticity outside this module.
+anchor slots. Shares produced by `split` use $k+1,\ldots,k+n$, and
+`ramp::reconstruct` rejects labels that reduce to zero or to one of the
+reserved anchor positions $1,\ldots,k$. It does not authenticate share
+values or validate extras beyond the first $k$ points, so exactly
+$k$ forged non-anchor shares can interpolate to a wrong secret vector.
+Validate share authenticity outside this module when callers are
+untrusted.
 
 ## `yamamoto`: $(k, L, n)$ Ramp Scheme
 
@@ -831,10 +866,10 @@ threshold. Use parameters with care: increasing $L$ improves rate and
 decreases privacy.
 
 The proof assumes share labels are outside the reserved anchor slots
-$1,\ldots,k$. The implementation validates duplicate labels and extra
-shares, but it does not enforce that a caller-supplied `Share.x` lies
-in the generated range $k+1,\ldots,k+n$, so forged anchor labels can
-force wrong recovered secret components. It is not an active-security
+$1,\ldots,k$. The implementation rejects zero labels, labels colliding
+with those anchors, duplicate labels, and inconsistent extras. It does
+not authenticate shares, so exactly $k$ forged non-anchor shares can
+still interpolate to a wrong secret. It is not an active-security
 protocol.
 
 ## `ito`: Ito-Saito-Nishizeki Cumulative Array
@@ -950,14 +985,15 @@ implementation rejects direct contradictions at the same leaf path, but
 an OR branch with internally tampered fragments can reconstruct to a
 wrong value before another valid branch is considered.
 
-The proof assumes each `ShareFragment.path` is bound to the player at
-that leaf by an authentic channel or by using the output of `split`.
-The `reconstruct` API checks duplicate player IDs and contradictory
-values for the same path, but it does not independently verify that a
-caller-supplied `PlayerShare.player` is entitled to every fragment path
-inside it. A forged fragment for another player's leaf can therefore
-satisfy the formula unless the caller authenticates or validates that
-path-to-player binding.
+The `reconstruct` API checks duplicate player IDs, contradictory
+values for the same path, and whether every submitted fragment path is
+actually a leaf labelled by the submitting `PlayerShare.player`. That
+path-ownership check prevents a caller from satisfying the formula by
+attaching another player's leaf path to its own share. This is still
+not active security: a player can tamper with a value on a path it
+legitimately owns, and an OR branch with an internally corrupted but
+syntactically valid subtree can produce a wrong value before another
+valid branch is considered.
 
 ## `karchmer_wigderson`: Monotone Span Program
 
@@ -1037,13 +1073,12 @@ independent of the secret.
 ### Caveats
 
 The access structure is exactly the one induced by the supplied span
-program. The constructor checks shape, not that the program represents
-some intended external policy. It currently accepts zero-width rows;
-in that degenerate API regime the target vector above does not exist
-and the proof does not describe the implementation's behavior. Use
-positive-width programs. Reconstruction is passive; forged fragments
-can make a qualified coalition compute a wrong value unless the caller
-adds verification.
+program. The constructor checks shape, enforces positive row width, and
+rejects player label zero; it does not prove that the program
+represents some intended external policy. Reconstruction is passive:
+forged fragments for rows legitimately owned by a qualified coalition
+can make that coalition compute a wrong value unless the caller adds
+verification.
 
 ## `brickell`: Ideal Vector-Space Secret Sharing
 
@@ -1122,10 +1157,10 @@ monotone access structure has such an ideal realization. The
 implementation accepts arbitrary user vectors, so the represented
 access structure is the one induced over $F$, not necessarily the one
 the caller intended over integers. Choose $p$ large enough to avoid
-accidental modular dependencies. The constructor currently permits
-zero-width vectors; the target $e_1$ is then undefined and the theory
-above does not apply. There is no tamper correction; a bad share in a
-minimal qualified set can produce a wrong secret.
+accidental modular dependencies. The constructor delegates to the span
+program constructor, which rejects zero-width vectors. There is no
+tamper correction; a bad share in a minimal qualified set can produce a
+wrong secret.
 
 ## `massey`: Linear-Code Secret Sharing
 
@@ -1202,14 +1237,13 @@ the secret.
 ### Caveats
 
 The mathematical scheme requires the secret column to be nonzero in
-$F^k$. The constructor checks only that some raw `BigUint` entry in
-column zero is nonzero; callers should supply matrix entries reduced
-modulo $p$ and ensure some secret-column entry is nonzero modulo $p$.
-Otherwise sharing may panic or the qualification test may not match the
-intended field-linear scheme. The constructor also does not prove that
-the matrix realizes an intended policy. As in the other linear schemes,
-shares are not authenticated: a tampered share can make a qualified
-coalition recover the wrong value.
+$F^k$. The constructor reduces every matrix entry modulo $p$ and then
+checks that column zero is nonzero, so raw multiples of $p$ do not pass
+as secret-column support. The constructor does not prove that the
+matrix realizes an intended policy; qualification is exactly the
+field-linear column-span relation after reduction modulo $p$. As in the
+other linear schemes, shares are not authenticated: a tampered share can
+make a qualified coalition recover the wrong value.
 
 ## `visual`: Naor-Shamir Visual Cryptography
 
@@ -1391,10 +1425,13 @@ Reference: `feldman1987practical`; computational VSS background:
 The module implements the standard Feldman-style computational VSS
 template over a Schnorr group. The mathematical template requires a
 prime $p$, a prime subgroup order $q$, and a generator $g$ of the
-order-$q$ subgroup. This is a caller-supplied precondition:
-`DlogGroup::new` performs sanity checks but does not prove primality or
-prove that the order is exactly $q$. Under valid parameters, the dealer
-samples a Shamir polynomial over $\mathbb{F}_q$:
+order-$q$ subgroup. `DlogGroup::new` checks those relations: it
+Miller-Rabin tests $p$ and $q$, checks $q \mid p-1$, reduces and
+rejects the identity generator, and verifies $g^q = 1 \pmod p$. Since
+$q$ is prime and $g \ne 1$, that pins the order of $g$ to exactly $q$,
+up to the probabilistic soundness of the primality test. Under valid
+parameters, the dealer samples a Shamir polynomial over
+$\mathbb{F}_q$:
 
 $$
 f(x) = a_0 + a_1 x + \cdots + a_{k-1}x^{k-1},
@@ -1461,14 +1498,14 @@ protocol.
 ### Caveats
 
 Do not use the bundled `small_test_group` for security. The constructor
-performs sanity checks, not primality proofs or full parameter
-generation; in particular, $g^q = 1$ only proves that the order of $g$
-divides $q$. If $q$ is composite or the generator has smaller order,
-the field and binding statements above can fail. This scheme is useful
-when computational assumptions and a private authenticated channel
-model are acceptable; it is not a replacement for `vss` when
-information-theoretic secrecy or an honest-majority protocol is
-required.
+validates supplied parameters but does not generate new groups or give a
+formal primality certificate; for large inputs its Miller-Rabin test is
+probabilistic. `verify_share` also rejects player labels that would
+alias the secret slot modulo $q$ and rejects commitments outside the
+order-$q$ subgroup. This scheme is useful when computational
+assumptions and a private authenticated channel model are acceptable;
+it is not a replacement for `vss` when information-theoretic secrecy or
+an honest-majority protocol is required.
 
 ## `proactive`: Shamir Share Refresh
 
@@ -1911,3 +1948,89 @@ margin on the side that does *not* benefit from algorithm B's
 specialised structure. This avoids regressions when measurement
 noise crosses the line, at the cost of a few percent on inputs
 near the boundary.
+
+## References and Further Reading
+
+The short reference keys above correspond to `bib/references.bib` when
+that file contains the source. Extra entries here cover named
+mathematical and implementation techniques that are used in the theory
+but are not themselves secret-sharing papers.
+
+* `shamir1979share`: Adi Shamir, "How to Share a Secret,"
+  Communications of the ACM 22(11), 1979.
+* `karnin1983secret`: Ehud D. Karnin, Jonathan W. Greene, and Martin
+  E. Hellman, "On Secret Sharing Systems," IEEE Transactions on
+  Information Theory 29(1), 1983.
+* `blakley1979safeguarding`: George R. Blakley, "Safeguarding
+  Cryptographic Keys," AFIPS Conference Proceedings 48, 1979.
+* `blakley1984ramp`: George R. Blakley and Catherine Meadows,
+  "Security of Ramp Schemes," CRYPTO 1984.
+* `kothari1984generalized`: Suresh C. Kothari, "Generalized Linear
+  Threshold Scheme," CRYPTO 1984.
+* `mignotte1983secret`: Maurice Mignotte, "How to Share a Secret,"
+  Workshop on Cryptography, 1983.
+* `asmuth1983modular`: Charles Asmuth and John Bloom, "A Modular
+  Approach to Key Safeguarding," IEEE Transactions on Information
+  Theory 29(2), 1983.
+* `mceliece1981sharing`: Robert J. McEliece and Dilip V. Sarwate, "On
+  Sharing Secrets and Reed-Solomon Codes," Communications of the ACM
+  24(9), 1981.
+* `yamamoto1986secret`: Hirosuke Yamamoto, "Secret Sharing System
+  Using $(k,L,n)$ Threshold Scheme," Electronics and Communications in
+  Japan 69(9), 1986.
+* `ito1989secret`: Mitsuru Ito, Akira Saito, and Takao Nishizeki,
+  "Secret Sharing Scheme Realizing General Access Structure,"
+  Electronics and Communications in Japan 72(9), 1989.
+* `benaloh1990generalized`: Josh Benaloh and Jerry Leichter,
+  "Generalized Secret Sharing and Monotone Functions," CRYPTO 1988.
+* `karchmer1993span`: Mauricio Karchmer and Avi Wigderson, "On Span
+  Programs," Structure in Complexity Theory, 1993.
+* `vandijk1994linear`: Marten van Dijk, "A Linear Construction of
+  Perfect Secret Sharing Schemes," EUROCRYPT 1994.
+* `brickell1989ideal`: Ernest F. Brickell, "Some Ideal Secret Sharing
+  Schemes," EUROCRYPT 1989.
+* `massey1993minimal`: James L. Massey, "Minimal Codewords and Secret
+  Sharing," 6th Joint Swedish-Russian Workshop on Information Theory,
+  1993.
+* `naor1994visual`: Moni Naor and Adi Shamir, "Visual Cryptography,"
+  EUROCRYPT 1994.
+* `rabin1989vss`: Tal Rabin and Michael Ben-Or, "Verifiable Secret
+  Sharing and Multiparty Protocols with Honest Majority," STOC 1989.
+* `chor1985vss`: Benny Chor, Shafi Goldwasser, Silvio Micali, and
+  Baruch Awerbuch, "Verifiable Secret Sharing and Achieving
+  Simultaneity in the Presence of Faults," FOCS 1985.
+* `feldman1987practical`: Paul Feldman, "A Practical Scheme for
+  Non-Interactive Verifiable Secret Sharing," FOCS 1987.
+* `herzberg1995proactive`: Amir Herzberg, Stanislaw Jarecki, Hugo
+  Krawczyk, and Moti Yung, "Proactive Secret Sharing Or: How to Cope
+  With Perpetual Leakage," CRYPTO 1995.
+* `rabin1989ida`: Michael O. Rabin, "Efficient Dispersal of
+  Information for Security, Load Balancing, and Fault Tolerance,"
+  Journal of the ACM 36(2), 1989.
+* `reed1960polynomial`: Irving S. Reed and Gustave Solomon,
+  "Polynomial Codes over Certain Finite Fields," Journal of the
+  Society for Industrial and Applied Mathematics 8(2), 1960.
+* `berlekamp1968algebraic`: Elwyn R. Berlekamp, Algebraic Coding
+  Theory, McGraw-Hill, 1968.
+* `roth2006coding`: Ron M. Roth, Introduction to Coding Theory,
+  Cambridge University Press, 2006.
+* `menezes1996handbook`: Alfred J. Menezes, Paul C. van Oorschot, and
+  Scott A. Vanstone, Handbook of Applied Cryptography, CRC Press, 1996.
+* `gathen2013modern`: Joachim von zur Gathen and Jurgen Gerhard,
+  Modern Computer Algebra, Cambridge University Press, 2013.
+* `miller1976riemann`: Gary L. Miller, "Riemann's Hypothesis and Tests
+  for Primality," Journal of Computer and System Sciences 13(3), 1976.
+* `rabin1980probabilistic`: Michael O. Rabin, "Probabilistic Algorithm
+  for Testing Primality," Journal of Number Theory 12(1), 1980.
+* `schnorr1991efficient`: Claus-Peter Schnorr, "Efficient Signature
+  Generation by Smart Cards," Journal of Cryptology 4(3), 1991.
+* `montgomery1985modular`: Peter L. Montgomery, "Modular
+  Multiplication Without Trial Division," Mathematics of Computation
+  44(170), 1985.
+* `solinas1999generalized`: Jerome A. Solinas, "Generalized Mersenne
+  Numbers," Technical Report CORR 99-39, University of Waterloo, 1999.
+* `nist2013fips1864`: NIST FIPS 186-4, Digital Signature Standard,
+  2013, for the named NIST prime shapes used in the code.
+* `karatsuba1963multiplication`: Anatoly Karatsuba and Yuri Ofman,
+  "Multiplication of Multidigit Numbers on Automata," Soviet Physics
+  Doklady 7, 1963.
