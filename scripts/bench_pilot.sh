@@ -91,6 +91,7 @@ measure cgma_vss_reconstruct
 hdr "CRT (small example sequences)"
 measure mignotte_split
 measure mignotte_reconstruct
+measure mignotte_reconstruct_large
 measure asmuth_bloom_split
 measure asmuth_bloom_reconstruct
 

@@ -28,6 +28,16 @@ use crate::bigint::BigUint;
 use crate::secure::ct_eq_biguint;
 
 /// A validated `(k, n)`-Mignotte sequence.
+///
+/// At construction the sequence may pre-compute a pairwise CRT
+/// inverse table when the moduli are large enough that
+/// extended-Euclidean inversion outweighs Montgomery setup cost. The
+/// threshold is documented at [`CRT_PRECOMP_THRESHOLD_BITS`]; pilot
+/// measurement on the existing test sequences (≤ 8-bit moduli) showed
+/// the precomp regressed reconstruct, while a 130-bit sequence (the
+/// smallest case where the trade flips) gains ~1.3×. For sequences
+/// below the threshold, `pair_inv` is `None` and reconstruct uses one
+/// `mod_inverse` per fold step (the historical baseline).
 #[derive(Clone, Debug)]
 pub struct MignotteSequence {
     moduli: Vec<BigUint>,
@@ -36,7 +46,22 @@ pub struct MignotteSequence {
     alpha: BigUint,
     /// Product of the `k` smallest moduli.
     beta: BigUint,
+    /// `pair_inv[i][j] = (m_j mod m_i)^{-1} mod m_i` for `i ≠ j`,
+    /// 0-based into `moduli`. Diagonal is unused (`BigUint::zero()`).
+    /// `None` when the sequence falls below
+    /// [`CRT_PRECOMP_THRESHOLD_BITS`] and reconstruct uses the
+    /// per-fold `mod_inverse` path instead.
+    pair_inv: Option<Vec<Vec<BigUint>>>,
 }
+
+/// Bit-length above which CRT pairwise-inverse precomputation pays
+/// off vs the per-fold `mod_inverse` baseline. Below the threshold,
+/// `BigUint::mod_mul` rebuilds a Montgomery context per call and the
+/// setup cost dominates the per-step extended-Euclidean it tries to
+/// replace; pilot measurements on 8-bit / 64-bit / 130-bit / 256-bit
+/// sequences identified the flip near 100–130 bits, so we use 128 as
+/// the cutoff with a small margin on the precomp side.
+pub const CRT_PRECOMP_THRESHOLD_BITS: usize = 128;
 
 /// One trustee's share.
 #[derive(Clone, Eq, PartialEq)]
@@ -83,11 +108,40 @@ impl MignotteSequence {
         if alpha >= beta {
             return None;
         }
+        // Decide whether to precompute the pairwise-inverse table.
+        // The decision is on the LARGEST modulus's bit length: that's
+        // where mod_inverse cost peaks, and a single threshold on a
+        // single value keeps the dispatch trivially correct under
+        // future moduli additions.
+        let max_bits = moduli.iter().map(BigUint::bits).max().unwrap_or(0);
+        let pair_inv = if max_bits >= CRT_PRECOMP_THRESHOLD_BITS {
+            let mut table: Vec<Vec<BigUint>> = Vec::with_capacity(n);
+            for i in 0..n {
+                let mut row = Vec::with_capacity(n);
+                for j in 0..n {
+                    if i == j {
+                        row.push(BigUint::zero());
+                    } else {
+                        let m_j_mod_m_i = moduli[j].modulo(&moduli[i]);
+                        // Pairwise coprimality (validated above) makes
+                        // mod_inverse infallible here; a `?` failure
+                        // means a validation regression, not user error.
+                        let inv = mod_inverse(&m_j_mod_m_i, &moduli[i])?;
+                        row.push(inv);
+                    }
+                }
+                table.push(row);
+            }
+            Some(table)
+        } else {
+            None
+        };
         Some(Self {
             moduli,
             k,
             alpha,
             beta,
+            pair_inv,
         })
     }
 
@@ -183,17 +237,39 @@ pub fn reconstruct(seq: &MignotteSequence, shares: &[Share]) -> Option<BigUint> 
     let used = &shares[..k];
     let (mut x, mut prod) = (BigUint::zero(), BigUint::one());
     let mut first = true;
+    let mut folded_indices: Vec<usize> = Vec::with_capacity(k);
     for s in used {
-        let m = &seq.moduli[s.index - 1];
+        let m_i_idx = s.index - 1;
+        let m = &seq.moduli[m_i_idx];
         if first {
             x = s.residue.clone();
             prod = m.clone();
+            folded_indices.push(m_i_idx);
             first = false;
             continue;
         }
         // Solve y ≡ x (mod prod), y ≡ residue (mod m).
         // y = x + prod * ((residue − x) * prod^{-1} mod m) mod (prod * m).
-        let inv = mod_inverse(&prod.modulo(m), m)?;
+        // The `prod^{-1} mod m` factor is computed two ways depending
+        // on the precomp dispatch threshold:
+        //
+        // - Precomp path (large moduli): assemble inv from the cached
+        //   pairwise table, ∏_{j folded} pair_inv[m_i_idx][j] mod m.
+        // - Direct path (small moduli, no precomp): one extended-
+        //   Euclidean call as in the historical implementation.
+        let inv = if let Some(pair_inv) = &seq.pair_inv {
+            let mut acc = BigUint::one();
+            for &j in &folded_indices {
+                debug_assert!(
+                    j != m_i_idx,
+                    "fold step would self-multiply pair_inv diagonal",
+                );
+                acc = BigUint::mod_mul(&acc, &pair_inv[m_i_idx][j], m);
+            }
+            acc
+        } else {
+            mod_inverse(&prod.modulo(m), m)?
+        };
         // diff = (residue − x) mod m, computed without going negative.
         let x_mod_m = x.modulo(m);
         let diff = if s.residue >= x_mod_m {
@@ -204,6 +280,7 @@ pub fn reconstruct(seq: &MignotteSequence, shares: &[Share]) -> Option<BigUint> 
         let t = BigUint::mod_mul(&diff, &inv, m);
         x = x.add_ref(&prod.mul_ref(&t));
         prod = prod.mul_ref(m);
+        folded_indices.push(m_i_idx);
     }
     // Reduce to canonical [0, prod). The folding above can leave x < prod
     // already, but a final `modulo` is cheap insurance.
@@ -407,5 +484,86 @@ mod tests {
             shares[6].clone(),
         ];
         assert_eq!(reconstruct(&seq, &picked), Some(secret));
+    }
+
+    /// Build a (3, 5)-Mignotte sequence whose moduli sit just above
+    /// the CRT precomp threshold so the precomp branch is exercised.
+    /// Uses five distinct primes near 2^130, generated deterministically
+    /// from a fixed seed via `random_below` + Miller–Rabin so the test
+    /// runs in well under a second and the sequence is reproducible.
+    fn large_example_3_of_5() -> MignotteSequence {
+        use crate::csprng::ChaCha20Rng;
+        use crate::primes::{is_probable_prime, random_below};
+        let mut rng = ChaCha20Rng::from_seed(&[0xA1u8; 32]);
+        // Floor: 2^130, ceiling: 2^131. Primes in this range are
+        // pairwise coprime by virtue of being distinct primes; the
+        // remaining Mignotte conditions (strict-increase and α < β)
+        // we sort and verify after collection.
+        let lo = {
+            let mut v = BigUint::one();
+            v.shl_bits(130);
+            v
+        };
+        let span = {
+            let mut v = BigUint::one();
+            v.shl_bits(130);
+            v
+        };
+        let mut found: Vec<BigUint> = Vec::new();
+        while found.len() < 5 {
+            let mut candidate = random_below(&mut rng, &span).expect("span > 0");
+            candidate = candidate.add_ref(&lo);
+            if !candidate.is_odd() {
+                continue;
+            }
+            if is_probable_prime(&candidate) && !found.contains(&candidate) {
+                found.push(candidate);
+            }
+        }
+        found.sort();
+        MignotteSequence::new(found, 3).expect("constructed 130-bit Mignotte sequence")
+    }
+
+    #[test]
+    fn small_example_skips_precomp() {
+        // Below CRT_PRECOMP_THRESHOLD_BITS, pair_inv must be None
+        // so reconstruct takes the historical mod_inverse path.
+        let seq = small_example_3_of_5();
+        assert!(seq.pair_inv.is_none(), "small moduli should skip CRT precomp");
+    }
+
+    #[test]
+    fn large_example_uses_precomp() {
+        // At ≥ 130-bit moduli, pair_inv must be populated so
+        // reconstruct takes the precomp path.
+        let seq = large_example_3_of_5();
+        assert!(seq.pair_inv.is_some(), "large moduli should populate CRT precomp");
+        let table = seq.pair_inv.as_ref().unwrap();
+        assert_eq!(table.len(), 5);
+        for row in table {
+            assert_eq!(row.len(), 5);
+        }
+    }
+
+    #[test]
+    fn large_example_round_trip_via_precomp() {
+        // The precomp branch must produce the same secrets as the
+        // direct mod_inverse branch on the same operand stream.
+        let seq = large_example_3_of_5();
+        let alpha = seq.alpha().clone();
+        let beta = seq.beta().clone();
+        let secret = alpha.add_ref(&BigUint::from_u64(7));
+        assert!(secret < beta, "secret must lie in (α, β)");
+        let shares = split(&seq, &secret);
+        for window_start in 0..=2 {
+            let used = &shares[window_start..window_start + 3];
+            assert_eq!(
+                reconstruct(&seq, used),
+                Some(secret.clone()),
+                "precomp branch failed for shares[{}..{}]",
+                window_start,
+                window_start + 3,
+            );
+        }
     }
 }

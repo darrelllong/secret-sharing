@@ -1038,6 +1038,22 @@ impl MontgomeryCtx {
         )
     }
 
+    /// Crossover bit-length below which the binary square-and-multiply
+    /// scan beats the 4-bit window scheme. The window's 14 setup
+    /// multiplies (precomputing `base^2..base^15`) are a fixed tax that
+    /// only pays off once the body savings exceed it. Cost analysis at
+    /// the boundary (random exponent of `n` bits):
+    ///
+    /// - binary: `n` squarings + `n/2` multiplies   ≈ 1.5n
+    /// - window: `n` squarings + `n/4` multiplies + 14 ≈ 1.25n + 14
+    ///
+    /// Setting the two costs equal gives `n ≈ 56` for the break-even
+    /// exponent. Below 64 bits the binary path wins; we use 64 as the
+    /// threshold so a small margin of safety is on the binary side.
+    /// `cgma_vss` exponents are 256-bit (player abscissae × subgroup
+    /// order), so it always takes the window path.
+    const POW_WINDOW_THRESHOLD_BITS: usize = 64;
+
     fn pow_encoded_with_workspace(
         &self,
         base_mont: &BigUint,
@@ -1050,20 +1066,57 @@ impl MontgomeryCtx {
         if exponent.is_zero() {
             return self.decode_with_workspace(&self.one_mont.clone(), workspace);
         }
+        if exponent.bits() < Self::POW_WINDOW_THRESHOLD_BITS {
+            return self.pow_binary_scan_with_workspace(base_mont, exponent, workspace);
+        }
+        self.pow_window4_with_workspace(base_mont, exponent, workspace)
+    }
 
-        // 4-bit fixed-window exponentiation, MSB-first. The bit-by-bit
-        // scan it replaces does `n` squarings + `n/2` multiplies for an
-        // n-bit random exponent (≈ 1.5n mont-muls). The window method
-        // does `n` squarings + `n/4` multiplies + 14 setup multiplies
-        // (≈ 1.25n + 14), shaving ~17 % of the operation count for
-        // 256-bit exponents and ~17 % for 2048-bit. Setup cost is
-        // amortised over the long exponent in cgma_vss.
+    /// Bit-by-bit MSB-first square-and-multiply. The historical baseline
+    /// kept as the fallback for short exponents: no setup cost, n squarings
+    /// + n/2 multiplies for an n-bit random exponent.
+    fn pow_binary_scan_with_workspace(
+        &self,
+        base_mont: &BigUint,
+        exponent: &BigUint,
+        workspace: &mut Vec<u64>,
+    ) -> BigUint {
+        let mut result = self.one_mont.clone();
+        let mut power = base_mont.clone();
+        for bit in 0..exponent.bits() {
+            if exponent.bit(bit) {
+                result = BigUint::montgomery_mul_odd_with_workspace(
+                    &result,
+                    &power,
+                    &self.modulus,
+                    self.n0_inv,
+                    workspace,
+                );
+            }
+            power = BigUint::montgomery_mul_odd_with_workspace(
+                &power,
+                &power,
+                &self.modulus,
+                self.n0_inv,
+                workspace,
+            );
+        }
+        self.decode_with_workspace(&result, workspace)
+    }
+
+    /// 4-bit fixed-window MSB-first scan. The body cost is `n + n/4`
+    /// mont-muls plus 14 setup multiplies; faster than the binary
+    /// scan once `n ≥ ~56` (see [`Self::POW_WINDOW_THRESHOLD_BITS`]).
+    fn pow_window4_with_workspace(
+        &self,
+        base_mont: &BigUint,
+        exponent: &BigUint,
+        workspace: &mut Vec<u64>,
+    ) -> BigUint {
         const WINDOW_BITS: u32 = 4;
         const TABLE_SIZE: usize = 1 << WINDOW_BITS;
 
-        // Precompute table[i] = base_mont^i (in Montgomery form).
-        // table[0] = 1 (Montgomery one), table[1] = base, then
-        // each subsequent entry by one mont-mul against `base`.
+        // Precompute table[i] = base_mont^i in Montgomery form.
         let mut table: Vec<BigUint> = Vec::with_capacity(TABLE_SIZE);
         table.push(self.one_mont.clone());
         table.push(base_mont.clone());
@@ -1080,9 +1133,8 @@ impl MontgomeryCtx {
 
         let n_bits = exponent.bits();
 
-        // Helper: read window of `width` bits ending at bit position
-        // `top` (so it covers [top − width + 1 ..= top]). Returns the
-        // window as a `usize` index into `table`.
+        // Read width bits ending at `top`, returning the window as a
+        // table index.
         let read_window = |top: usize, width: u32| -> usize {
             let mut idx: usize = 0;
             for i in (0..width).rev() {
@@ -1095,13 +1147,10 @@ impl MontgomeryCtx {
             idx
         };
 
-        // Process the exponent MSB-first. The first slice consumed is
-        // the partial window (1..=3 bits if `n_bits` is not a multiple
-        // of `WINDOW_BITS`, else a full 4-bit window); subsequent
-        // iterations consume full 4-bit windows. `remaining` tracks
-        // how many bits are still ahead of us — it decreases
-        // monotonically and is never below zero, so the unsigned
-        // arithmetic cannot underflow even for short exponents.
+        // MSB-first scan with a `remaining` counter that decreases
+        // monotonically — never underflows even for short exponents
+        // (which won't reach this path under the threshold dispatch
+        // anyway, but the safety margin is free).
         let leading = (n_bits as u32) % WINDOW_BITS;
         let initial_width: u32 = if leading > 0 { leading } else { WINDOW_BITS };
         let mut remaining: usize = n_bits;

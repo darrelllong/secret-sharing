@@ -42,6 +42,11 @@ use crate::csprng::Csprng;
 use crate::secure::ct_eq_biguint;
 
 /// Validated Asmuth–Bloom parameter set.
+///
+/// Like [`crate::mignotte::MignotteSequence`], `pair_inv` is
+/// populated only when the moduli's bit length crosses
+/// [`crate::mignotte::CRT_PRECOMP_THRESHOLD_BITS`]. Below the
+/// threshold the per-fold `mod_inverse` baseline is faster.
 #[derive(Clone, Debug)]
 pub struct AsmuthBloomParams {
     m0: BigUint,
@@ -52,6 +57,11 @@ pub struct AsmuthBloomParams {
     /// `⌊M_bot / m_0⌋` — the upper bound (exclusive) of the random mask
     /// `A`. Pre-computed so split is allocation-free.
     a_range: BigUint,
+    /// Pairwise CRT inverse table, populated only when the largest
+    /// modulus is at least [`crate::mignotte::CRT_PRECOMP_THRESHOLD_BITS`]
+    /// bits. `None` means reconstruct uses the per-fold `mod_inverse`
+    /// path.
+    pair_inv: Option<Vec<Vec<BigUint>>>,
 }
 
 /// One trustee's piece: index of the modulus and the residue
@@ -107,12 +117,34 @@ impl AsmuthBloomParams {
             return None;
         }
         let (a_range, _) = m_bot.div_rem(&m0);
+        // Mirror MignotteSequence's CRT-precomp threshold dispatch.
+        let max_bits = moduli.iter().map(BigUint::bits).max().unwrap_or(0);
+        let pair_inv = if max_bits >= crate::mignotte::CRT_PRECOMP_THRESHOLD_BITS {
+            let mut table: Vec<Vec<BigUint>> = Vec::with_capacity(n);
+            for i in 0..n {
+                let mut row = Vec::with_capacity(n);
+                for j in 0..n {
+                    if i == j {
+                        row.push(BigUint::zero());
+                    } else {
+                        let m_j_mod_m_i = moduli[j].modulo(&moduli[i]);
+                        let inv = mod_inverse(&m_j_mod_m_i, &moduli[i])?;
+                        row.push(inv);
+                    }
+                }
+                table.push(row);
+            }
+            Some(table)
+        } else {
+            None
+        };
         Some(Self {
             m0,
             moduli,
             k,
             m_bot,
             a_range,
+            pair_inv,
         })
     }
 
@@ -188,15 +220,32 @@ pub fn reconstruct(params: &AsmuthBloomParams, shares: &[Share]) -> Option<BigUi
     let used = &shares[..k];
     let (mut y, mut prod) = (BigUint::zero(), BigUint::one());
     let mut first = true;
+    let mut folded_indices: Vec<usize> = Vec::with_capacity(k);
     for s in used {
-        let m = &params.moduli[s.index - 1];
+        let m_i_idx = s.index - 1;
+        let m = &params.moduli[m_i_idx];
         if first {
             y = s.residue.clone();
             prod = m.clone();
+            folded_indices.push(m_i_idx);
             first = false;
             continue;
         }
-        let inv = mod_inverse(&prod.modulo(m), m)?;
+        // Threshold dispatch: precomp when the table is populated,
+        // else the historical mod_inverse path.
+        let inv = if let Some(pair_inv) = &params.pair_inv {
+            let mut acc = BigUint::one();
+            for &j in &folded_indices {
+                debug_assert!(
+                    j != m_i_idx,
+                    "fold step would self-multiply pair_inv diagonal",
+                );
+                acc = BigUint::mod_mul(&acc, &pair_inv[m_i_idx][j], m);
+            }
+            acc
+        } else {
+            mod_inverse(&prod.modulo(m), m)?
+        };
         let y_mod_m = y.modulo(m);
         let diff = if s.residue >= y_mod_m {
             s.residue.sub_ref(&y_mod_m)
@@ -206,6 +255,7 @@ pub fn reconstruct(params: &AsmuthBloomParams, shares: &[Share]) -> Option<BigUi
         let t = BigUint::mod_mul(&diff, &inv, m);
         y = y.add_ref(&prod.mul_ref(&t));
         prod = prod.mul_ref(m);
+        folded_indices.push(m_i_idx);
     }
     let y = y.modulo(&prod);
     // y must lie in [0, M_bot). For honest shares this holds by

@@ -622,18 +622,82 @@ big_uint montgomery_ctx::square(big_uint const& value) const {
     return decode(sq_mont);
 }
 
+// Mirrors the Rust threshold: under 64 bits the binary
+// square-and-multiply scan beats the 4-bit window scheme (the
+// 14-multiply table-build cost dominates short exponents). Above the
+// threshold the window scheme amortises that setup over the longer
+// body and wins. cgma_vss exponents are 256-bit so they always take
+// the window path.
+constexpr std::size_t POW_WINDOW_THRESHOLD_BITS = 64;
+
 big_uint montgomery_ctx::pow(big_uint const& base, big_uint const& exponent) const {
     if (modulus_ == big_uint::one()) {
         return big_uint::zero();
     }
+    if (exponent.is_zero()) {
+        return big_uint::one().modulo(modulus_);
+    }
     auto base_mont = encode(base.modulo(modulus_));
-    auto result = one_mont_;
-    auto power = base_mont;
-    for (std::size_t bit_idx = 0; bit_idx < exponent.bits(); ++bit_idx) {
-        if (exponent.bit(bit_idx)) {
-            result = mont_mul(result, power);
+    if (exponent.bits() < POW_WINDOW_THRESHOLD_BITS) {
+        // Binary square-and-multiply: n squarings + ~n/2 multiplies,
+        // no setup cost. Wins for short exponents.
+        auto result = one_mont_;
+        auto power = base_mont;
+        for (std::size_t bit_idx = 0; bit_idx < exponent.bits(); ++bit_idx) {
+            if (exponent.bit(bit_idx)) {
+                result = mont_mul(result, power);
+            }
+            power = mont_mul(power, power);
         }
-        power = mont_mul(power, power);
+        return decode(result);
+    }
+    // 4-bit fixed-window MSB-first scan. n squarings + n/4 multiplies
+    // + 14 setup multiplies; the body savings dominate the setup
+    // once n ≥ ~56 bits, hence the 64-bit threshold above.
+    constexpr std::size_t WINDOW_BITS = 4;
+    constexpr std::size_t TABLE_SIZE = 1U << WINDOW_BITS;
+
+    std::vector<big_uint> table;
+    table.reserve(TABLE_SIZE);
+    table.push_back(one_mont_);
+    table.push_back(base_mont);
+    for (std::size_t i = 2; i < TABLE_SIZE; ++i) {
+        table.push_back(mont_mul(table[i - 1], base_mont));
+    }
+
+    // Read `width` bits ending at bit `top`, MSB-first into a table
+    // index. width is in [1, WINDOW_BITS]; top ≥ width − 1 by the
+    // remaining-bits invariant maintained by the caller.
+    auto read_window = [&](std::size_t top, std::size_t width) -> std::size_t {
+        std::size_t idx = 0;
+        for (std::size_t i = 0; i < width; ++i) {
+            idx <<= 1U;
+            if (exponent.bit(top - i)) {
+                idx |= 1U;
+            }
+        }
+        return idx;
+    };
+
+    std::size_t n_bits = exponent.bits();
+    std::size_t leading = n_bits % WINDOW_BITS;
+    std::size_t initial_width = leading > 0 ? leading : WINDOW_BITS;
+    std::size_t remaining = n_bits;
+    std::size_t initial_top = remaining - 1;
+    auto initial_idx = read_window(initial_top, initial_width);
+    auto result = table[initial_idx];
+    remaining -= initial_width;
+
+    while (remaining > 0) {
+        for (std::size_t i = 0; i < WINDOW_BITS; ++i) {
+            result = mont_mul(result, result);
+        }
+        std::size_t top = remaining - 1;
+        auto idx = read_window(top, WINDOW_BITS);
+        if (idx != 0) {
+            result = mont_mul(result, table[idx]);
+        }
+        remaining -= WINDOW_BITS;
     }
     return decode(result);
 }

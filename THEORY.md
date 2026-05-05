@@ -1846,3 +1846,68 @@ the loop guard rather than from a `top - width` subtraction, so the
 unsigned arithmetic cannot underflow even for $n \in \{1, 2, 3\}$.
 Regression tests pin this for every exponent in $[0, 20]$ and for
 the all-zero-windows case $2^{16}$.
+
+## Threshold-Driven Algorithm Dispatch
+
+Several primitives in this crate exhibit a *crossover regime*:
+algorithm A is faster below some input-size threshold, algorithm B
+above it, and the only honest way to pick the threshold is to
+measure. Three current examples:
+
+* **Karatsuba vs schoolbook multiplication** (`bigint::mul_ref`).
+  Karatsuba's recursive split costs an asymptotic
+  $O(n^{\log_2 3}) \approx O(n^{1.58})$ vs schoolbook's $O(n^2)$,
+  but its constant factor is high. The crate dispatches to Karatsuba
+  only when both operands have at least
+  `KARATSUBA_THRESHOLD_LIMBS = 32` limbs and their length ratio is
+  at most `KARATSUBA_MAX_IMBALANCE = 2`.
+
+* **Window-method vs binary-scan exponentiation**
+  (`MontgomeryCtx::pow`). The 4-bit window incurs $2^w - 2 = 14$
+  setup multiplies before the main loop. Below break-even (~56 bits
+  of exponent), the binary scan wins. The crate uses
+  `POW_WINDOW_THRESHOLD_BITS = 64` with a small safety margin on the
+  binary side.
+
+* **CRT precomp vs per-fold extended-Euclidean**
+  (`MignotteSequence::reconstruct`, `AsmuthBloomParams::reconstruct`).
+  Pairwise inverses cached at construction trade $k - 1$
+  `mod_inverse` calls per reconstruct for $O(k^2)$ `mod_mul` calls.
+  Each `BigUint::mod_mul` rebuilds a `MontgomeryCtx`, so at small
+  modulus sizes the setup outweighs the saving; at $\ge 128$-bit
+  moduli the saving wins. The crate uses
+  `CRT_PRECOMP_THRESHOLD_BITS = 128`.
+
+The pattern they share — and the rule the implementation follows —
+is the following:
+
+1. **Thresholds must be measured, not guessed.** Pilot-bench is the
+   ground truth in this repo; "I think algorithm B is faster" lost
+   cleanly on the CRT precomp before measurement. Constants live as
+   named items so the threshold can be retuned in one place when
+   measurement contradicts intuition.
+
+2. **Both branches must have regression coverage.** A future
+   refactor that re-routes everything through one path should fail
+   a test, not silently change performance. For the window method,
+   `montgomery_pow_handles_short_exponents` exercises the binary
+   path and `montgomery_pow_handles_zero_windows` exercises the
+   window path; for the CRT precomp,
+   `mignotte::tests::small_example_skips_precomp` and
+   `large_example_uses_precomp` together pin both branches plus
+   the dispatch decision.
+
+3. **Dispatch decisions must not depend on secret inputs.** All
+   three thresholds above key off the *size* of the operand, which
+   is public (a modulus's bit length, a public abscissa's bit
+   length). A "use binary scan if exponent is short" rule applied
+   to a secret RSA decryption exponent would leak the bit-length
+   of the secret; the side-channel notes on `MontgomeryCtx::pow`
+   document the surface and direct secret-exponent callers
+   elsewhere.
+
+The threshold constants are deliberately conservative: a small
+margin on the side that does *not* benefit from algorithm B's
+specialised structure. This avoids regressions when measurement
+noise crosses the line, at the cost of a few percent on inputs
+near the boundary.

@@ -106,6 +106,32 @@ fn chunks_4kb(rng: &mut ChaCha20Rng) -> Vec<BigUint> {
         .collect()
 }
 
+/// Build a (3, 5)-Mignotte sequence with 130-bit moduli — above
+/// `CRT_PRECOMP_THRESHOLD_BITS` so reconstruct exercises the
+/// pairwise-inverse precomp branch. Deterministic seed makes the
+/// sequence reproducible across runs.
+fn build_large_mignotte_3_of_5() -> mignotte::MignotteSequence {
+    use secret_sharing::primes::{is_probable_prime, random_below};
+    let mut rng = ChaCha20Rng::from_seed(&[0xA1u8; 32]);
+    let mut lo = BigUint::one();
+    lo.shl_bits(130);
+    let mut span = BigUint::one();
+    span.shl_bits(130);
+    let mut found: Vec<BigUint> = Vec::new();
+    while found.len() < 5 {
+        let mut candidate = random_below(&mut rng, &span).expect("span > 0");
+        candidate = candidate.add_ref(&lo);
+        if !candidate.is_odd() {
+            continue;
+        }
+        if is_probable_prime(&candidate) && !found.contains(&candidate) {
+            found.push(candidate);
+        }
+    }
+    found.sort();
+    mignotte::MignotteSequence::new(found, 3).expect("valid 130-bit sequence")
+}
+
 fn main() {
     let op = std::env::args().nth(1).unwrap_or_else(|| {
         eprintln!("usage: pilot_ss <operation>");
@@ -451,6 +477,21 @@ fn main() {
             let s = seq.alpha().add_ref(&BigUint::from_u64(1));
             let shares = mignotte::split(&seq, &s);
             let n_iter = iters(5000);
+            let t0 = Instant::now();
+            for _ in 0..n_iter {
+                black_box(mignotte::reconstruct(&seq, &shares[..K]).unwrap());
+            }
+            ms_per_op(t0.elapsed(), n_iter)
+        }
+        "mignotte_reconstruct_large" => {
+            // 130-bit moduli — above CRT_PRECOMP_THRESHOLD_BITS, so
+            // reconstruct exercises the precomp branch. The sequence
+            // is built deterministically from a fixed CSPRNG seed
+            // for reproducibility.
+            let seq = build_large_mignotte_3_of_5();
+            let s = seq.alpha().add_ref(&BigUint::from_u64(1));
+            let shares = mignotte::split(&seq, &s);
+            let n_iter = iters(2000);
             let t0 = Instant::now();
             for _ in 0..n_iter {
                 black_box(mignotte::reconstruct(&seq, &shares[..K]).unwrap());
