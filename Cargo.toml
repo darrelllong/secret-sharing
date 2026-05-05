@@ -1,5 +1,5 @@
 [package]
-name = "secret-sharing"
+name = "secret-sharing-rs"
 version = "0.5.0"
 edition = "2021"
 license = "BSD-2-Clause"
@@ -7,7 +7,7 @@ authors = ["Darrell Long"]
 description = "Secret-sharing primitives (Shamir, Blakley, ramp, VSS, CRT, visual, etc.) implemented directly from the original papers with no external dependencies."
 repository = "https://github.com/darrelllong/secret-sharing"
 readme = "README.md"
-documentation = "https://docs.rs/secret-sharing"
+documentation = "https://docs.rs/secret-sharing-rs"
 keywords = ["secret-sharing", "shamir", "threshold", "cryptography", "vss"]
 categories = ["cryptography", "algorithms"]
 # Keep the published tarball focused on what a Rust consumer needs.
