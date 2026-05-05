@@ -11,3 +11,4 @@ Cargo.lock
 # Outputs from examples/verify_ship.sh — share images for visual
 # inspection. Regenerated on every run.
 /examples/ship_output/
+.claude/scheduled_tasks.lock
