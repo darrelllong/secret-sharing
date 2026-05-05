@@ -545,3 +545,7 @@ via `PrimeField::new_unchecked` once you have witnesses.
 <p align="center">
  <img src="assets/ship_of_fools.jpg" width="50%" alt="Ship of Fools">
 </p>
+
+## Licence
+
+BSD 2-Clause. See [`LICENSE`](LICENSE).

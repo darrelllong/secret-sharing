@@ -83,3 +83,7 @@ The bench target `pilot_ss_cpp` exposes the same operation interface
 as the Rust `pilot_ss` binary so pilot-bench can drive both with a
 single harness (see `cpp/scripts/bench_compare.sh`). Coverage today
 is `shamir_split`, `shamir_reconstruct`, and the `*_4kb` variants.
+
+## Licence
+
+BSD 2-Clause. See [`../LICENSE`](../LICENSE).

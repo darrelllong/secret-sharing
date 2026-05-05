@@ -3,6 +3,7 @@ project(secret_sharing_cpp
     VERSION 1.0.0
     LANGUAGES CXX
     DESCRIPTION "Bit-compatible C++ port of secret-sharing")
+# Licence: BSD-2-Clause. See ../LICENSE for the full text.
 
 # C++20 (with std::span, std::optional, designated initialisers,
 # concepts). C++23 features used selectively via __has_cpp_attribute.
