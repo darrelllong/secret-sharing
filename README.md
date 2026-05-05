@@ -36,7 +36,9 @@ scheme catalogued in [`bib/references.bib`](bib/references.bib):
 
 For the algebra behind every scheme, see [`THEORY.md`](THEORY.md).
 For copy-pasteable usage examples, see [`HOWTO.md`](HOWTO.md). For
-the current peer-review status, see [`PEER-REVIEW.md`](PEER-REVIEW.md).
+performance numbers and kiviat / line / bar charts, see
+[`PERFORMANCE.md`](PERFORMANCE.md). For the current peer-review
+status, see [`PEER-REVIEW.md`](PEER-REVIEW.md).
 
 ## Threshold model
 
@@ -502,7 +504,7 @@ For copy-pasteable examples covering every scheme, see
 ```sh
 cargo test # 236 unit + 7 integration + 2 doc
 cargo clippy --all-targets -- -D warnings # clean
-bash scripts/bench_pilot.sh # CI-backed pilot-bench numbers
+bash scripts/bench_pilot.sh # CI-backed pilot-bench numbers — see PERFORMANCE.md
 ```
 
 ## Choosing a field
