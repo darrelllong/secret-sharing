@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(secret_sharing_cpp
-    VERSION 1.0.0
+    VERSION 0.5.0
     LANGUAGES CXX
     DESCRIPTION "Bit-compatible C++ port of secret-sharing")
 # Licence: BSD-2-Clause. See ../LICENSE for the full text.
