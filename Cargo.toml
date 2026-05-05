@@ -4,6 +4,25 @@ version = "1.0.0"
 edition = "2021"
 license = "BSD-2-Clause"
 authors = ["Darrell Long"]
+description = "Secret-sharing primitives (Shamir, Blakley, ramp, VSS, CRT, visual, etc.) implemented directly from the original papers with no external dependencies."
+repository = "https://github.com/darrelllong/secret-sharing"
+readme = "README.md"
+documentation = "https://docs.rs/secret-sharing"
+keywords = ["secret-sharing", "shamir", "threshold", "cryptography", "vss"]
+categories = ["cryptography", "algorithms"]
+# Keep the published tarball focused on what a Rust consumer needs.
+# cpp/ is the C++ port, benchmarks/ + assets/ + scripts/ are
+# auxiliary; downstream users get them via the GitHub repo, not
+# crates.io.
+exclude = [
+    "cpp/**",
+    "benchmarks/**",
+    "assets/**",
+    "scripts/**",
+    "target/**",
+    ".claude/**",
+    "pubs/**",
+]
 
 [lib]
 name = "secret_sharing"
