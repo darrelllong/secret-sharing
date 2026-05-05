@@ -656,6 +656,65 @@ impl BigUint {
         result
     }
 
+    /// Right-shift by `n` bits, returning a fresh value.
+    ///
+    /// Implemented as `n / 64` full-limb drops at the low end (the
+    /// little-endian representation makes this an offset slice) plus
+    /// up to 63 single-bit shifts. Matches the structure of
+    /// [`Self::shl_bits`] and avoids undefined behaviour from shifting
+    /// a `u64` by 64 or more positions.
+    #[must_use]
+    pub fn shr_bits(&self, n: usize) -> Self {
+        if n == 0 {
+            return self.clone();
+        }
+        let limb_shifts = n / 64;
+        let bit_shifts = n % 64;
+        if limb_shifts >= self.limbs.len() {
+            return Self::zero();
+        }
+        let mut new_limbs: Vec<u64> = self.limbs[limb_shifts..].to_vec();
+        if bit_shifts > 0 {
+            let mut carry: u64 = 0;
+            for i in (0..new_limbs.len()).rev() {
+                let next_carry = new_limbs[i] << (64 - bit_shifts);
+                new_limbs[i] = (new_limbs[i] >> bit_shifts) | carry;
+                carry = next_carry;
+            }
+        }
+        let mut out = Self { limbs: new_limbs };
+        out.normalize();
+        out
+    }
+
+    /// Return `self mod 2^k`, i.e. the low `k` bits as a fresh value.
+    /// Used by the field-reduction machinery to split a product into
+    /// (high, low) at a bit boundary that is not necessarily a limb
+    /// boundary.
+    #[must_use]
+    pub fn low_bits(&self, k: usize) -> Self {
+        if k == 0 {
+            return Self::zero();
+        }
+        let limb_count = k / 64;
+        let bit_remainder = k % 64;
+        let mut new_limbs: Vec<u64> = if bit_remainder == 0 {
+            self.limbs.iter().take(limb_count).copied().collect()
+        } else {
+            let mut v: Vec<u64> = self.limbs.iter().take(limb_count).copied().collect();
+            if let Some(&next) = self.limbs.get(limb_count) {
+                let mask = (1u64 << bit_remainder) - 1;
+                v.push(next & mask);
+            }
+            v
+        };
+        // Normalise: drop trailing zero limbs.
+        while new_limbs.last().copied() == Some(0) {
+            new_limbs.pop();
+        }
+        Self { limbs: new_limbs }
+    }
+
     /// Shift left by one bit.
     pub fn shl1(&mut self) {
         if self.is_zero() {
@@ -1449,5 +1508,44 @@ mod tests {
                 .modulo_positive(&BigUint::from_u64(11)),
             BigUint::from_u64(8)
         );
+    }
+
+    #[test]
+    fn shr_bits_low_bits_round_trip() {
+        // For random x and various split points k:
+        // - x.shr_bits(k) == x / 2^k
+        // - x.low_bits(k) == x mod 2^k
+        // - shr_bits(k) << k + low_bits(k) == x
+        let mut seed: u64 = 0xDEAD_BEEF_CAFE_F00D;
+        for _ in 0..200 {
+            let words = ((lcg_next(&mut seed) % 12) + 1) as usize;
+            let x = seeded_biguint(words, &mut seed);
+            for &k in &[0usize, 1, 7, 31, 32, 63, 64, 65, 100, 127, 128, 129, 200] {
+                if k > x.bits() + 64 {
+                    continue;
+                }
+                let high = x.shr_bits(k);
+                let low = x.low_bits(k);
+                // low < 2^k.
+                assert!(low.bits() <= k, "low_bits result exceeds k bits");
+                // x = high * 2^k + low.
+                let mut hk = high.clone();
+                hk.shl_bits(k);
+                assert_eq!(hk.add_ref(&low), x, "round-trip failed at k={k}");
+            }
+        }
+    }
+
+    #[test]
+    fn low_bits_zero_when_k_zero() {
+        let x = BigUint::from_u128(0xDEADBEEF_DEADBEEF);
+        assert_eq!(x.low_bits(0), BigUint::zero());
+    }
+
+    #[test]
+    fn shr_bits_zero_when_k_exceeds_value() {
+        let x = BigUint::from_u64(7);
+        assert_eq!(x.shr_bits(64), BigUint::zero());
+        assert_eq!(x.shr_bits(1000), BigUint::zero());
     }
 }

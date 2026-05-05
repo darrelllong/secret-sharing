@@ -236,28 +236,80 @@ values.
 
 ![4 KiB block radar](assets/four-kb-throughput-radar.svg)
 
-### Mersenne-127 fast path
+### Standardised-prime fast paths
 
-`PrimeField::mul` now branches on the modulus at construction. For
-`p = 2^127 − 1` (the bundled `mersenne127()`) it dispatches to a
-specialised `mersenne127_mul` that:
+`PrimeField::mul` recognises a catalogue of standardised primes at
+construction time and routes each through the cheapest correct
+multiplier for its modulus structure. The catalogue covers ten
+RFC- or FIPS-blessed primes; one BigUint comparison per
+`PrimeField::new*` call selects the dispatch.
 
-1. Reduces each operand to a `u128` (one `low_u128()` call; the
-   slow modulo path is taken only on the rare unreduced input).
-2. Forms a 254-bit product as a 2 × 2 schoolbook on `u128`
-   partial multiplies — four 64×64→128 multiplies, summed with
-   carry propagation into four `u64` limbs.
-3. Reduces using `2^127 ≡ 1 (mod p)`: one fold of bits 127..253
-   into bits 0..126, a second fold of bit 127 of the resulting
-   128-bit sum, and one final conditional subtract.
+| Prime             | Form                                                              | Standard         |
+|-------------------|-------------------------------------------------------------------|------------------|
+| `mersenne127`     | `2^127 − 1` (Mersenne)                                            | this crate       |
+| `mersenne521`     | `2^521 − 1` (Mersenne; = NIST P-521 base field)                   | FIPS 186-4       |
+| `curve25519`      | `2^255 − 19` (pseudo-Mersenne)                                    | RFC 7748         |
+| `poly1305`        | `2^130 − 5` (pseudo-Mersenne)                                     | RFC 8439         |
+| `secp256k1`       | `2^256 − 2^32 − 977` (pseudo-Mersenne, 2 terms)                   | SEC 2 / RFC 6979 |
+| `curve448`        | `2^448 − 2^224 − 1` (Solinas, 2 terms)                            | RFC 7748         |
+| `nist_p192`       | `2^192 − 2^64 − 1` (Solinas, 2 terms)                             | FIPS 186-4       |
+| `nist_p224`       | `2^224 − 2^96 + 1` (Solinas, 2 terms, mixed signs)                | FIPS 186-4       |
+| `nist_p256`       | `2^256 − 2^224 + 2^192 + 2^96 − 1` (Solinas, 4 terms, mixed signs) | FIPS 186-4       |
+| `nist_p384`       | `2^384 − 2^128 − 2^96 + 2^32 − 1` (Solinas, 4 terms, mixed signs) | FIPS 186-4       |
 
-No allocation, no Montgomery setup, no `BigUint::mod_mul` call.
-Generic moduli still take the Montgomery path unchanged, and the
-fast path is unit-tested against the generic path on edge cases
-plus 256 random fuzz inputs (`field::tests::mersenne127_mul_matches_generic_on_random_fuzz`).
+The same parametric reducer handles all ten. Each prime is
+described by `δ = 2^k − p` decomposed into signed terms
+`(offset, coef)`; the multiplier:
 
-Speedups vs the previous Montgomery-only path (per-element ops,
-`PILOT_SS_ITERS_PERCENT=100`, quick preset):
+1. Pre-reduces each operand to `≤ k` bits (slow path, unreached
+   when callers feed reduced values).
+2. Computes `prod = a · b` via `BigUint::mul_ref` (Karatsuba above
+   32 limbs).
+3. Iteratively folds: `t' = low + high · δ`, accumulated as
+   positive and negative `BigUint` running sums. Construction-time
+   validation (`validate_reduction_params`) requires `δ > 0`, which
+   guarantees the running sum stays non-negative across every fold
+   so the BigInt machinery is never reached for the registered primes.
+4. Hard-asserts a 32-fold cap (panic on overrun, never silent
+   partial reduction). NIST P-256 is the worst case in the catalogue
+   at ~8 folds; everything else converges in 1–3.
+
+`mersenne127` keeps a separate hand-rolled `u128` fast path because
+its operands fit in two `u64`s and a 2 × 2 schoolbook + Mersenne
+fold stays entirely in registers — measurably faster than going
+through the parametric reducer.
+
+**Per-prime speedup vs generic Montgomery** (release build, Apple
+silicon, 50 warmup + 200 measured iterations, median latency, from
+`examples/bench_field_mul.rs`):
+
+| Prime          | bits | fast path |  generic  | speedup |
+|----------------|-----:|----------:|----------:|--------:|
+| `mersenne521`  |  521 |    292 ns |   6.08 µs |  20.83× |
+| `curve448`     |  448 |    667 ns |   4.83 µs |   7.25× |
+| `mersenne127`  |  127 |    542 ns |   3.54 µs |   6.54× |
+| `curve25519`   |  255 |   1.42 µs |   6.38 µs |   4.50× |
+| `secp256k1`    |  256 |   1.21 µs |   5.21 µs |   4.31× |
+| `nist_p224`    |  224 |   1.79 µs |   7.12 µs |   3.98× |
+| `nist_p192`    |  192 |   1.50 µs |   4.83 µs |   3.22× |
+| `poly1305`     |  130 |   1.50 µs |   4.71 µs |   3.14× |
+| `nist_p384`    |  384 |   2.25 µs |   4.42 µs |   1.96× |
+| `nist_p256`    |  256 |   6.96 µs |   7.00 µs |   1.01× |
+
+`nist_p256` is recognised but routes to Montgomery in production via
+a `prefer_fast: false` flag in its table entry. Its 4-term
+mixed-sign polynomial with `max_offset = 224, k = 256` requires ~8
+fold iterations each doing 4 BigUint shifts and adds; that's more
+work than Montgomery's 4 mont-muls on 4 limbs. The 1.01× row above
+is Montgomery-vs-Montgomery (signal noise — both columns time the
+same code) and the entry stays in the catalogue so the parametric
+reducer's correctness is still validated for it under the per-prime
+fuzz harness.
+
+**Speedup on schemes that internally use `mersenne127`** (the
+catalogue's most-used prime; pilot-bench, quick preset, 100% iter
+scale). These remain the table from the previous mersenne127-only
+commit because the `mersenne127` fast path itself is unchanged:
 
 | Operation                          | before (ms) | after (ms) | speedup |
 |------------------------------------|------------:|-----------:|--------:|
@@ -278,20 +330,29 @@ Speedups vs the previous Montgomery-only path (per-element ops,
 | `proactive_refresh`                |     0.1133  |    0.02900 |   3.91× |
 | `decode_reconstruct_t1`            |     0.4415  |    0.06559 |   6.73× |
 
-Lagrange-style threshold schemes hit a tight 4–5× band; the ramp,
-yamamoto, kgh, vss, and proactive schemes inherit roughly the same
-speedup because their internal loops resolve to the same
-`PrimeField::mul`. `decode_reconstruct_t1` (Berlekamp–Welch) leads
-at 6.7× because its homogeneous-system solve is mul-mod heavy
-end-to-end. `blakley` is the visible exception at 1.25×–1.44×,
-since with the multiplier dispatched cheaply the bottleneck shifts
-to `mod_inverse` (extended Euclidean over `BigUint`) inside the
-augmented-matrix pivot — the natural target for the next round of
-optimisation if blakley specifically matters.
+**Correctness coverage.** Every catalogue prime has a per-prime
+fuzz test (`field::tests::fuzz_<name>`) running 16 384 random
+multiplies through the fast path and the generic Montgomery path
+and asserting exact equality on every input. Edge cases (`0`, `1`,
+`p−1`, `p`, `p+1`, `2^(k−1)`), unreduced-input handling, and the
+`(p−1)²` worst-case convergence path are exercised independently.
+Construction-time validation rejects malformed table entries
+(zero coefficient, offset ≥ k, δ ≤ 0, δ ≠ 2^k − p), with negative
+unit tests pinning each contract.
 
-`cgma_vss` is unaffected: it uses 2048-bit modular exponentiation
-in a different group, not `PrimeField::mul`. AVX-512 IFMA on x86 or
-ARM SVE2 is the right next step for that scheme.
+**Side-channel scope.** The parametric reducer's iteration count
+and per-fold limb work are operand-dependent. This path makes no
+constant-time claim, and the underlying `BigUint` is itself not
+constant-time (see the module-level note in `src/bigint.rs`). The
+crate's stated threat model is residue scrubbing on `Drop`, not
+timing-channel resistance against a co-located attacker.
+
+**Out of scope.** Brainpool primes (RFC 5639) are generic primes
+without Solinas structure and stay on the Montgomery path.
+NIST P-256 is recognised but routes to Montgomery as documented
+above. Adding a new pseudo-Mersenne / Solinas prime is one entry
+in the catalogue plus a constructor; the fuzz harness picks it up
+automatically.
 
 ## Kiviat charts
 
