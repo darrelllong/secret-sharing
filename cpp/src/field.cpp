@@ -328,7 +328,18 @@ prime_field::kind prime_field::detect(big_uint const& p,
 }
 
 big_uint prime_field::add(big_uint const& a, big_uint const& b) const {
-    return a.add_ref(b).modulo(p_);
+    // Reduced inputs sum to at most 2p − 2, so one conditional subtract
+    // replaces the division-based modulo on the path every Horner step
+    // and Lagrange accumulation takes. Unreduced inputs whose sum
+    // reaches 2p fall through to the full reduction.
+    auto s = a.add_ref(b);
+    if (!(s < p_)) {
+        s.sub_assign_ref(p_);
+        if (!(s < p_)) {
+            s = s.modulo(p_);
+        }
+    }
+    return s;
 }
 
 big_uint prime_field::sub(big_uint const& a, big_uint const& b) const {

@@ -23,14 +23,14 @@
   <text class="small" x="307.1" y="344.0" text-anchor="middle">≈2^64</text>
   <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
   <text class="small" x="610.0" y="344.0" text-anchor="middle">≈2^128</text>
-  <path d="M 80.0 276.3 L 307.1 218.8 L 610.0 165.0" stroke="#0f766e" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="276.3" r="3.5" fill="#0f766e" />
-  <circle cx="307.1" cy="218.8" r="3.5" fill="#0f766e" />
-  <circle cx="610.0" cy="165.0" r="3.5" fill="#0f766e" />
-  <path d="M 80.0 143.3 L 307.1 129.0 L 610.0 116.2" stroke="#1d4ed8" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="143.3" r="3.5" fill="#1d4ed8" />
-  <circle cx="307.1" cy="129.0" r="3.5" fill="#1d4ed8" />
-  <circle cx="610.0" cy="116.2" r="3.5" fill="#1d4ed8" />
+  <path d="M 80.0 316.9 L 307.1 316.9 L 610.0 300.3" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="316.9" r="3.5" fill="#0f766e" />
+  <circle cx="307.1" cy="316.9" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="300.3" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 174.6 L 307.1 158.1 L 610.0 145.3" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="174.6" r="3.5" fill="#1d4ed8" />
+  <circle cx="307.1" cy="158.1" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="145.3" r="3.5" fill="#1d4ed8" />
   <text class="title" x="80.0" y="30.0">Mignotte: latency vs legal-range bit width</text>
   <text class="small" x="80.0" y="46.0">k=3, n=5; secret picked just inside (α, β); log y, linear x in bits</text>
   <text class="small" x="345.0" y="362.0" text-anchor="middle">approximate β bit width</text>

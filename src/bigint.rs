@@ -5,8 +5,9 @@
 //! sibling crate's `ct` module.
 //!
 //! Representation: little-endian `u64` limbs. Algorithms — schoolbook
-//! multiplication, Karatsuba above a threshold, bitwise long division —
-//! are intentionally simple so the scheme code reads as the published
+//! multiplication, Karatsuba above a threshold, short division for
+//! one-limb divisors, bitwise long division otherwise — are
+//! intentionally simple so the scheme code reads as the published
 //! formulas with no arithmetic backend in the way.
 
 use core::cmp::Ordering;
@@ -31,9 +32,16 @@ fn zeroize_slice<T: Copy + Default>(slice: &mut [T]) {
     compiler_fence(AtomicOrdering::SeqCst);
 }
 
-// Heuristic crossover where the recursive split starts beating schoolbook in
-// this pure-Rust implementation on our benchmark hardware.
-const KARATSUBA_THRESHOLD_LIMBS: usize = 32;
+// Crossover where the recursive split starts beating schoolbook in this
+// pure-Rust implementation. Measured (median over 300 multiplies per operand
+// size) on two hosts that agree: schoolbook wins or ties through 96 limbs —
+// the recursion's Vec temporaries cost more than the limb products it saves —
+// and Karatsuba pulls ahead from 128. At 256 limbs Karatsuba is ~25% faster
+// on an Apple M4 Pro and ~31% on an AMD EPYC 7452; at the 128 boundary it is
+// roughly break-even on the M4 and ~16% ahead on the EPYC. Every modulus this
+// crate ships fits in 9 limbs, so only CRT-style products of many moduli
+// (mignotte, asmuth_bloom) and external callers ever reach this path.
+const KARATSUBA_THRESHOLD_LIMBS: usize = 128;
 // Limit highly lopsided splits; beyond this ratio the extra recursion/temporary
 // cost usually outweighs Karatsuba's multiplication count reduction.
 const KARATSUBA_MAX_IMBALANCE: usize = 2;
@@ -894,13 +902,35 @@ impl BigUint {
             return (Self::zero(), self.clone());
         }
 
+        // A one-limb divisor admits grade-school short division: walk the
+        // limbs high to low, carrying the running remainder in a `u128`.
+        // O(limbs) instead of the O(bits) loop below, and it is the shape
+        // the extended-gcd tail (`mod_inverse`) and the CRT schemes
+        // (mignotte, asmuth_bloom) settle into once their working values
+        // shrink, so most divisions in a reconstruction end up here.
+        if divisor.limbs.len() == 1 {
+            let d = u128::from(divisor.limbs[0]);
+            let mut q = vec![0u64; self.limbs.len()];
+            let mut rem = 0u128;
+            for (i, &limb) in self.limbs.iter().enumerate().rev() {
+                let cur = (rem << 64) | u128::from(limb);
+                // rem < d after the previous step, so cur < d << 64 and
+                // the per-limb quotient digit fits in a u64.
+                q[i] = low_u64(cur / d);
+                rem = cur % d;
+            }
+            let mut quotient = Self { limbs: q };
+            quotient.normalize();
+            return (quotient, Self::from_u64(low_u64(rem)));
+        }
+
         let mut quotient = Self::zero();
         let mut remainder = Self::zero();
 
-        // Bit-by-bit long division. `remainder` holds the partially
-        // reconstructed dividend prefix; each step shifts it left, appends the
-        // next source bit, and subtracts the divisor if the prefix is already
-        // large enough.
+        // Multi-limb divisors take bit-by-bit long division. `remainder`
+        // holds the partially reconstructed dividend prefix; each step
+        // shifts it left, appends the next source bit, and subtracts the
+        // divisor if the prefix is already large enough.
         for bit in (0..self.bits()).rev() {
             remainder.shl1();
             if self.bit(bit) {
@@ -1549,9 +1579,12 @@ mod tests {
 
     #[test]
     fn karatsuba_dispatch_matches_schoolbook() {
+        // Sizes straddle KARATSUBA_THRESHOLD_LIMBS so both the schoolbook
+        // dispatch and the recursive path (including an imbalanced split)
+        // are checked against the schoolbook reference.
         let mut seed = 0x243f_6a88_85a3_08d3;
-        for words in [32usize, 40, 64] {
-            for _ in 0..6 {
+        for words in [64usize, 128, 160, 256] {
+            for _ in 0..4 {
                 let lhs = seeded_biguint(words, &mut seed);
                 let rhs = seeded_biguint(words, &mut seed);
                 let dispatched = lhs.mul_ref(&rhs);
@@ -1569,6 +1602,22 @@ mod tests {
         assert_eq!(q, BigUint::from_u128(33_366_699_733_066_399));
         assert_eq!(r, BigUint::from_u64(26));
         assert_eq!(q.mul_ref(&divisor).add_ref(&r), dividend);
+    }
+
+    #[test]
+    fn division_roundtrip_across_divisor_widths() {
+        // One-limb divisors take the short-division path; wider divisors
+        // take the bit-by-bit loop. Both must satisfy q·d + r = n, r < d.
+        let mut seed = 0xb7e1_5162_8aed_2a6a;
+        for (dividend_words, divisor_words) in [(4usize, 1usize), (6, 2), (8, 3), (5, 5)] {
+            for _ in 0..4 {
+                let dividend = seeded_biguint(dividend_words, &mut seed);
+                let divisor = seeded_biguint(divisor_words, &mut seed);
+                let (q, r) = dividend.div_rem(&divisor);
+                assert!(r < divisor);
+                assert_eq!(q.mul_ref(&divisor).add_ref(&r), dividend);
+            }
+        }
     }
 
     #[test]

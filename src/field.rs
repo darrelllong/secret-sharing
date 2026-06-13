@@ -318,16 +318,35 @@ impl PrimeField {
     }
 
     /// Reduce an arbitrary `BigUint` into `[0, p)`.
+    ///
+    /// Values produced by the field's own operations are already
+    /// reduced, so the comparison usually settles it without paying
+    /// for the division inside `modulo`.
     #[must_use]
     pub fn reduce(&self, a: &BigUint) -> BigUint {
-        a.modulo(&self.p)
+        if a < &self.p {
+            a.clone()
+        } else {
+            a.modulo(&self.p)
+        }
     }
 
     /// `a + b mod p`. Inputs need not be pre-reduced.
+    ///
+    /// Reduced inputs sum to at most `2p − 2`, so one conditional
+    /// subtract replaces the division-based `modulo` on the path every
+    /// Horner step and Lagrange accumulation takes. Unreduced inputs
+    /// whose sum reaches `2p` fall through to the full reduction.
     #[must_use]
     pub fn add(&self, a: &BigUint, b: &BigUint) -> BigUint {
-        let s = a.add_ref(b);
-        s.modulo(&self.p)
+        let mut s = a.add_ref(b);
+        if s >= self.p {
+            s.sub_assign_ref(&self.p);
+            if s >= self.p {
+                s = s.modulo(&self.p);
+            }
+        }
+        s
     }
 
     /// `a − b mod p`. Inputs need not be pre-reduced.

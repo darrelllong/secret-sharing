@@ -31,18 +31,18 @@
   <text class="small" x="210.9" y="344.0" text-anchor="middle">32×32</text>
   <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
   <text class="small" x="610.0" y="344.0" text-anchor="middle">64×64</text>
-  <path d="M 80.0 249.8 L 86.2 213.9 L 111.2 175.0 L 210.9 135.1 L 610.0 94.3" stroke="#0f766e" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="249.8" r="3.5" fill="#0f766e" />
-  <circle cx="86.2" cy="213.9" r="3.5" fill="#0f766e" />
-  <circle cx="111.2" cy="175.0" r="3.5" fill="#0f766e" />
-  <circle cx="210.9" cy="135.1" r="3.5" fill="#0f766e" />
-  <circle cx="610.0" cy="94.3" r="3.5" fill="#0f766e" />
-  <path d="M 80.0 303.1 L 86.2 270.9 L 111.2 235.2 L 210.9 195.7 L 610.0 155.5" stroke="#1d4ed8" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="303.1" r="3.5" fill="#1d4ed8" />
-  <circle cx="86.2" cy="270.9" r="3.5" fill="#1d4ed8" />
-  <circle cx="111.2" cy="235.2" r="3.5" fill="#1d4ed8" />
-  <circle cx="210.9" cy="195.7" r="3.5" fill="#1d4ed8" />
-  <circle cx="610.0" cy="155.5" r="3.5" fill="#1d4ed8" />
+  <path d="M 80.0 242.2 L 86.2 205.8 L 111.2 166.3 L 210.9 125.8 L 610.0 85.2" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="242.2" r="3.5" fill="#0f766e" />
+  <circle cx="86.2" cy="205.8" r="3.5" fill="#0f766e" />
+  <circle cx="111.2" cy="166.3" r="3.5" fill="#0f766e" />
+  <circle cx="210.9" cy="125.8" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="85.2" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 294.7 L 86.2 262.5 L 111.2 227.9 L 210.9 188.1 L 610.0 147.8" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="294.7" r="3.5" fill="#1d4ed8" />
+  <circle cx="86.2" cy="262.5" r="3.5" fill="#1d4ed8" />
+  <circle cx="111.2" cy="227.9" r="3.5" fill="#1d4ed8" />
+  <circle cx="210.9" cy="188.1" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="147.8" r="3.5" fill="#1d4ed8" />
   <text class="title" x="80.0" y="30.0">Visual cryptography (3, 3): latency vs image area</text>
   <text class="small" x="80.0" y="46.0">fixed n=3; image scales W×H from 4×4 to 64×64</text>
   <text class="small" x="345.0" y="362.0" text-anchor="middle">image area (pixels, label = side×side)</text>

@@ -55,18 +55,44 @@ TEST(big_uint, division_round_trip) {
     EXPECT_LT(r, divisor);
 }
 
+TEST(big_uint, division_round_trip_across_divisor_widths) {
+    // One-limb divisors take the short-division path; wider divisors
+    // take the bit-by-bit loop. Both must satisfy q·d + r = n, r < d.
+    std::mt19937_64 rng{0xb7e151628aed2a6aull};
+    for (auto [dividend_words, divisor_words] :
+         {std::pair{4u, 1u}, {6u, 2u}, {8u, 3u}, {5u, 5u}}) {
+        for (int trial = 0; trial < 4; ++trial) {
+            auto dividend = seeded_biguint(dividend_words, rng);
+            auto divisor = seeded_biguint(divisor_words, rng);
+            auto [q, r] = dividend.div_rem(divisor);
+            EXPECT_LT(r, divisor);
+            EXPECT_EQ(q.mul_ref(divisor).add_ref(r), dividend);
+        }
+    }
+}
+
 TEST(big_uint, mul_dispatch_matches_schoolbook) {
+    // Sizes straddle the Karatsuba threshold (128 limbs). Schoolbook is
+    // private, so build the reference by decomposing one operand into
+    // 64-limb chunks: each chunk·b partial product has a short side well
+    // under the threshold and therefore dispatches to schoolbook, and
+    // the shifted sum of the partials must equal the full product.
+    constexpr std::size_t CHUNK_LIMBS = 64;
     std::mt19937_64 rng{0x9e3779b97f4a7c15ull};
-    for (auto words : {32u, 40u, 64u}) {
-        for (int trial = 0; trial < 6; ++trial) {
+    for (auto words : {64u, 128u, 160u, 256u}) {
+        for (int trial = 0; trial < 4; ++trial) {
             auto a = seeded_biguint(words, rng);
             auto b = seeded_biguint(words, rng);
             auto via_dispatch = a.mul_ref(b);
-            // Schoolbook is private; cross-check by going through the
-            // small-operand branch (under the karatsuba threshold).
-            // Constructing a small companion just verifies the
-            // dispatch agrees with the algebraic result.
-            EXPECT_EQ(via_dispatch.add_ref(ss::big_uint::zero()), via_dispatch);
+
+            auto reference = ss::big_uint::zero();
+            for (std::size_t start = 0; start < words; start += CHUNK_LIMBS) {
+                auto chunk = a.shr_bits(start * 64).low_bits(CHUNK_LIMBS * 64);
+                auto part = chunk.mul_ref(b);
+                part.shl_bits(start * 64);
+                reference.add_assign_ref(part);
+            }
+            EXPECT_EQ(via_dispatch, reference);
         }
     }
 }

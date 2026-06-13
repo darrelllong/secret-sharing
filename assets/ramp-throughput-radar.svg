@@ -19,26 +19,26 @@
   <line class="axis" x1="320" y1="290" x2="540.0" y2="290.0" />
   <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
   <line class="axis" x1="320" y1="290" x2="100.0" y2="290.0" />
-  <polygon points="320.0,107.4 502.3,290.0 320.0,437.1 131.8,290.0" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="107.4" r="3" fill="#0f766e" />
+  <polygon points="320.0,109.1 502.3,290.0 320.0,437.7 127.0,290.0" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="109.1" r="3" fill="#0f766e" />
   <circle cx="502.3" cy="290.0" r="3" fill="#0f766e" />
-  <circle cx="320.0" cy="437.1" r="3" fill="#0f766e" />
-  <circle cx="131.8" cy="290.0" r="3" fill="#0f766e" />
-  <polygon points="320.0,157.9 451.8,290.0 320.0,400.3 187.4,290.0" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
-  <circle cx="320.0" cy="157.9" r="3" fill="#1d4ed8" />
-  <circle cx="451.8" cy="290.0" r="3" fill="#1d4ed8" />
-  <circle cx="320.0" cy="400.3" r="3" fill="#1d4ed8" />
-  <circle cx="187.4" cy="290.0" r="3" fill="#1d4ed8" />
-  <polygon points="320.0,178.7 431.2,290.0 320.0,366.2 208.4,290.0" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
-  <circle cx="320.0" cy="178.7" r="3" fill="#b45309" />
-  <circle cx="431.2" cy="290.0" r="3" fill="#b45309" />
-  <circle cx="320.0" cy="366.2" r="3" fill="#b45309" />
-  <circle cx="208.4" cy="290.0" r="3" fill="#b45309" />
-  <polygon points="320.0,208.9 401.1,290.0 320.0,332.4 238.9,290.0" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="208.9" r="3" fill="#b91c1c" />
-  <circle cx="401.1" cy="290.0" r="3" fill="#b91c1c" />
-  <circle cx="320.0" cy="332.4" r="3" fill="#b91c1c" />
-  <circle cx="238.9" cy="290.0" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="437.7" r="3" fill="#0f766e" />
+  <circle cx="127.0" cy="290.0" r="3" fill="#0f766e" />
+  <polygon points="320.0,125.5 484.7,290.0 320.0,400.1 141.6,290.0" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="125.5" r="3" fill="#1d4ed8" />
+  <circle cx="484.7" cy="290.0" r="3" fill="#1d4ed8" />
+  <circle cx="320.0" cy="400.1" r="3" fill="#1d4ed8" />
+  <circle cx="141.6" cy="290.0" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,119.7 491.1,290.0 320.0,364.1 134.7,290.0" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="119.7" r="3" fill="#b45309" />
+  <circle cx="491.1" cy="290.0" r="3" fill="#b45309" />
+  <circle cx="320.0" cy="364.1" r="3" fill="#b45309" />
+  <circle cx="134.7" cy="290.0" r="3" fill="#b45309" />
+  <polygon points="320.0,224.2 385.9,290.0 320.0,326.6 248.4,290.0" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="224.2" r="3" fill="#b91c1c" />
+  <circle cx="385.9" cy="290.0" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="326.6" r="3" fill="#b91c1c" />
+  <circle cx="248.4" cy="290.0" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">ramp</text>
   <text class="label" x="562.0" y="294.0" text-anchor="start">yamamoto</text>
   <text class="label" x="320.0" y="536.0" text-anchor="middle">blakley_meadows</text>

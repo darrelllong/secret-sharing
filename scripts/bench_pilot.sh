@@ -44,8 +44,20 @@ measure() {
     mean=$(echo  "$out" | awk '/Reading mean/{print $5}')
     ci=$(echo    "$out" | awk '/Reading CI/{print $5}')
     rounds=$(echo "$out" | awk '/^Rounds:/{print $2}')
-    printf "| %-40s | %10s | %10s | %5s |\n" \
-           "$name" "$mean" "±$ci" "$rounds"
+    if [[ -z "$mean" || -z "$ci" ]]; then
+        printf "| %-40s | %10s | %10s | %5s |\n" "$name" "n/a" "n/a" "${rounds:-0}"
+        return
+    fi
+    # pilot-bench's "Reading CI" is the FULL width of the 95% interval
+    # (pilot_subsession_confidence_interval returns T·s/√h · 2), so the
+    # ± column wants half of it. Formatting happens in awk rather than
+    # bash printf, which pads %s by bytes and lets the two-byte ± skew
+    # the column; fixed-point at 7 decimals keeps the table free of the
+    # mixed e-notation pilot-bench emits for small values while holding
+    # ≥3 significant figures even for the sub-microsecond ops.
+    awk -v name="$name" -v mean="$mean" -v ci="$ci" -v rounds="$rounds" 'BEGIN {
+        printf "| %-40s | %10.7f | ±%9.7f | %5d |\n", name, mean, ci / 2, rounds
+    }'
 }
 
 sep() { echo "|------------------------------------------|------------|------------|-------|"; }

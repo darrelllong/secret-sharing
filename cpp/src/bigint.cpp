@@ -18,8 +18,11 @@ namespace secret_sharing {
 
 namespace {
 
-// Karatsuba dispatch heuristic — same crossover as the Rust impl.
-constexpr std::size_t KARATSUBA_THRESHOLD_LIMBS = 32;
+// Karatsuba dispatch heuristic — same crossover as the Rust impl, where the
+// measurement note lives: schoolbook wins or ties through 96 limbs and the
+// recursive split only pays for itself from 128 limbs up (verified on both
+// an Apple M4 Pro and an AMD EPYC 7452).
+constexpr std::size_t KARATSUBA_THRESHOLD_LIMBS = 128;
 constexpr std::size_t KARATSUBA_MAX_IMBALANCE = 2;
 
 // Volatile-zero a contiguous u64 buffer; the optimiser must not
@@ -426,6 +429,29 @@ std::pair<big_uint, big_uint> big_uint::div_rem(big_uint const& divisor) const {
     if (*this < divisor) {
         return {zero(), *this};
     }
+    // A one-limb divisor admits grade-school short division: walk the
+    // limbs high to low, carrying the running remainder in a __uint128_t.
+    // O(limbs) instead of the O(bits) loop below, and it is the shape the
+    // extended-gcd tail (mod_inverse) settles into once its working
+    // values shrink, so most divisions in a reconstruction end up here.
+    if (divisor.limbs_.size() == 1) {
+        __uint128_t const d = divisor.limbs_[0];
+        big_uint quotient;
+        quotient.limbs_.assign(limbs_.size(), 0);
+        __uint128_t rem = 0;
+        for (std::size_t i = limbs_.size(); i-- > 0;) {
+            __uint128_t const cur = (rem << 64U) | limbs_[i];
+            // rem < d after the previous step, so cur < d·2^64 and the
+            // per-limb quotient digit fits in a u64.
+            quotient.limbs_[i] = static_cast<std::uint64_t>(cur / d);
+            rem = cur % d;
+        }
+        quotient.normalise();
+        return {std::move(quotient), big_uint{static_cast<std::uint64_t>(rem)}};
+    }
+    // Multi-limb divisors take bit-by-bit long division: rebuild the
+    // dividend prefix in `remainder`, subtracting the divisor whenever
+    // the prefix grows large enough.
     big_uint quotient;
     big_uint remainder;
     for (std::size_t bit_idx = bits(); bit_idx-- > 0;) {
