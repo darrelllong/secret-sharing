@@ -22,38 +22,38 @@
   <line class="axis" x1="320" y1="290" x2="224.5" y2="488.2" />
   <line class="axis" x1="320" y1="290" x2="105.5" y2="339.0" />
   <line class="axis" x1="320" y1="290" x2="148.0" y2="152.8" />
-  <polygon points="320.0,87.1 458.0,179.9 528.5,337.6 379.4,413.3 255.5,424.0 155.7,327.5 226.8,215.7" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="87.1" r="3" fill="#0f766e" />
-  <circle cx="458.0" cy="179.9" r="3" fill="#0f766e" />
-  <circle cx="528.5" cy="337.6" r="3" fill="#0f766e" />
-  <circle cx="379.4" cy="413.3" r="3" fill="#0f766e" />
-  <circle cx="255.5" cy="424.0" r="3" fill="#0f766e" />
-  <circle cx="155.7" cy="327.5" r="3" fill="#0f766e" />
-  <circle cx="226.8" cy="215.7" r="3" fill="#0f766e" />
-  <polygon points="320.0,102.1 447.4,188.4 514.8,334.5 357.7,368.4 259.6,415.4 156.2,327.4 226.8,215.7" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
-  <circle cx="320.0" cy="102.1" r="3" fill="#1d4ed8" />
-  <circle cx="447.4" cy="188.4" r="3" fill="#1d4ed8" />
-  <circle cx="514.8" cy="334.5" r="3" fill="#1d4ed8" />
-  <circle cx="357.7" cy="368.4" r="3" fill="#1d4ed8" />
-  <circle cx="259.6" cy="415.4" r="3" fill="#1d4ed8" />
-  <circle cx="156.2" cy="327.4" r="3" fill="#1d4ed8" />
-  <circle cx="226.8" cy="215.7" r="3" fill="#1d4ed8" />
-  <polygon points="320.0,127.8 434.0,199.1 504.8,332.2 348.6,349.4 264.9,404.5 171.9,323.8 226.8,215.6" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
-  <circle cx="320.0" cy="127.8" r="3" fill="#b45309" />
-  <circle cx="434.0" cy="199.1" r="3" fill="#b45309" />
-  <circle cx="504.8" cy="332.2" r="3" fill="#b45309" />
-  <circle cx="348.6" cy="349.4" r="3" fill="#b45309" />
-  <circle cx="264.9" cy="404.5" r="3" fill="#b45309" />
-  <circle cx="171.9" cy="323.8" r="3" fill="#b45309" />
-  <circle cx="226.8" cy="215.6" r="3" fill="#b45309" />
-  <polygon points="320.0,144.0 416.8,212.8 490.0,328.8 335.5,322.2 271.0,391.7 181.4,321.6 226.7,215.6" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="144.0" r="3" fill="#b91c1c" />
-  <circle cx="416.8" cy="212.8" r="3" fill="#b91c1c" />
-  <circle cx="490.0" cy="328.8" r="3" fill="#b91c1c" />
-  <circle cx="335.5" cy="322.2" r="3" fill="#b91c1c" />
-  <circle cx="271.0" cy="391.7" r="3" fill="#b91c1c" />
-  <circle cx="181.4" cy="321.6" r="3" fill="#b91c1c" />
-  <circle cx="226.7" cy="215.6" r="3" fill="#b91c1c" />
+  <polygon points="320.0,100.8 445.5,189.9 485.1,327.7 372.5,398.9 267.3,399.5 189.9,319.7 245.4,230.5" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="100.8" r="3" fill="#0f766e" />
+  <circle cx="445.5" cy="189.9" r="3" fill="#0f766e" />
+  <circle cx="485.1" cy="327.7" r="3" fill="#0f766e" />
+  <circle cx="372.5" cy="398.9" r="3" fill="#0f766e" />
+  <circle cx="267.3" cy="399.5" r="3" fill="#0f766e" />
+  <circle cx="189.9" cy="319.7" r="3" fill="#0f766e" />
+  <circle cx="245.4" cy="230.5" r="3" fill="#0f766e" />
+  <polygon points="320.0,107.4 442.5,192.3 483.0,327.2 369.4,392.6 270.5,392.8 190.1,319.6 245.4,230.5" fill="#1d4ed8" fill-opacity="0.18" stroke="#1d4ed8" stroke-width="2" />
+  <circle cx="320.0" cy="107.4" r="3" fill="#1d4ed8" />
+  <circle cx="442.5" cy="192.3" r="3" fill="#1d4ed8" />
+  <circle cx="483.0" cy="327.2" r="3" fill="#1d4ed8" />
+  <circle cx="369.4" cy="392.6" r="3" fill="#1d4ed8" />
+  <circle cx="270.5" cy="392.8" r="3" fill="#1d4ed8" />
+  <circle cx="190.1" cy="319.6" r="3" fill="#1d4ed8" />
+  <circle cx="245.4" cy="230.5" r="3" fill="#1d4ed8" />
+  <polygon points="320.0,115.5 439.4,194.8 479.9,326.5 369.9,393.6 274.7,384.1 202.9,316.7 245.4,230.5" fill="#b45309" fill-opacity="0.18" stroke="#b45309" stroke-width="2" />
+  <circle cx="320.0" cy="115.5" r="3" fill="#b45309" />
+  <circle cx="439.4" cy="194.8" r="3" fill="#b45309" />
+  <circle cx="479.9" cy="326.5" r="3" fill="#b45309" />
+  <circle cx="369.9" cy="393.6" r="3" fill="#b45309" />
+  <circle cx="274.7" cy="384.1" r="3" fill="#b45309" />
+  <circle cx="202.9" cy="316.7" r="3" fill="#b45309" />
+  <circle cx="245.4" cy="230.5" r="3" fill="#b45309" />
+  <polygon points="320.0,124.2 433.3,199.6 475.1,325.4 330.1,311.0 279.6,374.0 210.5,315.0 245.3,230.4" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="124.2" r="3" fill="#b91c1c" />
+  <circle cx="433.3" cy="199.6" r="3" fill="#b91c1c" />
+  <circle cx="475.1" cy="325.4" r="3" fill="#b91c1c" />
+  <circle cx="330.1" cy="311.0" r="3" fill="#b91c1c" />
+  <circle cx="279.6" cy="374.0" r="3" fill="#b91c1c" />
+  <circle cx="210.5" cy="315.0" r="3" fill="#b91c1c" />
+  <circle cx="245.3" cy="230.4" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">trivial (n-of-n)</text>
   <text class="label" x="509.2" y="143.1" text-anchor="start">ito (k-of-n via ISN)</text>
   <text class="label" x="555.9" y="347.9" text-anchor="start">benaloh_leichter (2-of-3)</text>
@@ -61,12 +61,12 @@
   <text class="label" x="215.0" y="512.0" text-anchor="end">bytes (chunked Shamir)</text>
   <text class="label" x="84.1" y="347.9" text-anchor="end">ida (Reed-Solomon)</text>
   <text class="label" x="130.8" y="143.1" text-anchor="end">decode (Berlekamp-Welch, t=1)</text>
-  <text class="small" x="324.0" y="253.3">464</text>
-  <text class="small" x="324.0" y="216.7">2k</text>
-  <text class="small" x="324.0" y="180.0">10k</text>
-  <text class="small" x="324.0" y="143.3">46k</text>
-  <text class="small" x="324.0" y="106.7">215k</text>
-  <text class="small" x="324.0" y="70.0">1.0M</text>
+  <text class="small" x="324.0" y="253.3">681</text>
+  <text class="small" x="324.0" y="216.7">5k</text>
+  <text class="small" x="324.0" y="180.0">32k</text>
+  <text class="small" x="324.0" y="143.3">215k</text>
+  <text class="small" x="324.0" y="106.7">1.5M</text>
+  <text class="small" x="324.0" y="70.0">10.0M</text>
   <text class="label" x="20" y="630" font-weight="bold">Other schemes: split + reconstruct (ops/sec, log scale)</text>
   <text class="small" x="20" y="645">k=3, n=5; per-axis = scheme; per-polygon = secret-size (ChaCha20Rng, ARM64 release build)</text>
   <rect x="20.0" y="680.0" width="14" height="14" fill="#0f766e" rx="2" />

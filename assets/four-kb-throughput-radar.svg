@@ -21,20 +21,20 @@
   <line class="axis" x1="320" y1="290" x2="320.0" y2="510.0" />
   <line class="axis" x1="320" y1="290" x2="129.5" y2="400.0" />
   <line class="axis" x1="320" y1="290" x2="129.5" y2="180.0" />
-  <polygon points="320.0,143.4 343.7,276.3 447.6,363.7 320.0,436.0 193.4,363.1 178.1,208.1" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
-  <circle cx="320.0" cy="143.4" r="3" fill="#0f766e" />
-  <circle cx="343.7" cy="276.3" r="3" fill="#0f766e" />
-  <circle cx="447.6" cy="363.7" r="3" fill="#0f766e" />
-  <circle cx="320.0" cy="436.0" r="3" fill="#0f766e" />
-  <circle cx="193.4" cy="363.1" r="3" fill="#0f766e" />
-  <circle cx="178.1" cy="208.1" r="3" fill="#0f766e" />
-  <polygon points="320.0,160.7 359.8,267.0 434.4,356.0 320.0,404.1 221.5,346.9 200.1,220.8" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
-  <circle cx="320.0" cy="160.7" r="3" fill="#b91c1c" />
-  <circle cx="359.8" cy="267.0" r="3" fill="#b91c1c" />
-  <circle cx="434.4" cy="356.0" r="3" fill="#b91c1c" />
-  <circle cx="320.0" cy="404.1" r="3" fill="#b91c1c" />
-  <circle cx="221.5" cy="346.9" r="3" fill="#b91c1c" />
-  <circle cx="200.1" cy="220.8" r="3" fill="#b91c1c" />
+  <polygon points="320.0,131.5 344.9,275.6 457.9,369.6 320.0,448.9 184.0,368.5 177.7,207.8" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2" />
+  <circle cx="320.0" cy="131.5" r="3" fill="#0f766e" />
+  <circle cx="344.9" cy="275.6" r="3" fill="#0f766e" />
+  <circle cx="457.9" cy="369.6" r="3" fill="#0f766e" />
+  <circle cx="320.0" cy="448.9" r="3" fill="#0f766e" />
+  <circle cx="184.0" cy="368.5" r="3" fill="#0f766e" />
+  <circle cx="177.7" cy="207.8" r="3" fill="#0f766e" />
+  <polygon points="320.0,157.9 360.1,266.9 434.6,356.2 320.0,411.2 215.7,350.2 191.4,215.7" fill="#b91c1c" fill-opacity="0.18" stroke="#b91c1c" stroke-width="2" />
+  <circle cx="320.0" cy="157.9" r="3" fill="#b91c1c" />
+  <circle cx="360.1" cy="266.9" r="3" fill="#b91c1c" />
+  <circle cx="434.6" cy="356.2" r="3" fill="#b91c1c" />
+  <circle cx="320.0" cy="411.2" r="3" fill="#b91c1c" />
+  <circle cx="215.7" cy="350.2" r="3" fill="#b91c1c" />
+  <circle cx="191.4" cy="215.7" r="3" fill="#b91c1c" />
   <text class="label" x="320.0" y="52.0" text-anchor="middle">shamir</text>
   <text class="label" x="529.6" y="173.0" text-anchor="start">blakley</text>
   <text class="label" x="529.6" y="415.0" text-anchor="start">kothari</text>

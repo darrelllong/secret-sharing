@@ -168,9 +168,16 @@ impl Zeroize for Vec<Vec<BigUint>> {
 /// Use to wrap any secret-derived intermediate value so it cannot
 /// survive the function's exit:
 ///
-/// ```ignore
+/// ```
+/// use secret_sharing::secure::Zeroizing;
+/// # use secret_sharing::{ChaCha20Rng, PrimeField, csprng::OsRng};
+/// # use secret_sharing::field::mersenne127;
+/// # let field = PrimeField::new_unchecked(mersenne127());
+/// # let mut os = OsRng::new().expect("operating-system entropy unavailable");
+/// # let mut rng = ChaCha20Rng::from_os_entropy(&mut os);
+/// # let k = 3;
 /// let mut coeffs = Zeroizing::new(Vec::with_capacity(k));
-/// for _ in 0..k { coeffs.push(field.random(rng)); }
+/// for _ in 0..k { coeffs.push(field.random(&mut rng)); }
 /// // ...use coeffs...
 /// // At end of scope, coeffs is volatile-zeroed and dropped.
 /// ```

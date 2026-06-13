@@ -72,7 +72,12 @@ public:
 
     [[nodiscard]] big_uint const& modulus() const noexcept { return p_; }
 
-    [[nodiscard]] big_uint reduce(big_uint const& a) const { return a.modulo(p_); }
+    // Values produced by the field's own operations are already
+    // reduced, so the comparison usually settles it without paying
+    // for the division inside modulo().
+    [[nodiscard]] big_uint reduce(big_uint const& a) const {
+        return a < p_ ? a : a.modulo(p_);
+    }
     [[nodiscard]] big_uint add(big_uint const& a, big_uint const& b) const;
     [[nodiscard]] big_uint sub(big_uint const& a, big_uint const& b) const;
     [[nodiscard]] big_uint neg(big_uint const& a) const;
