@@ -1,4 +1,4 @@
-# pilot_ss sweep — Apple M4 Pro (arm64, macOS) — local
+# pilot_ss sweep — Apple M4 Pro (arm64, macOS) — Hardy (local)
 
 _preset `quick` (95% CI ≤ 20% of mean, ≥30 samples); `PILOT_SS_ITERS_PERCENT=25`._
 
@@ -6,117 +6,117 @@ _preset `quick` (95% CI ≤ 20% of mean, ≥30 samples); `PILOT_SS_ITERS_PERCENT
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| shamir_split                             |  0.0029960 | ±0.0000517 |    60 |
-| shamir_reconstruct                       |  0.0062530 | ±0.0000834 |    36 |
-| blakley_split                            |  0.1295000 | ±0.0008800 |    86 |
-| blakley_reconstruct                      |  0.0591000 | ±0.0014485 |    30 |
-| kothari_split                            |  0.0031540 | ±0.0000876 |    30 |
-| kothari_reconstruct                      |  0.0062840 | ±0.0001566 |    30 |
-| karchmer_wigderson_split                 |  0.0035810 | ±0.0001213 |    32 |
-| karchmer_wigderson_reconstruct           |  0.0090330 | ±0.0001816 |    30 |
-| brickell_split                           |  0.0035530 | ±0.0000673 |    46 |
-| brickell_reconstruct                     |  0.0115600 | ±0.0003062 |   242 |
-| massey_split                             |  0.0035230 | ±0.0000464 |    41 |
-| massey_reconstruct                       |  0.0053470 | ±0.0001290 |   240 |
+| shamir_split                             |  0.0029340 | ±0.0000224 |    90 |
+| shamir_reconstruct                       |  0.0062900 | ±0.0001024 |    30 |
+| blakley_split                            |  0.1292000 | ±0.0012540 |    30 |
+| blakley_reconstruct                      |  0.0572300 | ±0.0016695 |    54 |
+| kothari_split                            |  0.0032450 | ±0.0000789 |    60 |
+| kothari_reconstruct                      |  0.0061130 | ±0.0001325 |    90 |
+| karchmer_wigderson_split                 |  0.0032120 | ±0.0000692 |    30 |
+| karchmer_wigderson_reconstruct           |  0.0084940 | ±0.0002062 |    60 |
+| brickell_split                           |  0.0033580 | ±0.0000799 |    30 |
+| brickell_reconstruct                     |  0.0087980 | ±0.0001722 |    36 |
+| massey_split                             |  0.0025580 | ±0.0000498 |    30 |
+| massey_reconstruct                       |  0.0039600 | ±0.0000824 |    30 |
 
 ### Ramp / vector (k=3, L=k or L=k−1, n=5)
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| ramp_split                               |  0.0377700 | ±0.0007120 |    92 |
-| ramp_reconstruct                         |  0.0256300 | ±0.0004151 |    37 |
-| yamamoto_split                           |  0.0440000 | ±0.0006850 |   124 |
-| yamamoto_reconstruct                     |  0.0272800 | ±0.0005685 |    60 |
-| blakley_meadows_split                    |  0.1500000 | ±0.0004467 |   125 |
-| blakley_meadows_reconstruct              |  0.0701700 | ±0.0011825 |    32 |
-| kgh_split                                |  0.0188100 | ±0.0004132 |    30 |
-| kgh_reconstruct                          |  0.0230400 | ±0.0002131 |    30 |
+| ramp_split                               |  0.0320200 | ±0.0006250 |    96 |
+| ramp_reconstruct                         |  0.0210500 | ±0.0004810 |    41 |
+| yamamoto_split                           |  0.0305100 | ±0.0005255 |    45 |
+| yamamoto_reconstruct                     |  0.0213100 | ±0.0005105 |    35 |
+| blakley_meadows_split                    |  0.1309000 | ±0.0014900 |    40 |
+| blakley_meadows_reconstruct              |  0.0614100 | ±0.0016415 |    30 |
+| kgh_split                                |  0.0155100 | ±0.0003940 |    30 |
+| kgh_reconstruct                          |  0.0196800 | ±0.0003900 |    34 |
 
 ### Verifiable secret sharing
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| vss_split                                |  0.0220800 | ±0.0004466 |    90 |
-| vss_reconstruct                          |  0.0186000 | ±0.0003678 |    51 |
-| cgma_vss_split                           |  1.4370000 | ±0.0672500 |    40 |
-| cgma_vss_reconstruct                     | 13.2100000 | ±0.5145000 |    30 |
+| vss_split                                |  0.0181000 | ±0.0003934 |    63 |
+| vss_reconstruct                          |  0.0142000 | ±0.0004218 |   120 |
+| cgma_vss_split                           |  1.3370000 | ±0.0637000 |    60 |
+| cgma_vss_reconstruct                     | 12.6500000 | ±0.4883000 |    60 |
 
 ### CRT (small example sequences)
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| mignotte_split                           |  0.0002930 | ±0.0000056 |   115 |
-| mignotte_reconstruct                     |  0.0019300 | ±0.0000520 |    30 |
-| mignotte_reconstruct_large               |  0.0151700 | ±0.0001425 |    60 |
-| asmuth_bloom_split                       |  0.0004245 | ±0.0000104 |    70 |
-| asmuth_bloom_reconstruct                 |  0.0021290 | ±0.0000683 |    30 |
+| mignotte_split                           |  0.0002645 | ±0.0000071 |   121 |
+| mignotte_reconstruct                     |  0.0017570 | ±0.0000409 |   110 |
+| mignotte_reconstruct_large               |  0.0146800 | ±0.0002198 |    30 |
+| asmuth_bloom_split                       |  0.0003539 | ±0.0000051 |    30 |
+| asmuth_bloom_reconstruct                 |  0.0019600 | ±0.0000479 |    53 |
 
 ### Other / convenience schemes
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| trivial_split                            |  0.0006598 | ±0.0000110 |    62 |
-| trivial_reconstruct                      |  0.0001783 | ±0.0000032 |    43 |
-| ito_split                                |  0.0025330 | ±0.0000415 |    44 |
-| ito_reconstruct                          |  0.0007885 | ±0.0000107 |   115 |
-| benaloh_leichter_split                   |  0.0013020 | ±0.0000181 |    90 |
-| benaloh_leichter_reconstruct             |  0.0005541 | ±0.0000114 |    30 |
-| proactive_refresh                        |  0.0186400 | ±0.0003309 |    30 |
-| proactive_recover                        |  0.0077290 | ±0.0001040 |    61 |
-| bytes_split_16                           |  0.0082090 | ±0.0001759 |    77 |
-| bytes_reconstruct_16                     |  0.0171200 | ±0.0004035 |    30 |
-| ida_split_16                             |  0.0039130 | ±0.0000631 |    30 |
-| ida_reconstruct_16                       |  0.0097810 | ±0.0001752 |    30 |
-| decode_reconstruct_t1                    |  0.0873000 | ±0.0020565 |    60 |
+| trivial_split                            |  0.0005721 | ±0.0000093 |    55 |
+| trivial_reconstruct                      |  0.0001439 | ±0.0000030 |    35 |
+| ito_split                                |  0.0022500 | ±0.0000506 |    40 |
+| ito_reconstruct                          |  0.0007439 | ±0.0000133 |    66 |
+| benaloh_leichter_split                   |  0.0012360 | ±0.0000324 |    65 |
+| benaloh_leichter_reconstruct             |  0.0005208 | ±0.0000145 |    37 |
+| proactive_refresh                        |  0.0168900 | ±0.0003725 |    47 |
+| proactive_recover                        |  0.0070580 | ±0.0001836 |    90 |
+| bytes_split_16                           |  0.0068470 | ±0.0001661 |   180 |
+| bytes_reconstruct_16                     |  0.0141800 | ±0.0002401 |    85 |
+| ida_split_16                             |  0.0031550 | ±0.0000846 |   150 |
+| ida_reconstruct_16                       |  0.0082150 | ±0.0002083 |    60 |
+| decode_reconstruct_t1                    |  0.0709500 | ±0.0009760 |   128 |
 
 ### Visual cryptography (n=3, 8×8 image)
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| visual_split_3_8                         |  0.0103600 | ±0.0002191 |    30 |
-| visual_decode_3_8                        |  0.0013640 | ±0.0000102 |    86 |
+| visual_split_3_8                         |  0.0085380 | ±0.0002885 |    30 |
+| visual_decode_3_8                        |  0.0011040 | ±0.0000235 |   390 |
 
 ### 4 KiB block (k=3, n=5, GF(2^127 − 1), 274 × 15-byte chunks)
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| shamir_split_4kb                         |  0.9957000 | ±0.0227000 |    31 |
-| shamir_reconstruct_4kb                   |  2.0040000 | ±0.0412500 |    60 |
-| blakley_split_4kb                        | 40.5500000 | ±0.1222000 |   180 |
-| blakley_reconstruct_4kb                  | 23.0400000 | ±0.1534500 |   243 |
-| kothari_split_4kb                        |  0.8875000 | ±0.0183550 |    30 |
-| kothari_reconstruct_4kb                  |  1.8770000 | ±0.0445850 |    46 |
-| karchmer_wigderson_split_4kb             |  1.0270000 | ±0.0203650 |    30 |
-| karchmer_wigderson_reconstruct_4kb       |  2.5950000 | ±0.0754500 |    30 |
-| brickell_split_4kb                       |  0.9750000 | ±0.0193900 |    31 |
-| brickell_reconstruct_4kb                 |  2.7330000 | ±0.0514000 |    30 |
-| massey_split_4kb                         |  0.9241000 | ±0.0201600 |   103 |
-| massey_reconstruct_4kb                   |  1.3090000 | ±0.0328700 |    74 |
+| shamir_split_4kb                         |  0.7939000 | ±0.0163600 |    52 |
+| shamir_reconstruct_4kb                   |  1.7200000 | ±0.0334500 |    60 |
+| blakley_split_4kb                        | 37.0600000 | ±0.4065500 |    60 |
+| blakley_reconstruct_4kb                  | 20.9100000 | ±0.2267000 |    30 |
+| kothari_split_4kb                        |  0.7440000 | ±0.0129300 |    30 |
+| kothari_reconstruct_4kb                  |  1.5470000 | ±0.0377650 |    32 |
+| karchmer_wigderson_split_4kb             |  0.9075000 | ±0.0256700 |    90 |
+| karchmer_wigderson_reconstruct_4kb       |  2.2620000 | ±0.0527500 |    34 |
+| brickell_split_4kb                       |  0.8755000 | ±0.0284150 |    30 |
+| brickell_reconstruct_4kb                 |  2.2560000 | ±0.0376600 |    95 |
+| massey_split_4kb                         |  0.6696000 | ±0.0161550 |    42 |
+| massey_reconstruct_4kb                   |  1.0200000 | ±0.0257650 |    31 |
 
 ### Threshold (k, n) sweep (Shamir, GF(2^127 − 1))
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| shamir_split_2_3                         |  0.0018450 | ±0.0000308 |   197 |
-| shamir_reconstruct_2_3                   |  0.0053250 | ±0.0000956 |    35 |
-| shamir_split_3_5                         |  0.0039600 | ±0.0000741 |    51 |
-| shamir_reconstruct_3_5                   |  0.0090650 | ±0.0001354 |    41 |
-| shamir_split_5_9                         |  0.0107800 | ±0.0002913 |    30 |
-| shamir_reconstruct_5_9                   |  0.0170400 | ±0.0010180 |    34 |
-| shamir_split_7_15                        |  0.0253200 | ±0.0006985 |    90 |
-| shamir_reconstruct_7_15                  |  0.0345500 | ±0.0009525 |    91 |
-| shamir_split_10_20                       |  0.0364700 | ±0.0008500 |   120 |
-| shamir_reconstruct_10_20                 |  0.0674900 | ±0.0011585 |   364 |
+| shamir_split_2_3                         |  0.0015640 | ±0.0000167 |   330 |
+| shamir_reconstruct_2_3                   |  0.0043610 | ±0.0000755 |   106 |
+| shamir_split_3_5                         |  0.0033530 | ±0.0001172 |    62 |
+| shamir_reconstruct_3_5                   |  0.0070960 | ±0.0001428 |    50 |
+| shamir_split_5_9                         |  0.0083290 | ±0.0002027 |   120 |
+| shamir_reconstruct_5_9                   |  0.0140800 | ±0.0004345 |   240 |
+| shamir_split_7_15                        |  0.0162600 | ±0.0003017 |   120 |
+| shamir_reconstruct_7_15                  |  0.0263000 | ±0.0005760 |    60 |
+| shamir_split_10_20                       |  0.0292500 | ±0.0006415 |    90 |
+| shamir_reconstruct_10_20                 |  0.0583300 | ±0.0009325 |    71 |
 
 ### Cold-cache first-iteration latency (one op per fresh process)
 
 | Operation                                |   ms/op    | ±CI (95%)  | Runs  |
 |------------------------------------------|------------|------------|-------|
-| shamir_cold_split                        |  0.0078590 | ±0.0001233 |    71 |
-| shamir_cold_reconstruct                  |  0.0191000 | ±0.0006085 |    33 |
-| blakley_cold_split                       |  0.2140000 | ±0.0056800 |    46 |
-| blakley_cold_reconstruct                 |  0.0886000 | ±0.0022090 |    30 |
-| massey_cold_split                        |  0.0082890 | ±0.0001090 |    53 |
-| massey_cold_reconstruct                  |  0.0121800 | ±0.0002015 |    31 |
+| shamir_cold_split                        |  0.0064540 | ±0.0001225 |    90 |
+| shamir_cold_reconstruct                  |  0.0149200 | ±0.0004453 |    30 |
+| blakley_cold_split                       |  0.1861000 | ±0.0031240 |    30 |
+| blakley_cold_reconstruct                 |  0.0691900 | ±0.0020640 |    90 |
+| massey_cold_split                        |  0.0068450 | ±0.0001157 |   721 |
+| massey_cold_reconstruct                  |  0.0100700 | ±0.0003203 |   111 |
 
 Generated by `scripts/bench_pilot.sh` (preset: quick).
