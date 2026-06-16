@@ -69,6 +69,11 @@ the [arithmetic pass](#arithmetic-pass-division--add--lagrange--karatsuba)
 below are what produced these numbers relative to the original
 Montgomery-only path.
 
+![Threshold throughput radar](assets/threshold-throughput-radar.svg)
+
+*Throughput rosette: split (teal) vs reconstruct (red) ops/s across the
+threshold family.*
+
 ### Ramp / vector (k=3, L=k or L=k−1, n=5)
 
 | Operation | ms/op | ±CI (95%) | Runs |
@@ -87,6 +92,11 @@ cost on split, since each polynomial / matrix lives over a length-$L$
 secret. `blakley_meadows` is heaviest at split because the
 hyperplane-bank rejection-sampling guard re-rolls the random matrix
 on rare singular events.
+
+![Ramp / vector throughput radar](assets/ramp-throughput-radar.svg)
+
+*Throughput rosette: split (teal) vs reconstruct (red) ops/s across the
+ramp / vector family.*
 
 ### Verifiable secret sharing
 
@@ -162,6 +172,11 @@ scaling curve at larger $\beta$ see `assets/mignotte-scaling.svg` and
 $n = 11$) is the heaviest because the homogeneous-system solve runs
 even when no tampering is present.
 
+![Other-schemes throughput radar](assets/other-throughput-radar.svg)
+
+*Throughput rosette: split (teal) vs reconstruct (red) ops/s across the
+other / convenience family.*
+
 ### Visual cryptography (n=3, 8×8 image)
 
 | Operation | ms/op | ±CI (95%) | Runs |
@@ -231,11 +246,9 @@ its split — split must sample fresh hyperplane coefficients and reject
 singular configurations on top of the same linear work reconstruct
 does once. Every other scheme is split-faster.
 
-The kiviat below visualises this same 4 KiB-block data, one polygon
-for split throughput and one for reconstruct, on a six-axis rosette.
-Source: `examples/bench.rs`, a coarse `Instant`-based timer (5 warmup
-+ 20 measured iterations of the full 274-chunk loop, median latency);
-the pilot-bench numbers above are the authoritative CI'd values.
+The rosette below visualises this same 4 KiB-block data on a six-axis
+rosette (split teal, reconstruct red); `blakley` is the one scheme
+whose reconstruct polygon sits outside its split.
 
 ![4 KiB block radar](assets/four-kb-throughput-radar.svg)
 
@@ -486,23 +499,7 @@ most of the practical win); workspace pooling through
 `cgma_vss`); Solinas-specialised add/sub (the conditional-subtract
 `add` already covers the dominant path).
 
-## Kiviat charts
-
-Operations that share a "single integer secret of N bits" model also
-have kiviat (radar) charts in [`assets/`](assets/) — three families
-with ≥ 3 axes get a radar; the two-axis VSS family is a table above.
-These use a coarse in-process timer (`std::time::Instant`, 50 warmup +
-200 measured iterations, median latency) and exist for at-a-glance
-shape, not confidence-interval rigour. The pilot-bench tables above
-are the authoritative numbers.
-
-![Threshold throughput radar](assets/threshold-throughput-radar.svg)
-
-![Ramp / vector throughput radar](assets/ramp-throughput-radar.svg)
-
-![Other-schemes throughput radar](assets/other-throughput-radar.svg)
-
-## Non-radar scaling charts
+## Scaling charts
 
 For schemes whose secret-size model differs structurally from a fixed
 bit-width (CRT moduli, visual pixel expansion, Schnorr group size) the
@@ -527,6 +524,13 @@ above carries the authoritative pilot-bench numbers.
   `~/pilot-bench` (CMake build, headless `bench` binary). Its
   "Reading CI" is the full two-sided interval width;
   `scripts/bench_pilot.sh` reports half of it as the ± column.
+- **Radar & scaling charts.** The per-family throughput rosettes (shown
+  inline above) and the scaling charts in `assets/` come from
+  `examples/bench.rs`, a coarse in-process timer
+  (`std::time::Instant`, median of measured iterations) — not
+  pilot-bench. Split throughput is the teal polygon, reconstruct the
+  red. They convey at-a-glance shape; the pilot-bench tables are
+  authoritative.
 - **Controlled before/after.** Comparisons that claim a speedup from a
   specific change (e.g. the arithmetic pass above) are run on one host
   in one session — build baseline, measure; apply change, rebuild,
