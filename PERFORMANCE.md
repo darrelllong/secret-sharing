@@ -528,9 +528,10 @@ above carries the authoritative pilot-bench numbers.
   inline above) and the scaling charts in `assets/` come from
   `examples/bench.rs`, a coarse in-process timer
   (`std::time::Instant`, median of measured iterations) — not
-  pilot-bench. Split throughput is the teal polygon, reconstruct the
-  red. They convey at-a-glance shape; the pilot-bench tables are
-  authoritative.
+  pilot-bench. They were generated on Hardy (Apple M4), the same host
+  as the canonical pilot-bench tables. Split throughput is the teal
+  polygon, reconstruct the red. They convey at-a-glance shape; the
+  pilot-bench tables are authoritative.
 - **Controlled before/after.** Comparisons that claim a speedup from a
   specific change (e.g. the arithmetic pass above) are run on one host
   in one session — build baseline, measure; apply change, rebuild,
