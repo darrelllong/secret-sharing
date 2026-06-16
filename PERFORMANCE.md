@@ -202,12 +202,12 @@ single-element number from the threshold table. There is no shared
 per-secret amortisation — the polynomial / matrix bank is
 re-randomised per chunk because each chunk is an independent secret.
 
-End-to-end (split + reconstruct, per 4 KiB secret). The total-time CI
-propagates from the per-op CIs by Pythagorean addition assuming
-independence ($\sigma_\text{total} = \sqrt{\sigma_\text{split}^2 +
-\sigma_\text{recon}^2}$); throughput is $4000 / \text{total\_ms}$
-KiB/s with the delta-method CI
-$(\text{throughput} / \text{total\_ms}) \cdot \sigma_\text{total}$:
+End-to-end (split + reconstruct, per 4 KiB secret). Writing $t$ for the
+total time in ms, its CI propagates from the per-op CIs by Pythagorean
+addition assuming independence,
+$\sigma_t = \sqrt{\sigma_\text{split}^2 + \sigma_\text{recon}^2}$, and
+throughput is $4000 / t$ KiB/s with delta-method CI
+$(\text{throughput} / t) \cdot \sigma_t$:
 
 | Scheme | total ms (±CI 95%) | throughput KiB/s (±CI 95%) |
 |--------|-------------------:|---------------------------:|
@@ -394,9 +394,9 @@ Routing the Lagrange-family schemes onto the `mersenne127` fast path
 `brickell`, and `massey` ~4–6× over the original Montgomery-only path.
 
 `nist_p256` is recognised but routes to Montgomery in production via a
-`prefer_fast: false` flag. Its 4-term mixed-sign polynomial with
-$\text{max\_offset} = 224, k = 256$ needs ~8 fold iterations, each
-doing 4 BigUint shifts and adds — more work than Montgomery's 4
+`prefer_fast: false` flag. Its 4-term mixed-sign polynomial (largest
+term offset 224, $k = 256$) needs ~8 fold iterations, each doing 4
+BigUint shifts and adds — more work than Montgomery's 4
 mont-muls on 4 limbs. The 1.01× row is Montgomery-vs-Montgomery
 (noise — both columns time the same code); the entry stays in the
 catalogue so the parametric reducer's correctness is still validated

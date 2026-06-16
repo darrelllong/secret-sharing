@@ -1520,7 +1520,7 @@ $$
 Q(x)
 $$
 
-with $Q(0)=s$ and $\mathrm{deg}\ Q < k$. Each player samples a zero-constant
+with $Q(0)=s$ and $\deg Q < k$. Each player samples a zero-constant
 polynomial
 
 $$
@@ -1641,13 +1641,13 @@ $$
 for all supplied points, with
 
 $$
-\mathrm{deg}\ Q < k + t
+\deg Q < k + t
 $$
 
 and
 
 $$
-\mathrm{deg}\ E \le t.
+\deg E \le t.
 $$
 
 If at most $t$ shares are erroneous and the true message polynomial is
@@ -1769,7 +1769,7 @@ Let $b(x)$ denote $\lceil \log_2 (x+1) \rceil$. After one fold step
 on a value with $b(t) > k$,
 
 $$
-b(\text{result}) \le \max\left(b(\text{low}),\ b(\text{high}) + \max_i e_i + \lceil \log_2 |s_i \cdot \text{num\_terms}|\rceil\right),
+b(\text{result}) \le \max\left(b(\text{low}), b(\text{high}) + \max_i e_i + \lceil \log_2 |s_i \cdot \text{(number of terms)}|\rceil\right),
 $$
 
 so each fold strips at least $k - \max_i e_i$ bits from the magnitude
