@@ -31,16 +31,16 @@
   <text class="small" x="344.4" y="344.0" text-anchor="middle">1024-bit</text>
   <line class="grid" x1="610.0" y1="60.0" x2="610.0" y2="330.0" />
   <text class="small" x="610.0" y="344.0" text-anchor="middle">2048-bit</text>
-  <path d="M 80.0 285.7 L 80.8 284.5 L 344.4 151.9 L 610.0 164.1" stroke="#0f766e" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="285.7" r="3.5" fill="#0f766e" />
-  <circle cx="80.8" cy="284.5" r="3.5" fill="#0f766e" />
-  <circle cx="344.4" cy="151.9" r="3.5" fill="#0f766e" />
-  <circle cx="610.0" cy="164.1" r="3.5" fill="#0f766e" />
-  <path d="M 80.0 247.8 L 80.8 245.9 L 344.4 101.3 L 610.0 107.9" stroke="#1d4ed8" stroke-width="2" fill="none" />
-  <circle cx="80.0" cy="247.8" r="3.5" fill="#1d4ed8" />
-  <circle cx="80.8" cy="245.9" r="3.5" fill="#1d4ed8" />
-  <circle cx="344.4" cy="101.3" r="3.5" fill="#1d4ed8" />
-  <circle cx="610.0" cy="107.9" r="3.5" fill="#1d4ed8" />
+  <path d="M 80.0 289.0 L 80.8 288.3 L 344.4 156.4 L 610.0 165.7" stroke="#0f766e" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="289.0" r="3.5" fill="#0f766e" />
+  <circle cx="80.8" cy="288.3" r="3.5" fill="#0f766e" />
+  <circle cx="344.4" cy="156.4" r="3.5" fill="#0f766e" />
+  <circle cx="610.0" cy="165.7" r="3.5" fill="#0f766e" />
+  <path d="M 80.0 251.4 L 80.8 249.5 L 344.4 105.5 L 610.0 110.7" stroke="#1d4ed8" stroke-width="2" fill="none" />
+  <circle cx="80.0" cy="251.4" r="3.5" fill="#1d4ed8" />
+  <circle cx="80.8" cy="249.5" r="3.5" fill="#1d4ed8" />
+  <circle cx="344.4" cy="105.5" r="3.5" fill="#1d4ed8" />
+  <circle cx="610.0" cy="110.7" r="3.5" fill="#1d4ed8" />
   <text class="title" x="80.0" y="30.0">CGMA-VSS: latency vs Schnorr group bit width</text>
   <text class="small" x="80.0" y="46.0">k=3, n=5; toy (23) → small (167) → 1024-bit OAKLEY group 2 → 2048-bit RFC 5114 §2.3</text>
   <text class="small" x="345.0" y="362.0" text-anchor="middle">Schnorr prime p bit width</text>
