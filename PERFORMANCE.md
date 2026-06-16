@@ -37,7 +37,8 @@ The tables below mirror
 [`benchmarks/pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md).
 Conditions: Apple M4 (arm64, host Hardy), macOS, release build,
 `quick` preset, `PILOT_SS_ITERS_PERCENT=25`. The same sweep on three
-other hosts is summarised under [Cross-host](#cross-host) below.
+other hosts is summarised under [Cross-processor](#cross-processor)
+below.
 
 ### Threshold (k=3, n=5, GF(2^127 − 1))
 
@@ -308,7 +309,7 @@ linear systems live in `Vec`s reused across solve steps. Reconstruct
 ratios run higher than split because the Lagrange denominators
 allocate more transient BigUints than split's polynomial evaluation.
 
-### Cross-host
+## Cross-processor
 
 The same `quick`-preset sweep on four machines spanning three
 architectures — Apple M1, Apple M4, and x86_64. Per-host captures:
