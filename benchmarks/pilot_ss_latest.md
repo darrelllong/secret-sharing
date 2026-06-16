@@ -1,4 +1,4 @@
-# pilot_ss sweep — Apple M4 Pro (arm64, macOS) — Hardy (local)
+# pilot_ss sweep — Apple M4 (arm64, macOS) — Hardy (local)
 
 _preset `quick` (95% CI ≤ 20% of mean, ≥30 samples); `PILOT_SS_ITERS_PERCENT=25`._
 

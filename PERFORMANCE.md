@@ -35,9 +35,9 @@ numbers; both will need many more rounds per operation.
 
 The tables below mirror
 [`benchmarks/pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md).
-Conditions: Apple M4 Pro (arm64), macOS, release build, `quick`
-preset, `PILOT_SS_ITERS_PERCENT=25`. The same sweep on two other
-hosts is summarised under [Cross-host](#cross-host) below.
+Conditions: Apple M4 (arm64, host Hardy), macOS, release build,
+`quick` preset, `PILOT_SS_ITERS_PERCENT=25`. The same sweep on three
+other hosts is summarised under [Cross-host](#cross-host) below.
 
 ### Threshold (k=3, n=5, GF(2^127 − 1))
 
@@ -297,28 +297,33 @@ allocate more transient BigUints than split's polynomial evaluation.
 
 ### Cross-host
 
-The same `quick`-preset sweep on three machines. Per-host captures:
-[`pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md) (Apple M4 Pro,
-Hardy), [`pilot_ss_dyson.md`](benchmarks/pilot_ss_dyson.md) (Apple
-arm64, dyson), and
+The same `quick`-preset sweep on four machines spanning three
+architectures — Apple M1, Apple M4, and x86_64. Per-host captures:
+[`pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md) (Apple M4,
+Hardy — the canonical tables above),
+[`pilot_ss_wigner.md`](benchmarks/pilot_ss_wigner.md) (Apple M1 Max,
+wigner), [`pilot_ss_dyson.md`](benchmarks/pilot_ss_dyson.md) (Apple
+M4 Pro, dyson), and
 [`pilot_ss_twilight.md`](benchmarks/pilot_ss_twilight.md) (AMD
 EPYC 7452, x86_64, twilight.soe.ucsc.edu). A representative slice
 (ms/op):
 
-| Operation | M4 Pro | dyson | twilight (EPYC) |
-|---|---:|---:|---:|
-| `shamir_split` | 0.002934 | 0.00317 | 0.00437 |
-| `shamir_reconstruct` | 0.00629 | 0.006371 | 0.009204 |
-| `mignotte_reconstruct` | 0.001757 | 0.001692 | 0.002741 |
-| `vss_reconstruct` | 0.0142 | 0.01434 | 0.01919 |
-| `cgma_vss_reconstruct` | 12.65 | 11.58 | 20.39 |
-| `decode_reconstruct_t1` | 0.07095 | 0.06878 | 0.09605 |
+| Operation | M1 Max (wigner) | M4 (Hardy) | M4 Pro (dyson) | EPYC x86 (twilight) |
+|---|---:|---:|---:|---:|
+| `shamir_split` | 0.003818 | 0.002934 | 0.00317 | 0.00437 |
+| `shamir_reconstruct` | 0.007753 | 0.00629 | 0.006371 | 0.009204 |
+| `mignotte_reconstruct` | 0.002066 | 0.001757 | 0.001692 | 0.002741 |
+| `vss_reconstruct` | 0.01766 | 0.0142 | 0.01434 | 0.01919 |
+| `cgma_vss_reconstruct` | 14.83 | 12.65 | 11.58 | 20.39 |
+| `decode_reconstruct_t1` | 0.08018 | 0.07095 | 0.06878 | 0.09605 |
 
-The two Apple hosts track within run-to-run noise; the EPYC is
-~1.3–1.5× slower on the field-arithmetic-bound schemes and ~1.6× on
-the 2048-bit modexp of `cgma_vss`, consistent with its lower
-single-thread clock. Relative scheme ordering is identical across all
-three. (`wiger` was unreachable at capture time and is not included.)
+The Apple parts order by generation: the M4 (Hardy) and M4 Pro (dyson)
+track within run-to-run noise of each other, and the M1 Max is
+~1.1–1.3× slower than the M4 across the field-arithmetic schemes
+(1.17× on the 2048-bit `cgma_vss` modexp). The EPYC is ~1.3–1.5×
+slower than the M4 on field arithmetic and ~1.6× on `cgma_vss`,
+consistent with its lower single-thread clock. Relative scheme
+ordering is identical across all four.
 
 ## Optimization history
 
@@ -443,7 +448,7 @@ agreement):
    multiplies per point to peel off the individual inverses. Inversion
    dominates reconstruction cost, so this replaces the $k$ most
    expensive operations in the evaluator with one.
-4. **Karatsuba threshold 32 → 128 limbs.** Re-measured on Apple M4 Pro
+4. **Karatsuba threshold 32 → 128 limbs.** Re-measured on Apple M4
    and AMD EPYC 7452 (median over 300 multiplies per size): this
    implementation's Karatsuba — `Vec` temporaries plus recursive
    splits — ties or loses to schoolbook through ~96 limbs and only
@@ -454,8 +459,8 @@ agreement):
 
 **Controlled before/after** — same host, same session, back to back:
 build `pilot_ss` on pristine `main`, measure; apply the pass, rebuild,
-measure. Apple M4 Pro, pilot-bench `normal` preset (95% CI ≤ 10% of
-mean, ≥ 50 samples), `PILOT_SS_ITERS_PERCENT=25`. ms/op:
+measure. Apple M4 (Hardy), pilot-bench `normal` preset (95% CI ≤ 10%
+of mean, ≥ 50 samples), `PILOT_SS_ITERS_PERCENT=25`. ms/op:
 
 | Operation | before | after | Δ |
 |---|---:|---:|---:|
