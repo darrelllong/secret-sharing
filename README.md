@@ -1,11 +1,15 @@
 # secret-sharing
 
 Threshold secret-sharing schemes implemented in pure, safe Rust
-directly from their published specifications. The crate is fully
-**self-contained**: `Cargo.toml` declares no external dependencies, and
-its `Cargo.lock` lists only this crate. Big-integer arithmetic, prime
-helpers, the `Csprng` trait, the `ChaCha20Rng` CSPRNG, and the
-`OsRng` entropy source are all in-tree.
+directly from their published specifications. The crate carries **no
+third-party dependencies**: its multiprecision arithmetic and number
+theory come from the sibling [rump](https://github.com/darrelllong/rump)
+crate (crates.io package `rust-mp`) — same author, extracted from this
+lineage, same `deny(unsafe)` and scrub-on-drop policies, with faster
+kernels than the fork this tree used to carry (Knuth Algorithm D
+division, word-level Montgomery multiplication). The `Csprng` trait,
+the `ChaCha20Rng` CSPRNG, and the `OsRng` entropy source remain
+in-tree.
 
 ## Catalogue
 

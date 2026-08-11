@@ -1,10 +1,10 @@
 [package]
 name = "secret-sharing-rs"
-version = "0.5.1"
+version = "0.6.0"
 edition = "2021"
 license = "BSD-2-Clause"
 authors = ["Darrell Long"]
-description = "Secret-sharing primitives (Shamir, Blakley, ramp, VSS, CRT, visual, etc.) implemented directly from the original papers with no external dependencies."
+description = "Secret-sharing primitives (Shamir, Blakley, ramp, VSS, CRT, visual, etc.) implemented directly from the original papers; multiprecision arithmetic from the sibling rust-mp crate, no third-party dependencies."
 repository = "https://github.com/darrelllong/secret-sharing"
 readme = "README.md"
 documentation = "https://docs.rs/secret-sharing-rs"
@@ -36,4 +36,8 @@ name = "pilot_ss"
 path = "src/bin/pilot_ss.rs"
 
 [dependencies]
+# The multiprecision layer (BigUint, Montgomery, number theory), extracted
+# to the sibling rump repository: crates.io package rust-mp, lib name rump.
+# Same author, same deny(unsafe) and scrub-on-drop policies.
+rust-mp = { version = "0.1.0", path = "../rump" }
 

@@ -8,9 +8,9 @@
 
 use std::sync::OnceLock;
 
-use crate::primes::{is_probable_prime, mod_inverse, random_below};
 use crate::bigint::{BigInt, BigUint, Sign};
 use crate::csprng::Csprng;
+use crate::primes::{is_probable_prime, mod_inverse, random_below};
 
 /// One term in a reduction polynomial: signed coefficient at a bit
 /// offset. Used to encode the right-hand side of `2^k ≡ δ (mod p)`
@@ -153,61 +153,154 @@ fn build_known_reductions() -> Vec<ReductionParams> {
     // Static term tables — each describes `δ` such that p = 2^k − δ
     // and the reducer substitutes `2^k ≡ δ`.
     static MERSENNE_TERMS: &[ReductionTerm] = &[ReductionTerm { offset: 0, coef: 1 }];
-    static CURVE25519_TERMS: &[ReductionTerm] = &[ReductionTerm { offset: 0, coef: 19 }];
+    static CURVE25519_TERMS: &[ReductionTerm] = &[ReductionTerm {
+        offset: 0,
+        coef: 19,
+    }];
     static POLY1305_TERMS: &[ReductionTerm] = &[ReductionTerm { offset: 0, coef: 5 }];
     // secp256k1: p = 2^256 − 2^32 − 977; δ = 2^32 + 977.
     static SECP256K1_TERMS: &[ReductionTerm] = &[
-        ReductionTerm { offset: 0, coef: 977 },
-        ReductionTerm { offset: 32, coef: 1 },
+        ReductionTerm {
+            offset: 0,
+            coef: 977,
+        },
+        ReductionTerm {
+            offset: 32,
+            coef: 1,
+        },
     ];
     // Curve448: p = 2^448 − 2^224 − 1; δ = 2^224 + 1.
     static CURVE448_TERMS: &[ReductionTerm] = &[
         ReductionTerm { offset: 0, coef: 1 },
-        ReductionTerm { offset: 224, coef: 1 },
+        ReductionTerm {
+            offset: 224,
+            coef: 1,
+        },
     ];
     // NIST P-192: p = 2^192 − 2^64 − 1; δ = 2^64 + 1.
     static P192_TERMS: &[ReductionTerm] = &[
         ReductionTerm { offset: 0, coef: 1 },
-        ReductionTerm { offset: 64, coef: 1 },
+        ReductionTerm {
+            offset: 64,
+            coef: 1,
+        },
     ];
     // NIST P-224: p = 2^224 − 2^96 + 1; δ = 2^96 − 1.
     static P224_TERMS: &[ReductionTerm] = &[
-        ReductionTerm { offset: 0, coef: -1 },
-        ReductionTerm { offset: 96, coef: 1 },
+        ReductionTerm {
+            offset: 0,
+            coef: -1,
+        },
+        ReductionTerm {
+            offset: 96,
+            coef: 1,
+        },
     ];
     // NIST P-256: p = 2^256 − 2^224 + 2^192 + 2^96 − 1.
     // Solving for δ: p = 2^256 − (2^224 − 2^192 − 2^96 + 1).
     // δ = 2^224 − 2^192 − 2^96 + 1.
     static P256_TERMS: &[ReductionTerm] = &[
         ReductionTerm { offset: 0, coef: 1 },
-        ReductionTerm { offset: 96, coef: -1 },
-        ReductionTerm { offset: 192, coef: -1 },
-        ReductionTerm { offset: 224, coef: 1 },
+        ReductionTerm {
+            offset: 96,
+            coef: -1,
+        },
+        ReductionTerm {
+            offset: 192,
+            coef: -1,
+        },
+        ReductionTerm {
+            offset: 224,
+            coef: 1,
+        },
     ];
     // NIST P-384: p = 2^384 − 2^128 − 2^96 + 2^32 − 1.
     // δ = 2^128 + 2^96 − 2^32 + 1.
     static P384_TERMS: &[ReductionTerm] = &[
         ReductionTerm { offset: 0, coef: 1 },
-        ReductionTerm { offset: 32, coef: -1 },
-        ReductionTerm { offset: 96, coef: 1 },
-        ReductionTerm { offset: 128, coef: 1 },
+        ReductionTerm {
+            offset: 32,
+            coef: -1,
+        },
+        ReductionTerm {
+            offset: 96,
+            coef: 1,
+        },
+        ReductionTerm {
+            offset: 128,
+            coef: 1,
+        },
     ];
 
     let table = vec![
-        ReductionParams { k: 521, terms: MERSENNE_TERMS, p: mersenne521(), name: "mersenne521", prefer_fast: true },
-        ReductionParams { k: 255, terms: CURVE25519_TERMS, p: curve25519_field(), name: "curve25519", prefer_fast: true },
-        ReductionParams { k: 130, terms: POLY1305_TERMS, p: poly1305_field(), name: "poly1305", prefer_fast: true },
-        ReductionParams { k: 256, terms: SECP256K1_TERMS, p: secp256k1_field(), name: "secp256k1", prefer_fast: true },
-        ReductionParams { k: 448, terms: CURVE448_TERMS, p: curve448_field(), name: "curve448", prefer_fast: true },
-        ReductionParams { k: 192, terms: P192_TERMS, p: nist_p192_field(), name: "nist_p192", prefer_fast: true },
-        ReductionParams { k: 224, terms: P224_TERMS, p: nist_p224_field(), name: "nist_p224", prefer_fast: true },
+        ReductionParams {
+            k: 521,
+            terms: MERSENNE_TERMS,
+            p: mersenne521(),
+            name: "mersenne521",
+            prefer_fast: true,
+        },
+        ReductionParams {
+            k: 255,
+            terms: CURVE25519_TERMS,
+            p: curve25519_field(),
+            name: "curve25519",
+            prefer_fast: true,
+        },
+        ReductionParams {
+            k: 130,
+            terms: POLY1305_TERMS,
+            p: poly1305_field(),
+            name: "poly1305",
+            prefer_fast: true,
+        },
+        ReductionParams {
+            k: 256,
+            terms: SECP256K1_TERMS,
+            p: secp256k1_field(),
+            name: "secp256k1",
+            prefer_fast: true,
+        },
+        ReductionParams {
+            k: 448,
+            terms: CURVE448_TERMS,
+            p: curve448_field(),
+            name: "curve448",
+            prefer_fast: true,
+        },
+        ReductionParams {
+            k: 192,
+            terms: P192_TERMS,
+            p: nist_p192_field(),
+            name: "nist_p192",
+            prefer_fast: true,
+        },
+        ReductionParams {
+            k: 224,
+            terms: P224_TERMS,
+            p: nist_p224_field(),
+            name: "nist_p224",
+            prefer_fast: true,
+        },
         // NIST P-256: 4 terms, max_offset 224, k 256 — ~8 fold iterations
         // × 4 BigUint shifts/adds each. Bench shows 0.6× of Montgomery
         // on the bench hardware, so we route this prime to Generic.
         // The entry is kept in the table so the fuzz suite still
         // validates the parametric reducer's correctness for it.
-        ReductionParams { k: 256, terms: P256_TERMS, p: nist_p256_field(), name: "nist_p256", prefer_fast: false },
-        ReductionParams { k: 384, terms: P384_TERMS, p: nist_p384_field(), name: "nist_p384", prefer_fast: true },
+        ReductionParams {
+            k: 256,
+            terms: P256_TERMS,
+            p: nist_p256_field(),
+            name: "nist_p256",
+            prefer_fast: false,
+        },
+        ReductionParams {
+            k: 384,
+            terms: P384_TERMS,
+            p: nist_p384_field(),
+            name: "nist_p384",
+            prefer_fast: true,
+        },
     ];
     // Validate every entry exactly once. A regression here (a typo in
     // a constant, an off-by-one in a `shl_bits`, a sign error in a
@@ -465,7 +558,11 @@ fn mul_mod_mersenne127(a: u128, b: u128) -> u128 {
     let folded = (sum & mask127) + (sum >> 127);
 
     // folded ∈ [0, p + 1]; one final conditional subtract.
-    if folded >= mask127 { folded - mask127 } else { folded }
+    if folded >= mask127 {
+        folded - mask127
+    } else {
+        folded
+    }
 }
 
 /// `a · b mod p` where `p = 2^k − δ` is described by [`ReductionParams`].
@@ -509,9 +606,19 @@ fn reduction_mul(a: &BigUint, b: &BigUint, params: &ReductionParams) -> BigUint 
     // bit length only; an input == p with bits == k still passes
     // through, and the final `modulo_positive` cleans up.
     let a_red;
-    let a = if a.bits() <= params.k { a } else { a_red = a.modulo(&params.p); &a_red };
+    let a = if a.bits() <= params.k {
+        a
+    } else {
+        a_red = a.modulo(&params.p);
+        &a_red
+    };
     let b_red;
-    let b = if b.bits() <= params.k { b } else { b_red = b.modulo(&params.p); &b_red };
+    let b = if b.bits() <= params.k {
+        b
+    } else {
+        b_red = b.modulo(&params.p);
+        &b_red
+    };
 
     let prod = a.mul_ref(b);
     let mut t = BigInt::from_biguint(prod);
@@ -580,7 +687,11 @@ fn reduction_fold(t: &BigInt, params: &ReductionParams) -> BigInt {
         );
     }
     let mag = t.magnitude();
-    let high = mag.shr_bits(params.k);
+    let high = {
+        let mut shifted = mag.clone();
+        shifted.shr_bits(params.k);
+        shifted
+    };
     let low = mag.low_bits(params.k);
 
     if high.is_zero() {
@@ -701,7 +812,10 @@ pub fn nist_p256_field() -> BigUint {
     t192.shl_bits(192);
     let mut t96 = BigUint::one();
     t96.shl_bits(96);
-    v.sub_ref(&t224).add_ref(&t192).add_ref(&t96).sub_ref(&BigUint::one())
+    v.sub_ref(&t224)
+        .add_ref(&t192)
+        .add_ref(&t96)
+        .sub_ref(&BigUint::one())
 }
 
 /// NIST P-384 base field,
@@ -716,7 +830,10 @@ pub fn nist_p384_field() -> BigUint {
     t96.shl_bits(96);
     let mut t32 = BigUint::one();
     t32.shl_bits(32);
-    v.sub_ref(&t128).sub_ref(&t96).add_ref(&t32).sub_ref(&BigUint::one())
+    v.sub_ref(&t128)
+        .sub_ref(&t96)
+        .add_ref(&t32)
+        .sub_ref(&BigUint::one())
 }
 
 #[cfg(test)]
@@ -921,7 +1038,13 @@ mod tests {
             for b in &edges {
                 let want = generic.mul(a, b);
                 let got = fast.mul(a, b);
-                assert_eq!(got, want, "edge mismatch: a.bits()={}, b.bits()={}", a.bits(), b.bits());
+                assert_eq!(
+                    got,
+                    want,
+                    "edge mismatch: a.bits()={}, b.bits()={}",
+                    a.bits(),
+                    b.bits()
+                );
                 assert!(got < *p, "result not reduced: bits={}", got.bits());
             }
         }
@@ -959,7 +1082,10 @@ mod tests {
         let mut big = p.clone();
         big.shl_bits(50);
         let huge = big.add_ref(&BigUint::from_u64(1234));
-        assert_eq!(fast.mul(&huge, &BigUint::from_u64(7)), generic.mul(&huge, &BigUint::from_u64(7)));
+        assert_eq!(
+            fast.mul(&huge, &BigUint::from_u64(7)),
+            generic.mul(&huge, &BigUint::from_u64(7))
+        );
     }
 
     fn check_worst_case_convergence(p: &BigUint, fast: &PrimeField, generic: &PrimeField) {
@@ -987,7 +1113,10 @@ mod tests {
         // Generic via `prefer_fast: false`. We want the correctness
         // coverage regardless of whether the dispatch picks it.
         let kind = super::detect_kind(&p);
-        let fast = if matches!(kind, super::FieldKind::Mersenne127 | super::FieldKind::Reduction(_)) {
+        let fast = if matches!(
+            kind,
+            super::FieldKind::Mersenne127 | super::FieldKind::Reduction(_)
+        ) {
             PrimeField::new_unchecked(p.clone())
         } else {
             // The production dispatch routes this prime to Generic;
@@ -1116,9 +1245,8 @@ mod tests {
         // so pad the leading nibble with a 0 to make the byte decode
         // round-trip cleanly.
         let poly = poly1305_field();
-        let expected_poly = BigUint::from_be_bytes(&hex_decode(
-            "03fffffffffffffffffffffffffffffffb",
-        ));
+        let expected_poly =
+            BigUint::from_be_bytes(&hex_decode("03fffffffffffffffffffffffffffffffb"));
         assert_eq!(poly, expected_poly, "poly1305");
 
         // mersenne521 (= NIST P-521): p = 2^521 − 1.
@@ -1174,10 +1302,7 @@ mod tests {
         ];
         for (name, p) in cases {
             let f = PrimeField::new_unchecked(p.clone());
-            let routed = matches!(
-                f.kind,
-                FieldKind::Mersenne127 | FieldKind::Reduction(_)
-            );
+            let routed = matches!(f.kind, FieldKind::Mersenne127 | FieldKind::Reduction(_));
             assert!(routed, "{name} fell through to Generic");
         }
     }
@@ -1188,8 +1313,10 @@ mod tests {
         // production dispatch must pick Generic. Lock in the contract
         // so a future flag flip is visible in test output.
         let f = PrimeField::new_unchecked(nist_p256_field());
-        assert!(matches!(f.kind, FieldKind::Generic),
-            "nist_p256 should route to Generic when prefer_fast is false");
+        assert!(
+            matches!(f.kind, FieldKind::Generic),
+            "nist_p256 should route to Generic when prefer_fast is false"
+        );
     }
 
     #[test]
@@ -1215,7 +1342,8 @@ mod tests {
             k: 127,
             terms: BAD,
             p: mersenne127(),
-            name: "bad_zero_coef", prefer_fast: true,
+            name: "bad_zero_coef",
+            prefer_fast: true,
         };
         super::validate_reduction_params(&params);
     }
@@ -1223,12 +1351,16 @@ mod tests {
     #[test]
     #[should_panic(expected = "≥ k")]
     fn validate_rejects_offset_at_or_above_k() {
-        static BAD: &[super::ReductionTerm] = &[super::ReductionTerm { offset: 127, coef: 1 }];
+        static BAD: &[super::ReductionTerm] = &[super::ReductionTerm {
+            offset: 127,
+            coef: 1,
+        }];
         let params = super::ReductionParams {
             k: 127,
             terms: BAD,
             p: mersenne127(),
-            name: "bad_offset", prefer_fast: true,
+            name: "bad_offset",
+            prefer_fast: true,
         };
         super::validate_reduction_params(&params);
     }
@@ -1239,7 +1371,10 @@ mod tests {
         // δ = -1 (single negative term at offset 0). For any k > 0
         // the implied prime would be 2^k + 1 (composite for many k);
         // regardless, the fold algorithm assumes δ > 0.
-        static BAD: &[super::ReductionTerm] = &[super::ReductionTerm { offset: 0, coef: -1 }];
+        static BAD: &[super::ReductionTerm] = &[super::ReductionTerm {
+            offset: 0,
+            coef: -1,
+        }];
         // We need a prime field that makes the mismatch test
         // unreachable — supply p = 2^127 + 1 (whatever that resolves
         // to) so the validator hits the δ-positivity check first.
@@ -1250,7 +1385,8 @@ mod tests {
             k: 127,
             terms: BAD,
             p,
-            name: "bad_negative_delta", prefer_fast: true,
+            name: "bad_negative_delta",
+            prefer_fast: true,
         };
         super::validate_reduction_params(&params);
     }
@@ -1265,7 +1401,8 @@ mod tests {
             k: 127,
             terms: BAD,
             p: mersenne127(),
-            name: "bad_polynomial_mismatch", prefer_fast: true,
+            name: "bad_polynomial_mismatch",
+            prefer_fast: true,
         };
         super::validate_reduction_params(&params);
     }
