@@ -36,7 +36,8 @@ numbers; both will need many more rounds per operation.
 The tables below mirror
 [`benchmarks/pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md).
 Conditions: Apple M4 (arm64, host Hardy), macOS, release build,
-`quick` preset, `PILOT_SS_ITERS_PERCENT=25`. The same sweep on three
+`normal` preset (95 % CI ≤ 10 % of the mean),
+`PILOT_SS_ITERS_PERCENT=25`. The same sweep on three
 other hosts is summarised under [Cross-processor](#cross-processor)
 below.
 
@@ -44,23 +45,23 @@ below.
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `shamir_split` | 0.002934 | ±0.0000224 | 90 |
-| `shamir_reconstruct` | 0.00629 | ±0.0001024 | 30 |
-| `blakley_split` | 0.1292 | ±0.001254 | 30 |
-| `blakley_reconstruct` | 0.05723 | ±0.0016695 | 54 |
-| `kothari_split` | 0.003245 | ±0.0000789 | 60 |
-| `kothari_reconstruct` | 0.006113 | ±0.0001325 | 90 |
-| `karchmer_wigderson_split` | 0.003212 | ±0.0000692 | 30 |
-| `karchmer_wigderson_reconstruct` | 0.008494 | ±0.0002062 | 60 |
-| `brickell_split` | 0.003358 | ±0.0000799 | 30 |
-| `brickell_reconstruct` | 0.008798 | ±0.0001722 | 36 |
-| `massey_split` | 0.002558 | ±0.0000498 | 30 |
-| `massey_reconstruct` | 0.00396 | ±0.0000824 | 30 |
+| `shamir_split` | 0.0029110 | ±0.0000369 | 80 |
+| `shamir_reconstruct` | 0.0056850 | ±0.0000488 | 59 |
+| `blakley_split` | 0.0448100 | ±0.0005800 | 50 |
+| `blakley_reconstruct` | 0.0243100 | ±0.0003657 | 50 |
+| `kothari_split` | 0.0028870 | ±0.0000422 | 80 |
+| `kothari_reconstruct` | 0.0059680 | ±0.0000644 | 84 |
+| `karchmer_wigderson_split` | 0.0031030 | ±0.0000286 | 50 |
+| `karchmer_wigderson_reconstruct` | 0.0080680 | ±0.0000716 | 50 |
+| `brickell_split` | 0.0030950 | ±0.0000408 | 50 |
+| `brickell_reconstruct` | 0.0081480 | ±0.0000603 | 80 |
+| `massey_split` | 0.0024140 | ±0.0000216 | 170 |
+| `massey_reconstruct` | 0.0039580 | ±0.0000531 | 50 |
 
-`shamir`, `kothari`, `brickell`, `massey` cluster together (2.6–3.4 µs
-split, 4–9 µs recover): Lagrange-style reconstruction over a single
+`shamir`, `kothari`, `brickell`, `massey` cluster together (2.4–3.1 µs
+split, 4–8 µs recover): Lagrange-style reconstruction over a single
 Mersenne-127 field element, each algebraic surface paying a constant
-overhead on top. `blakley` is the outlier on recovery (~57 µs) because
+overhead on top. `blakley` is the outlier on recovery (~24 µs) because
 it solves a $k \times k$ linear system end-to-end where Lagrange just
 evaluates one denominator-product per share; with the Mersenne
 multiply no longer dominating, blakley's remaining cost is the
@@ -79,14 +80,14 @@ threshold family.*
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `ramp_split` | 0.03202 | ±0.000625 | 96 |
-| `ramp_reconstruct` | 0.02105 | ±0.000481 | 41 |
-| `yamamoto_split` | 0.03051 | ±0.0005255 | 45 |
-| `yamamoto_reconstruct` | 0.02131 | ±0.0005105 | 35 |
-| `blakley_meadows_split` | 0.1309 | ±0.00149 | 40 |
-| `blakley_meadows_reconstruct` | 0.06141 | ±0.0016415 | 30 |
-| `kgh_split` | 0.01551 | ±0.000394 | 30 |
-| `kgh_reconstruct` | 0.01968 | ±0.00039 | 34 |
+| `ramp_split` | 0.0264200 | ±0.0002044 | 118 |
+| `ramp_reconstruct` | 0.0182900 | ±0.0001985 | 50 |
+| `yamamoto_split` | 0.0265600 | ±0.0002471 | 53 |
+| `yamamoto_reconstruct` | 0.0179800 | ±0.0001459 | 50 |
+| `blakley_meadows_split` | 0.0447100 | ±0.0002875 | 50 |
+| `blakley_meadows_reconstruct` | 0.0287500 | ±0.0005305 | 52 |
+| `kgh_split` | 0.0149400 | ±0.0001310 | 50 |
+| `kgh_reconstruct` | 0.0174900 | ±0.0001764 | 50 |
 
 The ramp / vector schemes pay roughly $L\times$ the threshold-scheme
 cost on split, since each polynomial / matrix lives over a length-$L$
@@ -107,10 +108,10 @@ degenerates to a line, so the table is the honest format:
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `vss_split` | 0.0181 | ±0.0003934 | 63 |
-| `vss_reconstruct` | 0.0142 | ±0.0004218 | 120 |
-| `cgma_vss_split` | 1.337 | ±0.0637 | 60 |
-| `cgma_vss_reconstruct` | 12.65 | ±0.4883 | 60 |
+| `vss_split` | 0.0173300 | ±0.0001374 | 50 |
+| `vss_reconstruct` | 0.0128200 | ±0.0000839 | 80 |
+| `cgma_vss_split` | 0.8339000 | ±0.0029180 | 50 |
+| `cgma_vss_reconstruct` | 7.1950000 | ±0.0269300 | 110 |
 
 `vss::deal` builds a full bivariate $k \times k$ polynomial matrix, so
 splits cost ~6× a single Shamir secret; reconstruction is dominated
@@ -136,11 +137,11 @@ validated group; for the scaling curve across group sizes (toy → 167
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `mignotte_split` | 0.0002645 | ±0.0000071 | 121 |
-| `mignotte_reconstruct` | 0.001757 | ±0.0000409 | 110 |
-| `mignotte_reconstruct_large` | 0.01468 | ±0.0002198 | 30 |
-| `asmuth_bloom_split` | 0.0003539 | ±0.0000051 | 30 |
-| `asmuth_bloom_reconstruct` | 0.00196 | ±0.0000479 | 53 |
+| `mignotte_split` | 0.0002456 | ±0.0000043 | 57 |
+| `mignotte_reconstruct` | 0.0010240 | ±0.0000110 | 54 |
+| `mignotte_reconstruct_large` | 0.0012910 | ±0.0000193 | 50 |
+| `asmuth_bloom_split` | 0.0003328 | ±0.0000056 | 52 |
+| `asmuth_bloom_reconstruct` | 0.0011130 | ±0.0000180 | 80 |
 
 These run on the bundled small (≈12-bit $\beta$) sequences — the
 schemes where the secret-size model is the legal-range gap
@@ -153,19 +154,19 @@ scaling curve at larger $\beta$ see `assets/mignotte-scaling.svg` and
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `trivial_split` | 0.0005721 | ±0.0000093 | 55 |
-| `trivial_reconstruct` | 0.0001439 | ±0.000003 | 35 |
-| `ito_split` | 0.00225 | ±0.0000506 | 40 |
-| `ito_reconstruct` | 0.0007439 | ±0.0000133 | 66 |
-| `benaloh_leichter_split` | 0.001236 | ±0.0000324 | 65 |
-| `benaloh_leichter_reconstruct` | 0.0005208 | ±0.0000145 | 37 |
-| `proactive_refresh` | 0.01689 | ±0.0003725 | 47 |
-| `proactive_recover` | 0.007058 | ±0.0001836 | 90 |
-| `bytes_split_16` | 0.006847 | ±0.0001661 | 180 |
-| `bytes_reconstruct_16` | 0.01418 | ±0.0002401 | 85 |
-| `ida_split_16` | 0.003155 | ±0.0000846 | 150 |
-| `ida_reconstruct_16` | 0.008215 | ±0.0002083 | 60 |
-| `decode_reconstruct_t1` | 0.07095 | ±0.000976 | 128 |
+| `trivial_split` | 0.0005176 | ±0.0000054 | 56 |
+| `trivial_reconstruct` | 0.0001362 | ±0.0000020 | 80 |
+| `ito_split` | 0.0019120 | ±0.0000140 | 140 |
+| `ito_reconstruct` | 0.0006803 | ±0.0000068 | 50 |
+| `benaloh_leichter_split` | 0.0010800 | ±0.0000073 | 82 |
+| `benaloh_leichter_reconstruct` | 0.0004443 | ±0.0000059 | 50 |
+| `proactive_refresh` | 0.0150500 | ±0.0001228 | 80 |
+| `proactive_recover` | 0.0059380 | ±0.0000386 | 85 |
+| `bytes_split_16` | 0.0062400 | ±0.0000878 | 110 |
+| `bytes_reconstruct_16` | 0.0116100 | ±0.0000758 | 110 |
+| `ida_split_16` | 0.0029130 | ±0.0000228 | 80 |
+| `ida_reconstruct_16` | 0.0070770 | ±0.0000413 | 50 |
+| `decode_reconstruct_t1` | 0.0646200 | ±0.0007770 | 170 |
 
 `trivial` and `benaloh_leichter` are the cheapest schemes in the crate
 — well under 2 µs at this parameterisation. `decode_reconstruct_t1`
@@ -182,8 +183,8 @@ other / convenience family.*
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `visual_split_3_8` | 0.008538 | ±0.0002885 | 30 |
-| `visual_decode_3_8` | 0.001104 | ±0.0000235 | 390 |
+| `visual_split_3_8` | 0.0074110 | ±0.0001136 | 50 |
+| `visual_decode_3_8` | 0.0009763 | ±0.0000101 | 140 |
 
 Visual cryptography is image-domain. The single-image numbers above
 are at a fixed configuration; for scaling with `n` and image area see
@@ -199,18 +200,18 @@ The threshold tables above measure a single Mersenne-127 element
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `shamir_split_4kb` | 0.7939 | ±0.01636 | 52 |
-| `shamir_reconstruct_4kb` | 1.72 | ±0.03345 | 60 |
-| `blakley_split_4kb` | 37.06 | ±0.40655 | 60 |
-| `blakley_reconstruct_4kb` | 20.91 | ±0.2267 | 30 |
-| `kothari_split_4kb` | 0.744 | ±0.01293 | 30 |
-| `kothari_reconstruct_4kb` | 1.547 | ±0.037765 | 32 |
-| `karchmer_wigderson_split_4kb` | 0.9075 | ±0.02567 | 90 |
-| `karchmer_wigderson_reconstruct_4kb` | 2.262 | ±0.05275 | 34 |
-| `brickell_split_4kb` | 0.8755 | ±0.028415 | 30 |
-| `brickell_reconstruct_4kb` | 2.256 | ±0.03766 | 95 |
-| `massey_split_4kb` | 0.6696 | ±0.016155 | 42 |
-| `massey_reconstruct_4kb` | 1.02 | ±0.025765 | 31 |
+| `shamir_split_4kb` | 0.7136000 | ±0.0044740 | 117 |
+| `shamir_reconstruct_4kb` | 1.3500000 | ±0.0110600 | 50 |
+| `blakley_split_4kb` | 12.0000000 | ±0.1344000 | 50 |
+| `blakley_reconstruct_4kb` | 6.3060000 | ±0.0835500 | 80 |
+| `kothari_split_4kb` | 0.7033000 | ±0.0082550 | 140 |
+| `kothari_reconstruct_4kb` | 1.3980000 | ±0.0115700 | 110 |
+| `karchmer_wigderson_split_4kb` | 0.7608000 | ±0.0061900 | 80 |
+| `karchmer_wigderson_reconstruct_4kb` | 2.0160000 | ±0.0212950 | 200 |
+| `brickell_split_4kb` | 0.7997000 | ±0.0178950 | 110 |
+| `brickell_reconstruct_4kb` | 2.0950000 | ±0.0225900 | 50 |
+| `massey_split_4kb` | 0.6466000 | ±0.0122000 | 50 |
+| `massey_reconstruct_4kb` | 0.9114000 | ±0.0100800 | 50 |
 
 Per-block costs scale linearly with the chunk count (4 KiB / 15 B ≈
 274 chunks): each entry lands within run-to-run variance of 274 × the
@@ -227,17 +228,17 @@ $(\text{throughput} / t) \cdot \sigma_t$:
 
 | Scheme | total ms (±CI 95%) | throughput KiB/s (±CI 95%) |
 |--------|-------------------:|---------------------------:|
-| `massey` | 1.69 ± 0.030 | 2367 ± 43 |
-| `kothari` | 2.29 ± 0.040 | 1746 ± 30 |
-| `shamir` | 2.51 ± 0.037 | 1591 ± 24 |
-| `brickell` | 3.13 ± 0.047 | 1277 ± 19 |
-| `karchmer_wigderson` | 3.17 ± 0.059 | 1262 ± 23 |
-| `blakley` | 57.97 ± 0.465 | 69.00 ± 0.55 |
+| `massey` | 1.56 ± 0.016 | 2567 ± 26 |
+| `shamir` | 2.06 ± 0.012 | 1938 ± 11 |
+| `kothari` | 2.10 ± 0.014 | 1904 ± 13 |
+| `karchmer_wigderson` | 2.78 ± 0.022 | 1441 ± 12 |
+| `brickell` | 2.89 ± 0.029 | 1382 ± 14 |
+| `blakley` | 18.31 ± 0.158 | 219 ± 2 |
 
 The Lagrange-style schemes (`massey`, `kothari`, `shamir`) sit in a
-tight 1.7–2.5 ms band; `brickell` and `karchmer_wigderson` form a
-second tier at ~3.1 ms because both pay a recovery-vector solve on top
-of the simpler inner product. `massey` keeps the lead — its
+tight 1.6–2.1 ms band; `brickell` and `karchmer_wigderson` form a
+second tier at ~2.8–2.9 ms because both pay a recovery-vector solve on
+top of the simpler inner product. `massey` keeps the lead — its
 `CodeScheme` runs a single linear combination over a fixed generator
 matrix on both split and reconstruct. `blakley` remains the outlier
 for the reason given in the threshold section (its $k \times k$
@@ -257,23 +258,24 @@ whose reconstruct polygon sits outside its split.
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `shamir_split_2_3` | 0.001564 | ±0.0000167 | 330 |
-| `shamir_reconstruct_2_3` | 0.004361 | ±0.0000755 | 106 |
-| `shamir_split_3_5` | 0.003353 | ±0.0001172 | 62 |
-| `shamir_reconstruct_3_5` | 0.007096 | ±0.0001428 | 50 |
-| `shamir_split_5_9` | 0.008329 | ±0.0002027 | 120 |
-| `shamir_reconstruct_5_9` | 0.01408 | ±0.0004345 | 240 |
-| `shamir_split_7_15` | 0.01626 | ±0.0003017 | 120 |
-| `shamir_reconstruct_7_15` | 0.0263 | ±0.000576 | 60 |
-| `shamir_split_10_20` | 0.02925 | ±0.0006415 | 90 |
-| `shamir_reconstruct_10_20` | 0.05833 | ±0.0009325 | 71 |
+| `shamir_split_2_3` | 0.0012700 | ±0.0000115 | 80 |
+| `shamir_reconstruct_2_3` | 0.0032070 | ±0.0000335 | 80 |
+| `shamir_split_3_5` | 0.0030510 | ±0.0000657 | 50 |
+| `shamir_reconstruct_3_5` | 0.0059850 | ±0.0001081 | 54 |
+| `shamir_split_5_9` | 0.0076400 | ±0.0001253 | 57 |
+| `shamir_reconstruct_5_9` | 0.0128200 | ±0.0002163 | 80 |
+| `shamir_split_7_15` | 0.0153900 | ±0.0001737 | 111 |
+| `shamir_reconstruct_7_15` | 0.0244400 | ±0.0004892 | 170 |
+| `shamir_split_10_20` | 0.0403500 | ±0.0006800 | 292 |
+| `shamir_reconstruct_10_20` | 0.0445500 | ±0.0003237 | 145 |
 
 Split scales approximately linearly in $n$ (one Horner evaluation per
 share); reconstruct scales approximately quadratically in $k$
 (Lagrange denominators are products over $k - 1$ pairs each).
-Empirically split_10_20 / split_2_3 ≈ 18.7× (for $n$ growing 3 → 20,
-~6.7×; the residual ~2.8× is per-share overhead from the per-trustee
-evaluation loop), and reconstruct's 13.4× across $k$ growing 2 → 10
+Empirically split_10_20 / split_2_3 ≈ 31.8×, which sits right on the
+$O(n \cdot k)$ work model — $(20 \cdot 10)/(3 \cdot 2) = 33×$ — now
+that the arithmetic layer no longer buries the tiny configuration
+under per-call overhead. Reconstruct's 13.9× across $k$ growing 2 → 10
 (5×) is consistent with $O(k^2)$ scaling plus a per-call linear term.
 
 ### Cold-cache first-iteration latency
@@ -283,27 +285,27 @@ allocator fast-paths are warm.
 
 | Operation | ms/op | ±CI (95%) | Runs |
 |---|---:|---:|---:|
-| `shamir_cold_split` | 0.006454 | ±0.0001225 | 90 |
-| `shamir_cold_reconstruct` | 0.01492 | ±0.0004453 | 30 |
-| `blakley_cold_split` | 0.1861 | ±0.003124 | 30 |
-| `blakley_cold_reconstruct` | 0.06919 | ±0.002064 | 90 |
-| `massey_cold_split` | 0.006845 | ±0.0001157 | 721 |
-| `massey_cold_reconstruct` | 0.01007 | ±0.0003203 | 111 |
+| `shamir_cold_split` | 0.0060090 | ±0.0000766 | 80 |
+| `shamir_cold_reconstruct` | 0.0135400 | ±0.0002193 | 50 |
+| `blakley_cold_split` | 0.0834700 | ±0.0013215 | 113 |
+| `blakley_cold_reconstruct` | 0.0325900 | ±0.0005085 | 50 |
+| `massey_cold_split` | 0.0056260 | ±0.0000860 | 88 |
+| `massey_cold_reconstruct` | 0.0093010 | ±0.0001036 | 112 |
 
 Cold/warm ratios against the matching warm rows from the threshold
 table:
 
 | Scheme | warm split | cold split | ratio | warm recon | cold recon | ratio |
 |---------|-----------:|-----------:|------:|-----------:|-----------:|------:|
-| shamir  |   0.002934 |   0.006454 | 2.20× |   0.00629  |   0.01492  | 2.37× |
-| blakley |   0.1292   |   0.1861   | 1.44× |   0.05723  |   0.06919  | 1.21× |
-| massey  |   0.002558 |   0.006845 | 2.68× |   0.00396  |   0.01007  | 2.54× |
+| shamir  |   0.002911 |   0.006009 | 2.06× |  0.005685 |  0.013540 | 2.38× |
+| blakley |   0.044810 |   0.083470 | 1.86× |  0.024310 |  0.032590 | 1.34× |
+| massey  |   0.002414 |   0.005626 | 2.33× |  0.003958 |  0.009301 | 2.35× |
 
-The 2–2.7× cold/warm ratio on the Lagrange-style schemes (shamir,
+The 2.1–2.4× cold/warm ratio on the Lagrange-style schemes (shamir,
 massey) reflects BigUint heap allocation dominating first-call cost:
 the Mersenne-127 fast path allocates one `BigUint` per multiply, and
 on a cold L1/L2 the allocator's size-class fast paths haven't been
-touched. Blakley's 1.2–1.4× is consistent with its
+touched. Blakley's 1.3–1.9× is consistent with its
 Gaussian-elimination work being allocation-light per chunk — the
 linear systems live in `Vec`s reused across solve steps. Reconstruct
 ratios run higher than split because the Lagrange denominators
@@ -312,9 +314,11 @@ allocate more transient BigUints than split's polynomial evaluation.
 ## Cross-processor
 
 The same `quick`-preset sweep on four machines spanning three
-architectures — Apple M1, Apple M4, and x86_64. Per-host captures:
-[`pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md) (Apple M4,
-Hardy — the canonical tables above),
+architectures — Apple M1, Apple M4, and x86_64. (The canonical tables
+above use the tighter `normal` preset; this comparison keeps all four
+hosts on `quick` so the columns are like for like.) Per-host captures:
+[`pilot_ss_hardy_quick.md`](benchmarks/pilot_ss_hardy_quick.md)
+(Apple M4, Hardy),
 [`pilot_ss_wigner.md`](benchmarks/pilot_ss_wigner.md) (Apple M1 Max,
 wigner), [`pilot_ss_dyson.md`](benchmarks/pilot_ss_dyson.md) (Apple
 M4 Pro, dyson), and
@@ -324,22 +328,40 @@ EPYC 7452, x86_64, twilight.soe.ucsc.edu). A representative slice
 
 | Operation | M1 Max (wigner) | M4 (Hardy) | M4 Pro (dyson) | EPYC x86 (twilight) |
 |---|---:|---:|---:|---:|
-| `shamir_split` | 0.003818 | 0.002934 | 0.00317 | 0.00437 |
-| `shamir_reconstruct` | 0.007753 | 0.00629 | 0.006371 | 0.009204 |
-| `mignotte_reconstruct` | 0.002066 | 0.001757 | 0.001692 | 0.002741 |
-| `vss_reconstruct` | 0.01766 | 0.0142 | 0.01434 | 0.01919 |
-| `cgma_vss_reconstruct` | 14.83 | 12.65 | 11.58 | 20.39 |
-| `decode_reconstruct_t1` | 0.08018 | 0.07095 | 0.06878 | 0.09605 |
+| `shamir_split` | 0.003919 | 0.002952 | 0.003364 | 0.00459 |
+| `shamir_reconstruct` | 0.007982 | 0.005876 | 0.006172 | 0.009721 |
+| `mignotte_reconstruct` | 0.001346 | 0.001155 | 0.001125 | 0.001935 |
+| `vss_reconstruct` | 0.01721 | 0.01422 | 0.01434 | 0.02041 |
+| `cgma_vss_reconstruct` | 10.79 | 8.292 | 8.048 | 14.68 |
+| `decode_reconstruct_t1` | 0.08609 | 0.07265 | 0.06966 | 0.1087 |
 
-The Apple parts order by generation: the M4 (Hardy) and M4 Pro (dyson)
-track within run-to-run noise of each other, and the M1 Max is
-~1.1–1.3× slower than the M4 across the field-arithmetic schemes
-(1.17× on the 2048-bit `cgma_vss` modexp). The EPYC is ~1.3–1.5×
-slower than the M4 on field arithmetic and ~1.6× on `cgma_vss`,
-consistent with its lower single-thread clock. Relative scheme
-ordering is identical across all four.
+The Apple parts order by generation: the M4 (Hardy) and M4 Pro
+(dyson) track within run-to-run noise of each other (0.96–1.14×
+across the slice — single-thread work, where the Pro's extra cores
+buy nothing), and the M1 Max is ~1.2–1.4× behind the M4 across the
+field-arithmetic schemes (1.30× on the 2048-bit `cgma_vss` modexp).
+The EPYC is ~1.4–1.7× behind on field arithmetic and 1.8× on
+`cgma_vss`, consistent with its lower single-thread clock. Relative
+scheme ordering is identical across all four.
 
 ## Optimization history
+
+### The rust-mp migration (2026-08-11)
+
+The in-tree bigint/primes fork was replaced by the
+[rump](https://github.com/darrelllong/rump) crate (crates.io
+`rust-mp` 0.1.1), which carries Knuth Algorithm D division,
+word-level Montgomery multiplication, and CRT/number-theory routines
+this fork predated. Measured on the canonical host against the last
+in-tree sweep: `mignotte_reconstruct_large` (three ~131-bit CRT
+moduli, division-bound) **11.5×**; the `blakley` family (Gaussian
+elimination over generic field elements) **2.3–2.9×**; `cgma_vss`
+(2048-bit modexp) **1.8×**; median across all 72 operations 1.1×,
+the Mersenne-127 fast paths being deliberately untouched. One
+regression was caught and fixed during the sweep itself: routing
+`mod_inverse` through the general Bézout routine doubled its signed
+bookkeeping and cost cold Lagrange reconstruction up to 1.6× —
+rust-mp 0.1.1 restores the lean single-coefficient loop.
 
 ### Standardised-prime fast paths
 
@@ -478,14 +500,14 @@ of mean, ≥ 50 samples), `PILOT_SS_ITERS_PERCENT=25`. ms/op:
 
 | Operation | before | after | Δ |
 |---|---:|---:|---:|
-| `shamir_split` | 0.00645 | 0.00312 | −52 % |
-| `asmuth_bloom_reconstruct` | 0.00300 | 0.00183 | −39 % |
-| `mignotte_reconstruct` | 0.00285 | 0.00183 | −36 % |
-| `vss_reconstruct` | 0.02020 | 0.01393 | −31 % |
-| `shamir_reconstruct` | 0.00776 | 0.00646 | −17 % |
-| `decode_reconstruct_t1` | 0.07551 | 0.06367 | −16 % |
-| `ramp_reconstruct` | 0.02371 | 0.02031 | −14 % |
-| `mignotte_reconstruct_large` | 0.01379 | 0.01321 | −4 % |
+| `shamir_split` | 0.0029110 | ±0.0000369 | 80 |
+| `asmuth_bloom_reconstruct` | 0.0011130 | ±0.0000180 | 80 |
+| `mignotte_reconstruct` | 0.0010240 | ±0.0000110 | 54 |
+| `vss_reconstruct` | 0.0128200 | ±0.0000839 | 80 |
+| `shamir_reconstruct` | 0.0056850 | ±0.0000488 | 59 |
+| `decode_reconstruct_t1` | 0.0646200 | ±0.0007770 | 170 |
+| `ramp_reconstruct` | 0.0182900 | ±0.0001985 | 50 |
+| `mignotte_reconstruct_large` | 0.0012910 | ±0.0000193 | 50 |
 
 `mignotte_reconstruct_large` moves least: its three ~131-bit moduli
 make the CRT product ~7 limbs, so the single-limb division fast path

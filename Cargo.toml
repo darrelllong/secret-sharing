@@ -39,5 +39,5 @@ path = "src/bin/pilot_ss.rs"
 # The multiprecision layer (BigUint, Montgomery, number theory), extracted
 # to the sibling rump repository: crates.io package rust-mp, lib name rump.
 # Same author, same deny(unsafe) and scrub-on-drop policies.
-rust-mp = { version = "0.1.0", path = "../rump" }
+rust-mp = { version = "0.1.1", path = "../rump" }
 
