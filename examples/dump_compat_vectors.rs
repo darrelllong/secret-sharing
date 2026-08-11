@@ -83,11 +83,11 @@ fn main() {
         let shares = shamir::split(&f, &mut rng, &secret, 3, 5);
         for s in &shares {
             print_bytes(
-                &format!("SHAMIR x = "),
+                "SHAMIR x = ",
                 &s.x.to_be_bytes(),
             );
             print_bytes(
-                &format!("SHAMIR y = "),
+                "SHAMIR y = ",
                 &s.y.to_be_bytes(),
             );
         }
