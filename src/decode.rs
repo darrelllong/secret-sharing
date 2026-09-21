@@ -41,10 +41,8 @@ use crate::bigint::BigUint;
 ///
 /// Returns `None` if:
 /// - `k == 0` or `shares.len() < k + 2 * max_errors`,
-/// - any share's `x` is zero or congruent to 0 modulo `p`, or any two
-///   shares' `x` are congruent modulo `p` (abscissae are field
-///   elements; representatives that differ only by a multiple of `p`
-///   collide and make the system singular),
+/// - any share's `x` is zero modulo `p`, or any two labels are
+///   congruent modulo `p`,
 /// - the linear system has no non-zero solution (impossible above the
 ///   decoding radius — only happens if the caller exceeds it),
 /// - polynomial division of `Q` by `E` is not exact (i.e. more than
@@ -74,13 +72,8 @@ pub fn reconstruct_with_errors(
     if k == 0 || m < needed {
         return None;
     }
-    // Finite-field label discipline: abscissae are elements of GF(p),
-    // so the zero / pairwise-distinctness contract must be judged on
-    // the *reduced* x ≡ x mod p. A share carrying x = p (≡ 0) would
-    // otherwise bypass the zero check and silently stand in for the
-    // secret's reserved abscissa, and two shares with x = 1 and
-    // x = p + 1 would evade the duplicate check and drive
-    // `lagrange_eval_unchecked` into a divide-by-zero panic.
+    // Interpolation uses residues, so validation must too: x=p denotes
+    // the reserved secret slot, and x and x+p give a zero denominator.
     let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
     for x in &xs {
         if x.is_zero() {
@@ -466,7 +459,7 @@ mod tests {
         let zero_residue = vec![
             Share {
                 x: f.modulus().clone(),
-                y: BigUint::from_u64(10),
+                y: BigUint::from_u64(7),
             },
             Share {
                 x: BigUint::from_u64(2),

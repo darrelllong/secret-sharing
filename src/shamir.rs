@@ -189,8 +189,8 @@ pub fn split_multi<R: Csprng>(
 ///
 /// Returns `None` on:
 /// - empty input or `shares.len() < k`,
-/// - any share whose `x` is zero or congruent to 0 modulo `p`, or any
-///   two shares whose `x` are congruent modulo `p`,
+/// - any share's `x` is zero modulo `p`, or any two labels are
+///   congruent modulo `p`,
 /// - `ell == 0` or `ell > k`,
 /// - any extra share (index `≥ k`) inconsistent with the polynomial
 ///   recovered from the first `k`.
@@ -205,12 +205,8 @@ pub fn reconstruct_multi(
     if ell == 0 || ell > k || shares.len() < k {
         return None;
     }
-    // Finite-field label discipline: abscissae are field elements, so
-    // the zero / pairwise-distinctness contract is judged on x mod p.
-    // A share with x = p (≡ 0) would otherwise bypass the zero check
-    // and, through the raw Vandermonde below, silently set the first
-    // recovered secret to its own y; x = 1 vs x = p + 1 collide inside
-    // the field and make the linear system singular.
+    // Validate the residues used by the Vandermonde system, including
+    // extra shares that could otherwise alias a base point or the secret slot.
     let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
     for x in &xs {
         if x.is_zero() {
@@ -427,13 +423,13 @@ mod tests {
     fn multi_secret_rejects_label_congruent_to_zero() {
         // x = p (≡ 0 mod p) is the secret's reserved abscissa; without
         // reduced-residue validation it would silently become the first
-        // recovered secret. Refused in both the first-k and extra regions.
+        // recovered secret. Values follow q(x)=7+3x, isolating the label defect.
         let f = small_field();
         // First k shares carry the zero residue (points from q = 7 + 3x).
         let first_k = vec![
             Share {
                 x: f.modulus().clone(),
-                y: BigUint::from_u64(10),
+                y: BigUint::from_u64(7),
             },
             Share {
                 x: BigUint::from_u64(2),
@@ -445,7 +441,12 @@ mod tests {
             },
         ];
         assert!(reconstruct_multi(&f, &first_k, 3, 1).is_none());
-        // The extra share (index ≥ k) carries the zero residue.
+    }
+
+    #[test]
+    fn multi_secret_rejects_extra_zero_residue_with_matching_value() {
+        let f = small_field();
+        // q(0)=7: isolate label rejection from the consistency check.
         let extra = vec![
             Share {
                 x: BigUint::from_u64(1),
@@ -461,7 +462,7 @@ mod tests {
             },
             Share {
                 x: f.modulus().clone(),
-                y: BigUint::from_u64(19),
+                y: BigUint::from_u64(7),
             },
         ];
         assert!(reconstruct_multi(&f, &extra, 3, 1).is_none());
@@ -541,8 +542,8 @@ mod tests {
             },
         ];
         assert_eq!(
-            reconstruct_multi(&f, &shares, 3, 1).map(|v| v[0].clone()),
-            Some(BigUint::from_u64(7))
+            reconstruct_multi(&f, &shares, 3, 2),
+            Some(vec![BigUint::from_u64(7), BigUint::from_u64(3)])
         );
     }
 }

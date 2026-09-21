@@ -107,7 +107,7 @@ TEST(big_uint, to_be_bytes_is_compact) {
 // `from_be_bytes` reserves `(n+7)/8` limbs but `normalise()` may pop
 // trailing zero limbs, leaving the live vector range (`size()`) smaller
 // than the owned allocation (`capacity()`). Returns such a value.
-ss::big_uint underfull_from_bytes(std::vector<std::uint8_t> bytes) {
+static ss::big_uint underfull_from_bytes(std::vector<std::uint8_t> bytes) {
     return ss::big_uint::from_be_bytes({bytes.data(), bytes.size()});
 }
 
@@ -123,7 +123,7 @@ TEST(big_uint, destroys_shrunk_storage_safely_under_sanitizers) {
         auto v = underfull_from_bytes({0x00, 0x00, 0x00, 0x00, 0x00,
                                        0x00, 0x00, 0x00, 0x01});
         EXPECT_EQ(v.to_be_bytes(), (std::vector<std::uint8_t>{0x01}));
-    }  // size() == 1 < capacity() == 2; destructor runs here
+    }  // One live limb with spare capacity; destructor runs here.
 
     // Normalising all the way to empty: live range is zero.
     {
@@ -132,8 +132,7 @@ TEST(big_uint, destroys_shrunk_storage_safely_under_sanitizers) {
         EXPECT_TRUE(v.is_zero());
     }
 
-    // Moved-from owner: the destination's destructor scrubs the copied
-    // storage with the same size < capacity relationship.
+    // The destination owns the retained allocation after the move.
     {
         auto a = underfull_from_bytes({0x00, 0x00, 0x00, 0x00, 0x00,
                                        0x00, 0x00, 0x00, 0x01});

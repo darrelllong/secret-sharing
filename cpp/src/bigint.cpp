@@ -96,17 +96,9 @@ big_uint big_uint::from_be_bytes(std::span<std::uint8_t const> bytes) {
 big_uint::~big_uint() {
     auto cap = limbs_.capacity();
     if (cap > 0) {
-        // Grow the live range to cover the whole allocated buffer before
-        // scrubbing it. Writing through `data()` past `size()` is UB and is
-        // flagged by ASan's container-overflow: after `normalise()` has
-        // `pop_back`'d zero limbs, `size() < capacity()`, yet the *entire*
-        // capacity may still hold secret residues from intermediate products.
-        // Resizing to capacity makes every allocated limb a live element
-        // (no reallocation: the new size equals the existing capacity), so
-        // wiping `[0, capacity)` below is well-defined while still scrubbing
-        // all high-significance secret limbs before the buffer returns to
-        // the allocator. The freshly value-initialised zero limbs added here
-        // are exactly the storage we want cleared anyway.
+        // Wipe the whole allocation, including capacity retained after a
+        // shrink. Extend the live element range first so the volatile
+        // stores stay within vector bounds. This cannot reallocate.
         if (limbs_.size() < cap) {
             limbs_.resize(cap);
         }

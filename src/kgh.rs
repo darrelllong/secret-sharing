@@ -127,10 +127,8 @@ pub fn split<R: Csprng>(
 /// Returns `None` on:
 /// - `k == 0` or `shares.len() < k`,
 /// - empty shares or shares with mismatched component counts,
-/// - any share whose `x` is zero or congruent to 0 modulo `p`, or any
-///   two shares whose `x` are congruent modulo `p` (abscissae are field
-///   elements; representatives differing by a multiple of `p` collide
-///   and make the interpolation singular),
+/// - any share's `x` is zero modulo `p`, or any two labels are
+///   congruent modulo `p`,
 /// - any extra share that contradicts the recovered polynomial.
 #[must_use]
 pub fn reconstruct(
@@ -150,11 +148,8 @@ pub fn reconstruct(
             return None;
         }
     }
-    // Finite-field label discipline: the zero / pairwise-distinctness
-    // contract is judged on x mod p, not the raw integer. A share with
-    // x = p (≡ 0) must not stand in for the secret's reserved abscissa,
-    // and x = 1 vs x = p + 1 collide inside the field and would panic
-    // the unchecked Lagrange evaluator below.
+    // Match the residues used by interpolation. Zero denotes the secret
+    // slot; congruent labels would give the unchecked evaluator a zero denominator.
     let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
     for x in &xs {
         if x.is_zero() {
@@ -273,13 +268,13 @@ mod tests {
     fn rejects_label_congruent_to_zero() {
         // x = p (≡ 0 mod p) is the secret's reserved abscissa; without
         // reduction the "secret" would silently become this share's y.
-        // Must refuse in both the first-k region and the extra region.
+        // The values follow q(x)=7+3x, so the label is the only defect.
         let f = small_field();
         // First k shares contain the zero residue.
         let first_k = vec![
             VectorShare {
                 x: f.modulus().clone(),
-                y: vec![BigUint::from_u64(10)],
+                y: vec![BigUint::from_u64(7)],
             },
             VectorShare {
                 x: BigUint::from_u64(2),
@@ -287,7 +282,12 @@ mod tests {
             },
         ];
         assert!(reconstruct(&f, &first_k, 2).is_none());
-        // Extra share (index ≥ k) carries the zero residue.
+    }
+
+    #[test]
+    fn rejects_extra_zero_residue_with_matching_value() {
+        let f = small_field();
+        // q(0)=7: an inconsistent y would hide the missing label check.
         let extra = vec![
             VectorShare {
                 x: BigUint::from_u64(1),
@@ -299,7 +299,7 @@ mod tests {
             },
             VectorShare {
                 x: f.modulus().clone(),
-                y: vec![BigUint::from_u64(16)],
+                y: vec![BigUint::from_u64(7)],
             },
         ];
         assert!(reconstruct(&f, &extra, 2).is_none());
@@ -351,5 +351,17 @@ mod tests {
             reconstruct(&f, &shares, 2),
             Some(vec![BigUint::from_u64(7)])
         );
+    }
+
+    #[test]
+    fn zero_polynomial_with_above_p_labels_is_valid() {
+        let f = small_field();
+        let shares: Vec<_> = (1..=5)
+            .map(|x| VectorShare {
+                x: f.modulus().add_ref(&BigUint::from_u64(x)),
+                y: vec![BigUint::zero(); 2],
+            })
+            .collect();
+        assert_eq!(reconstruct(&f, &shares, 3), Some(vec![BigUint::zero(); 2]));
     }
 }
