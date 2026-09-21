@@ -189,7 +189,8 @@ pub fn split_multi<R: Csprng>(
 ///
 /// Returns `None` on:
 /// - empty input or `shares.len() < k`,
-/// - duplicate or zero `x` coordinates,
+/// - any share whose `x` is zero or congruent to 0 modulo `p`, or any
+///   two shares whose `x` are congruent modulo `p`,
 /// - `ell == 0` or `ell > k`,
 /// - any extra share (index `≥ k`) inconsistent with the polynomial
 ///   recovered from the first `k`.
@@ -204,18 +205,24 @@ pub fn reconstruct_multi(
     if ell == 0 || ell > k || shares.len() < k {
         return None;
     }
-    for s in shares {
-        if s.x.is_zero() {
+    // Finite-field label discipline: abscissae are field elements, so
+    // the zero / pairwise-distinctness contract is judged on x mod p.
+    // A share with x = p (≡ 0) would otherwise bypass the zero check
+    // and, through the raw Vandermonde below, silently set the first
+    // recovered secret to its own y; x = 1 vs x = p + 1 collide inside
+    // the field and make the linear system singular.
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        if x.is_zero() {
             return None;
         }
     }
-    // Reject duplicate `x` coordinates anywhere in `shares` — a
-    // duplicate among the first `k` makes the system singular, and a
-    // duplicate spanning the consistency-check region would mask
-    // tampering.
+    // Reject duplicate `x` residues anywhere in `shares` — a duplicate
+    // among the first `k` makes the system singular, and a duplicate
+    // spanning the consistency-check region would mask tampering.
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
-            if shares[i].x == shares[j].x {
+            if xs[i] == xs[j] {
                 return None;
             }
         }
@@ -413,6 +420,129 @@ mod tests {
         assert_eq!(
             reconstruct_multi(&f, &shares, 3, 1).map(|v| v[0].clone()),
             Some(secret)
+        );
+    }
+
+    #[test]
+    fn multi_secret_rejects_label_congruent_to_zero() {
+        // x = p (≡ 0 mod p) is the secret's reserved abscissa; without
+        // reduced-residue validation it would silently become the first
+        // recovered secret. Refused in both the first-k and extra regions.
+        let f = small_field();
+        // First k shares carry the zero residue (points from q = 7 + 3x).
+        let first_k = vec![
+            Share {
+                x: f.modulus().clone(),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+        ];
+        assert!(reconstruct_multi(&f, &first_k, 3, 1).is_none());
+        // The extra share (index ≥ k) carries the zero residue.
+        let extra = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+            Share {
+                x: f.modulus().clone(),
+                y: BigUint::from_u64(19),
+            },
+        ];
+        assert!(reconstruct_multi(&f, &extra, 3, 1).is_none());
+    }
+
+    #[test]
+    fn multi_secret_rejects_first_k_collision_compat_control() {
+        // x = 1 and x = p + 1 collide in GF(p), making the Vandermonde
+        // singular. The baseline already refused (singular pivot); this
+        // stays as a compatibility control that the reduced-residue check
+        // also refuses.
+        let f = small_field();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+        ];
+        assert!(reconstruct_multi(&f, &shares, 3, 1).is_none());
+    }
+
+    #[test]
+    fn multi_secret_rejects_extra_region_duplicate_residue_with_matching_y() {
+        // Regression the baseline misses: an extra share (index ≥ k)
+        // aliases share 0's residue (x = 1 + p ≡ 1) with the same y (10).
+        // The baseline's extra validation evaluates the recovered
+        // polynomial at raw x = 1 + p, which reduces to 1 and matches y,
+        // so it would wrongly ACCEPT. The reduced-residue duplicate check
+        // must refuse.
+        let f = small_field();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+            Share {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: BigUint::from_u64(10),
+            },
+        ];
+        assert!(reconstruct_multi(&f, &shares, 3, 1).is_none());
+    }
+
+    #[test]
+    fn multi_secret_distinct_nonzero_residue_above_p_still_works() {
+        // A label above p with a distinct nonzero residue stays usable;
+        // reduction must not over-reject. y kept while p is added to x.
+        let f = small_field();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: f.modulus().add_ref(&BigUint::from_u64(3)),
+                y: BigUint::from_u64(16),
+            },
+        ];
+        assert_eq!(
+            reconstruct_multi(&f, &shares, 3, 1).map(|v| v[0].clone()),
+            Some(BigUint::from_u64(7))
         );
     }
 }

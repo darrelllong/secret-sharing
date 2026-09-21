@@ -41,7 +41,10 @@ use crate::bigint::BigUint;
 ///
 /// Returns `None` if:
 /// - `k == 0` or `shares.len() < k + 2 * max_errors`,
-/// - any share's `x` is zero, or any two shares share an `x`,
+/// - any share's `x` is zero or congruent to 0 modulo `p`, or any two
+///   shares' `x` are congruent modulo `p` (abscissae are field
+///   elements; representatives that differ only by a multiple of `p`
+///   collide and make the system singular),
 /// - the linear system has no non-zero solution (impossible above the
 ///   decoding radius — only happens if the caller exceeds it),
 /// - polynomial division of `Q` by `E` is not exact (i.e. more than
@@ -71,14 +74,22 @@ pub fn reconstruct_with_errors(
     if k == 0 || m < needed {
         return None;
     }
-    for s in shares {
-        if s.x.is_zero() {
+    // Finite-field label discipline: abscissae are elements of GF(p),
+    // so the zero / pairwise-distinctness contract must be judged on
+    // the *reduced* x ≡ x mod p. A share carrying x = p (≡ 0) would
+    // otherwise bypass the zero check and silently stand in for the
+    // secret's reserved abscissa, and two shares with x = 1 and
+    // x = p + 1 would evade the duplicate check and drive
+    // `lagrange_eval_unchecked` into a divide-by-zero panic.
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        if x.is_zero() {
             return None;
         }
     }
     for i in 0..m {
         for j in (i + 1)..m {
-            if shares[i].x == shares[j].x {
+            if xs[i] == xs[j] {
                 return None;
             }
         }
@@ -407,6 +418,140 @@ mod tests {
         let secret = BigUint::from_u64(0xAA);
         let shares = split(&f, &mut r, &secret, 3, 6);
         assert!(reconstruct_with_errors(&f, &shares, 3, 2).is_none());
+    }
+
+    #[test]
+    fn rejects_share_label_colliding_after_reduction() {
+        // Abscissae distinct as integers but congruent modulo p (x = 1
+        // and x = p + 1). The raw x-comparison misses the collision and
+        // interpolation would divide by zero. The decoder must refuse in
+        // both the Lagrange (t = 0) and Berlekamp–Welch (t > 0) paths.
+        // All y come from one polynomial q(x) = 7 + 3x, with the alias
+        // carrying the same y as its x ≡ 1 twin, so rejection is due to
+        // the duplicate residue alone — not an inconsistent value.
+        let f = small_field();
+        // t = 0, k = 2 needs only 2 shares.
+        let colliding = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: BigUint::from_u64(10),
+            },
+        ];
+        assert!(reconstruct_with_errors(&f, &colliding, 2, 0).is_none());
+        // t = 1, k = 2 needs m ≥ k + 2t = 4 shares.
+        let mut bw = colliding;
+        bw.push(Share {
+            x: BigUint::from_u64(2),
+            y: BigUint::from_u64(13),
+        });
+        bw.push(Share {
+            x: BigUint::from_u64(3),
+            y: BigUint::from_u64(16),
+        });
+        assert_eq!(bw.len(), 4);
+        assert!(reconstruct_with_errors(&f, &bw, 2, 1).is_none());
+    }
+
+    #[test]
+    fn rejects_share_label_congruent_to_zero() {
+        // A share whose x is a multiple of p is congruent to 0 mod p,
+        // reserved for the secret. Without reduction it becomes an
+        // abscissa-0 share and the "secret" silently becomes its y. Must
+        // refuse in both paths. y values come from q(x) = 7 + 3x.
+        let f = small_field();
+        let zero_residue = vec![
+            Share {
+                x: f.modulus().clone(),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+        ];
+        assert!(reconstruct_with_errors(&f, &zero_residue, 2, 0).is_none());
+        // Berlekamp–Welch path (t > 0): needs m ≥ 4.
+        let mut bw = zero_residue;
+        bw.push(Share {
+            x: BigUint::from_u64(3),
+            y: BigUint::from_u64(16),
+        });
+        bw.push(Share {
+            x: BigUint::from_u64(4),
+            y: BigUint::from_u64(19),
+        });
+        assert_eq!(bw.len(), 4);
+        assert!(reconstruct_with_errors(&f, &bw, 2, 1).is_none());
+    }
+
+    #[test]
+    fn rejects_extra_share_duplicate_residue_even_with_matching_y() {
+        // An extra share (index ≥ k) that aliases an existing share's
+        // residue: x = 1 + p ≡ 1 with the same y (10) as the x = 1 share.
+        // The residue collision alone must cause rejection, isolating it
+        // from an unrelated inconsistent-y refusal. Points from q = 7+3x.
+        let f = small_field();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+            Share {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: BigUint::from_u64(10),
+            },
+        ];
+        assert!(reconstruct_with_errors(&f, &shares, 2, 1).is_none());
+    }
+
+    #[test]
+    fn distinct_nonzero_residue_above_p_still_works() {
+        // A label exceeding p with a distinct nonzero residue (and thus a
+        // genuinely distinct abscissa) stays usable: reducing must not
+        // over-reject. y is retained unchanged while p is added to x.
+        let f = small_field();
+        let mut r = rng();
+        let secret = BigUint::from_u64(0x0BEE);
+        let mut shares = split(&f, &mut r, &secret, 2, 5);
+        let p = f.modulus().clone();
+        shares[2].x = p.add_ref(&BigUint::from_u64(3)); // ≡ 3, keep y
+        assert_eq!(reconstruct_with_errors(&f, &shares, 2, 0), Some(secret));
+    }
+
+    #[test]
+    fn zero_polynomial_with_above_p_label_still_works() {
+        // The all-zero polynomial is a valid secret (0); every share has
+        // y = 0 with distinct nonzero residues, one represented above p.
+        // Reduction must reject only zero/colliding residues, not this.
+        let f = small_field();
+        let p = f.modulus().clone();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(0),
+            },
+            Share {
+                x: p.add_ref(&BigUint::from_u64(2)), // ≡ 2
+                y: BigUint::from_u64(0),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(0),
+            },
+        ];
+        assert_eq!(reconstruct_with_errors(&f, &shares, 2, 0), Some(BigUint::from_u64(0)));
     }
 
     #[test]

@@ -127,7 +127,10 @@ pub fn split<R: Csprng>(
 /// Returns `None` on:
 /// - `k == 0` or `shares.len() < k`,
 /// - empty shares or shares with mismatched component counts,
-/// - duplicate or zero `x` labels,
+/// - any share whose `x` is zero or congruent to 0 modulo `p`, or any
+///   two shares whose `x` are congruent modulo `p` (abscissae are field
+///   elements; representatives differing by a multiple of `p` collide
+///   and make the interpolation singular),
 /// - any extra share that contradicts the recovered polynomial.
 #[must_use]
 pub fn reconstruct(
@@ -143,13 +146,24 @@ pub fn reconstruct(
         return None;
     }
     for s in shares {
-        if s.x.is_zero() || s.y.len() != m {
+        if s.y.len() != m {
+            return None;
+        }
+    }
+    // Finite-field label discipline: the zero / pairwise-distinctness
+    // contract is judged on x mod p, not the raw integer. A share with
+    // x = p (≡ 0) must not stand in for the secret's reserved abscissa,
+    // and x = 1 vs x = p + 1 collide inside the field and would panic
+    // the unchecked Lagrange evaluator below.
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        if x.is_zero() {
             return None;
         }
     }
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
-            if shares[i].x == shares[j].x {
+            if xs[i] == xs[j] {
                 return None;
             }
         }
@@ -232,5 +246,110 @@ mod tests {
         let mut shares = split(&f, &mut r, &secret, 3, 5);
         shares[4].y[1] = f.add(&shares[4].y[1], &BigUint::from_u64(1));
         assert!(reconstruct(&f, &shares, 3).is_none());
+    }
+
+    #[test]
+    fn rejects_label_colliding_after_reduction() {
+        // x = 1 and x = p + 1 are raw-distinct but collide in GF(p);
+        // the raw duplicate check misses them and the unchecked Lagrange
+        // evaluator would divide by zero. Must refuse. y from q = 7 + 3x,
+        // with the alias carrying the same y as its x ≡ 1 twin, so the
+        // rejection is the duplicate residue, not an inconsistent value.
+        let f = small_field();
+        let shares = vec![
+            VectorShare {
+                x: BigUint::from_u64(1),
+                y: vec![BigUint::from_u64(10)],
+            },
+            VectorShare {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: vec![BigUint::from_u64(10)],
+            },
+        ];
+        assert!(reconstruct(&f, &shares, 2).is_none());
+    }
+
+    #[test]
+    fn rejects_label_congruent_to_zero() {
+        // x = p (≡ 0 mod p) is the secret's reserved abscissa; without
+        // reduction the "secret" would silently become this share's y.
+        // Must refuse in both the first-k region and the extra region.
+        let f = small_field();
+        // First k shares contain the zero residue.
+        let first_k = vec![
+            VectorShare {
+                x: f.modulus().clone(),
+                y: vec![BigUint::from_u64(10)],
+            },
+            VectorShare {
+                x: BigUint::from_u64(2),
+                y: vec![BigUint::from_u64(13)],
+            },
+        ];
+        assert!(reconstruct(&f, &first_k, 2).is_none());
+        // Extra share (index ≥ k) carries the zero residue.
+        let extra = vec![
+            VectorShare {
+                x: BigUint::from_u64(1),
+                y: vec![BigUint::from_u64(10)],
+            },
+            VectorShare {
+                x: BigUint::from_u64(2),
+                y: vec![BigUint::from_u64(13)],
+            },
+            VectorShare {
+                x: f.modulus().clone(),
+                y: vec![BigUint::from_u64(16)],
+            },
+        ];
+        assert!(reconstruct(&f, &extra, 2).is_none());
+    }
+
+    #[test]
+    fn rejects_extra_share_duplicate_residue_with_matching_y() {
+        // An extra share aliasing an existing residue: x = 1 + p ≡ 1 with
+        // the same y (10). The residue collision alone must be refused,
+        // isolating it from an unrelated inconsistent-y rejection.
+        let f = small_field();
+        let shares = vec![
+            VectorShare {
+                x: BigUint::from_u64(1),
+                y: vec![BigUint::from_u64(10)],
+            },
+            VectorShare {
+                x: BigUint::from_u64(2),
+                y: vec![BigUint::from_u64(13)],
+            },
+            VectorShare {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: vec![BigUint::from_u64(10)],
+            },
+        ];
+        assert!(reconstruct(&f, &shares, 2).is_none());
+    }
+
+    #[test]
+    fn distinct_nonzero_residue_above_p_still_works() {
+        // A label above p with a distinct nonzero residue stays usable;
+        // reduction must not over-reject. y kept while p is added to x.
+        let f = small_field();
+        let shares = vec![
+            VectorShare {
+                x: BigUint::from_u64(1),
+                y: vec![BigUint::from_u64(10)],
+            },
+            VectorShare {
+                x: BigUint::from_u64(2),
+                y: vec![BigUint::from_u64(13)],
+            },
+            VectorShare {
+                x: f.modulus().add_ref(&BigUint::from_u64(3)),
+                y: vec![BigUint::from_u64(16)],
+            },
+        ];
+        assert_eq!(
+            reconstruct(&f, &shares, 2),
+            Some(vec![BigUint::from_u64(7)])
+        );
     }
 }

@@ -104,6 +104,44 @@ TEST(big_uint, to_be_bytes_is_compact) {
               (std::vector<std::uint8_t>{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}));
 }
 
+// `from_be_bytes` reserves `(n+7)/8` limbs but `normalise()` may pop
+// trailing zero limbs, leaving the live vector range (`size()`) smaller
+// than the owned allocation (`capacity()`). Returns such a value.
+ss::big_uint underfull_from_bytes(std::vector<std::uint8_t> bytes) {
+    return ss::big_uint::from_be_bytes({bytes.data(), bytes.size()});
+}
+
+TEST(big_uint, destroys_shrunk_storage_safely_under_sanitizers) {
+    // The destructor scrubs the full owned allocation. When size() <
+    // capacity() (here a high zero limb normalised away), wiping the
+    // capacity directly through data() writes past the live range and
+    // trips ASan's container-overflow; the fix extends the live range
+    // to the capacity first. This test can only establish absence of
+    // that illegal access under the sanitizer build — it does not
+    // itself observe the wipe.
+    {
+        auto v = underfull_from_bytes({0x00, 0x00, 0x00, 0x00, 0x00,
+                                       0x00, 0x00, 0x00, 0x01});
+        EXPECT_EQ(v.to_be_bytes(), (std::vector<std::uint8_t>{0x01}));
+    }  // size() == 1 < capacity() == 2; destructor runs here
+
+    // Normalising all the way to empty: live range is zero.
+    {
+        auto v = underfull_from_bytes({0x00, 0x00, 0x00, 0x00, 0x00,
+                                       0x00, 0x00, 0x00, 0x00});
+        EXPECT_TRUE(v.is_zero());
+    }
+
+    // Moved-from owner: the destination's destructor scrubs the copied
+    // storage with the same size < capacity relationship.
+    {
+        auto a = underfull_from_bytes({0x00, 0x00, 0x00, 0x00, 0x00,
+                                       0x00, 0x00, 0x00, 0x01});
+        auto b = std::move(a);
+        EXPECT_EQ(b.to_be_bytes(), (std::vector<std::uint8_t>{0x01}));
+    }
+}
+
 TEST(big_uint, shr_low_round_trip) {
     std::mt19937_64 rng{0x243f6a8885a308d3ull};
     for (int trial = 0; trial < 200; ++trial) {
