@@ -47,3 +47,18 @@ TEST(poly, lagrange_rejects_duplicate_abscissae) {
         ss::big_uint::zero());
     EXPECT_FALSE(r.has_value());
 }
+
+TEST(poly, generic_interpolation_accepts_zero_residue_abscissa) {
+    auto f = ss::prime_field::new_unchecked(from_u64(257));
+    // Unlike Shamir share labels, generic interpolation points may have x = 0.
+    // Exercise both zero itself and another representative of that residue.
+    for (auto x : {0u, 257u}) {
+        std::vector<std::pair<ss::big_uint, ss::big_uint>> pts{
+            {from_u64(x), from_u64(42)},
+            {from_u64(1), from_u64(45)},
+        };
+        auto value = ss::lagrange_eval(f, pts, from_u64(2));
+        ASSERT_TRUE(value.has_value());
+        EXPECT_EQ(*value, from_u64(48));
+    }
+}

@@ -15,14 +15,17 @@
 //! x       : u8         = trustee label (1..=255)
 //! length  : u32 (BE)   = byte-length of the original secret
 //! blocks  : [u8; ...]  = concatenated big-endian fixed-width chunks
-//!                         (one per polynomial; width = block_len)
+//!                         (one per polynomial; width = share_elem_len)
 //! ```
 //!
-//! `block_len` is derived from the field modulus: each polynomial
-//! evaluation is one field element, which we encode as `block_len`
-//! big-endian bytes where `block_len = ceil((p.bits() − 1) / 8)`. This
-//! ensures every plaintext block (which is `< 2^{block_len·8} ≤ p`)
-//! fits in one field element.
+//! Two widths are involved. The plaintext is chunked into blocks of
+//! `block_len = floor((p.bits() − 1) / 8)` bytes; each plaintext block
+//! (which is `< 2^{block_len·8} ≤ 2^{p.bits()−1} ≤ p`) fits in one
+//! field element. Each polynomial evaluation `y_i = q(x_i)` is then
+//! serialized on the wire as `share_elem_len = ceil(p.bits() / 8)`
+//! big-endian bytes — one byte longer than `block_len` (e.g.
+//! `2^127 − 1` gives 15-byte plaintext blocks and 16-byte field-element
+//! chunks).
 
 use crate::field::PrimeField;
 use crate::poly::{horner, lagrange_eval};

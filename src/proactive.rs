@@ -50,7 +50,9 @@ use crate::shamir::Share;
 ///
 /// # Panics
 /// - `k < 2`,
-/// - `shares.len() < k` (cannot reconstruct ⇒ refresh would lose `s`).
+/// - `shares.len() < k` (cannot reconstruct ⇒ refresh would lose `s`),
+/// - any share's `x` is congruent to `0 mod p`,
+/// - any two shares have `x` coordinates congruent `mod p`.
 ///
 /// Returns a vector with the same length and `x` coordinates as the
 /// input; only the `y` values are new.
@@ -66,17 +68,13 @@ pub fn refresh<R: Csprng>(
         shares.len() >= k,
         "input must have ≥ k shares to remain reconstructable"
     );
-    // Reject duplicate or zero x-coordinates: would corrupt the
-    // refreshed polynomial just like in plain Shamir.
-    for s in shares {
-        assert!(!s.x.is_zero(), "shares must have nonzero x");
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        assert!(!x.is_zero(), "shares must have nonzero x");
     }
-    for i in 0..shares.len() {
-        for j in (i + 1)..shares.len() {
-            assert_ne!(
-                shares[i].x, shares[j].x,
-                "shares must have distinct x-coordinates"
-            );
+    for i in 0..xs.len() {
+        for j in (i + 1)..xs.len() {
+            assert_ne!(xs[i], xs[j], "shares must have distinct x-coordinates");
         }
     }
 
@@ -98,10 +96,11 @@ pub fn refresh<R: Csprng>(
 
     shares
         .iter()
-        .map(|recipient| {
+        .zip(xs.iter())
+        .map(|(recipient, x)| {
             let mut new_y = recipient.y.clone();
             for r_i in contributions.iter() {
-                let delta = horner(field, r_i, &recipient.x);
+                let delta = horner(field, r_i, x);
                 new_y = field.add(&new_y, &delta);
             }
             Share {
@@ -122,10 +121,14 @@ pub fn refresh<R: Csprng>(
 /// (or an adversarially supplied wrong-share among the first `k`)
 /// would silently poison the recovered value.
 ///
-/// Returns `None` if fewer than `k` shares are supplied, any two share
-/// the same `x`, any share's `x` equals `x_lost` (we cannot recover
-/// what's already present), or any extra share is inconsistent with
-/// the polynomial fitted to the first `k`.
+/// Returns `None` if fewer than `k` shares are supplied, any two live
+/// shares have `x` coordinates congruent `mod p`, any live `x` or
+/// `x_lost` is congruent to `0 mod p`, any live `x` is congruent to
+/// `x_lost` (we cannot recover what's already present), or any extra
+/// share is inconsistent with the polynomial fitted to the first `k`.
+///
+/// On success, the returned share preserves the supplied `x_lost`
+/// label, including its representation when it is greater than `p`.
 #[must_use]
 pub fn recover_share(
     field: &PrimeField,
@@ -136,33 +139,34 @@ pub fn recover_share(
     if k < 2 || live.len() < k {
         return None;
     }
-    for s in live {
-        if s.x == *x_lost {
-            return None;
-        }
-        if s.x.is_zero() {
-            return None;
-        }
+    let live_xs: Vec<BigUint> = live.iter().map(|s| field.reduce(&s.x)).collect();
+    let lost_residue = field.reduce(x_lost);
+    if lost_residue.is_zero() {
+        return None;
     }
-    for i in 0..live.len() {
-        for j in (i + 1)..live.len() {
-            if live[i].x == live[j].x {
+    for i in 0..live_xs.len() {
+        if live_xs[i].is_zero() || live_xs[i] == lost_residue {
+            return None;
+        }
+        for j in (i + 1)..live_xs.len() {
+            if live_xs[i] == live_xs[j] {
                 return None;
             }
         }
     }
     let pts: Vec<(BigUint, BigUint)> = live
         .iter()
+        .zip(live_xs.iter())
         .take(k)
-        .map(|s| (s.x.clone(), s.y.clone()))
+        .map(|(s, x)| (x.clone(), s.y.clone()))
         .collect();
-    for s in live.iter().skip(k) {
-        let pred = lagrange_eval(field, &pts, &s.x)?;
+    for (s, x) in live.iter().zip(live_xs.iter()).skip(k) {
+        let pred = lagrange_eval(field, &pts, x)?;
         if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
     }
-    let y_lost = lagrange_eval(field, &pts, x_lost)?;
+    let y_lost = lagrange_eval(field, &pts, &lost_residue)?;
     Some(Share {
         x: x_lost.clone(),
         y: y_lost,
@@ -345,5 +349,101 @@ mod tests {
         ];
         full.sort_by(|a, b| a.x.cmp(&b.x));
         assert_eq!(shamir::reconstruct(&f, &full[..3], 3).unwrap(), secret);
+    }
+
+    #[test]
+    #[should_panic(expected = "shares must have nonzero x")]
+    fn refresh_panics_on_zero_residue_x() {
+        let f = small();
+        let mut r = rng();
+        let shares = vec![
+            Share {
+                x: BigUint::one(),
+                y: BigUint::from_u64(1),
+            },
+            Share {
+                x: f.modulus().clone(),
+                y: BigUint::from_u64(2),
+            },
+        ];
+        let _ = refresh(&f, &mut r, &shares, 2);
+    }
+
+    #[test]
+    #[should_panic(expected = "shares must have distinct x-coordinates")]
+    fn refresh_panics_on_duplicate_residue_x() {
+        let f = small();
+        let mut r = rng();
+        let shares = vec![
+            Share {
+                x: BigUint::one(),
+                y: BigUint::from_u64(1),
+            },
+            Share {
+                x: f.modulus().clone().add_ref(&BigUint::one()),
+                y: BigUint::from_u64(2),
+            },
+        ];
+        let _ = refresh(&f, &mut r, &shares, 2);
+    }
+
+    #[test]
+    fn recover_share_rejects_x_lost_congruent_to_live_x() {
+        let f = small();
+        let mut r = rng();
+        let secret = BigUint::from_u64(0x99);
+        let shares = shamir::split(&f, &mut r, &secret, 3, 5);
+        let x_alias = f.modulus().clone().add_ref(&BigUint::one());
+        assert!(recover_share(&f, &shares[..3], 3, &x_alias).is_none());
+    }
+
+    #[test]
+    fn recover_share_rejects_zero_residue_x_lost() {
+        let f = small();
+        let mut r = rng();
+        let secret = BigUint::from_u64(0x88);
+        let shares = shamir::split(&f, &mut r, &secret, 3, 5);
+        assert!(recover_share(&f, &shares[..3], 3, f.modulus()).is_none());
+    }
+
+    #[test]
+    fn recover_share_rejects_zero_residue_live_extra() {
+        let f = small();
+        let mut r = rng();
+        let secret = BigUint::from_u64(0x77);
+        let shares = shamir::split(&f, &mut r, &secret, 3, 5);
+        let mut live: Vec<Share> = shares[..4].to_vec();
+        live[3] = Share {
+            x: f.modulus().clone(),
+            y: secret.clone(),
+        };
+        assert!(recover_share(&f, &live, 3, &shares[4].x).is_none());
+    }
+
+    #[test]
+    fn recover_share_rejects_duplicate_residue_live_extra() {
+        let f = small();
+        let mut r = rng();
+        let secret = BigUint::from_u64(0x66);
+        let shares = shamir::split(&f, &mut r, &secret, 3, 5);
+        let mut live: Vec<Share> = shares[..4].to_vec();
+        live[3] = Share {
+            x: f.modulus().clone().add_ref(&BigUint::one()),
+            y: live[0].y.clone(),
+        };
+        assert!(recover_share(&f, &live, 3, &shares[4].x).is_none());
+    }
+
+    #[test]
+    fn recover_share_preserves_above_p_label() {
+        let f = small();
+        let mut r = rng();
+        let secret = BigUint::from_u64(0x5A);
+        let shares = shamir::split(&f, &mut r, &secret, 3, 6);
+        let live: Vec<Share> = shares[..3].to_vec();
+        let x_above_p = f.modulus().clone().add_ref(&shares[5].x);
+        let recovered = recover_share(&f, &live, 3, &x_above_p).unwrap();
+        assert_eq!(recovered.x, x_above_p);
+        assert_eq!(recovered.y, shares[5].y);
     }
 }

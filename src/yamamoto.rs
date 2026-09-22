@@ -85,7 +85,7 @@ pub fn split<R: Csprng>(
 /// fitted polynomial — any disagreement returns `None`.
 ///
 /// Returns `None` for empty input, fewer than `k` shares, duplicate or
-/// zero `x` coordinates, or `L = 0`.
+/// zero `x` coordinates modulo `p`, or `L = 0`.
 #[must_use]
 pub fn reconstruct(
     field: &PrimeField,
@@ -97,31 +97,31 @@ pub fn reconstruct(
         return None;
     }
     // Labels `1..=k` are reserved for the secret/padding anchors.
-    // Refuse any share whose label collides with one of those anchors —
-    // otherwise a caller could feed anchor-labelled "shares" and force
+    // Refuse any share whose residue collides with one of those anchors
+    // — otherwise a caller could feed anchor-labelled "shares" and force
     // the reconstructed output rather than recovering from real shares.
     let k_big = BigUint::from_u64(k as u64);
-    for s in shares {
-        let xr = field.reduce(&s.x);
-        if xr.is_zero() || xr <= k_big {
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        if x.is_zero() || *x <= k_big {
             return None;
         }
     }
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
-            if shares[i].x == shares[j].x {
+            if xs[i] == xs[j] {
                 return None;
             }
         }
     }
-    let pts: Vec<(BigUint, BigUint)> = shares
+    let pts: Vec<(BigUint, BigUint)> = xs[..k]
         .iter()
-        .take(k)
-        .map(|s| (s.x.clone(), s.y.clone()))
+        .zip(&shares[..k])
+        .map(|(x, s)| (x.clone(), s.y.clone()))
         .collect();
 
-    for s in &shares[k..] {
-        let pred = lagrange_eval(field, &pts, &s.x)?;
+    for (x, s) in xs[k..].iter().zip(&shares[k..]) {
+        let pred = lagrange_eval(field, &pts, x)?;
         if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
@@ -193,6 +193,21 @@ mod tests {
         assert_eq!(reconstruct(&f, &shares, 4, 3), Some(secret.clone()));
         shares[5].y = f.add(&shares[5].y, &BigUint::from_u64(1));
         assert!(reconstruct(&f, &shares, 4, 3).is_none());
+    }
+
+    #[test]
+    fn rejects_extra_duplicate_residue_with_matching_y() {
+        // The sixth share is deliberately given x = p + 6, aliasing the
+        // first share's residue 6 (> k, so not an anchor) while carrying
+        // that share's y. Raw equality misses the collision; only the
+        // field residue distinguishes it from a valid above-p label.
+        let f = small();
+        let mut r = rng();
+        let secret: Vec<BigUint> = (1..=2).map(|i| BigUint::from_u64(0x700 + i)).collect();
+        let mut shares = split(&f, &mut r, &secret, 5, 6);
+        shares[5].x = f.modulus().add_ref(&shares[0].x);
+        shares[5].y = shares[0].y.clone();
+        assert!(reconstruct(&f, &shares, 5, 2).is_none());
     }
 
     #[test]

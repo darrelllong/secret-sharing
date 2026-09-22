@@ -93,8 +93,8 @@ pub fn split<R: Csprng>(
 ///
 /// Returns `None` if:
 /// - `shares.len() < k`,
-/// - any share has a zero `x`,
-/// - any two shares share an `x`,
+/// - any share has a zero `x` modulo `p`,
+/// - any two shares have `x` coordinates congruent modulo `p`,
 /// - any extra share (index `≥ k`) disagrees with the polynomial fit
 ///   to the first `k`.
 #[must_use]
@@ -102,27 +102,28 @@ pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Big
     if k == 0 || shares.len() < k {
         return None;
     }
-    for s in shares {
-        if s.x.is_zero() {
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        if x.is_zero() {
             return None;
         }
     }
     for i in 0..shares.len() {
         for j in (i + 1)..shares.len() {
-            if shares[i].x == shares[j].x {
+            if xs[i] == xs[j] {
                 return None;
             }
         }
     }
-    let pts: Vec<(BigUint, BigUint)> = shares
+    let pts: Vec<(BigUint, BigUint)> = xs[..k]
         .iter()
-        .take(k)
-        .map(|s| (s.x.clone(), s.y.clone()))
+        .zip(&shares[..k])
+        .map(|(x, s)| (x.clone(), s.y.clone()))
         .collect();
     let secret = lagrange_eval(field, &pts, &BigUint::zero())?;
 
-    for s in &shares[k..] {
-        let pred = lagrange_eval(field, &pts, &s.x)?;
+    for (x, s) in xs[k..].iter().zip(&shares[k..]) {
+        let pred = lagrange_eval(field, &pts, x)?;
         if !ct_eq_biguint(&pred, &s.y) {
             return None;
         }
@@ -401,6 +402,60 @@ mod tests {
         let secret = BigUint::from_u64(0xBEEF);
         let mut shares = split(&f, &mut r, &secret, 3, 6);
         shares[5].y = f.add(&shares[5].y, &BigUint::from_u64(1));
+        assert!(reconstruct(&f, &shares, 3).is_none());
+    }
+
+    #[test]
+    fn reconstruct_rejects_extra_label_congruent_to_zero() {
+        // q(x) = 7 + 3x. The extra x = p is reserved for the secret but
+        // passes the raw zero-label check; its y also matches q(p), so
+        // the consistency check cannot mask the missing residue check.
+        let f = small_field();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+            Share {
+                x: f.modulus().clone(),
+                y: BigUint::from_u64(7),
+            },
+        ];
+        assert!(reconstruct(&f, &shares, 3).is_none());
+    }
+
+    #[test]
+    fn reconstruct_rejects_extra_duplicate_residue_with_matching_y() {
+        // x = p + 1 aliases the first share in GF(p), with the matching
+        // y from q(x) = 7 + 3x. Only the residue collision justifies
+        // refusal; the extra consistency check would otherwise accept it.
+        let f = small_field();
+        let shares = vec![
+            Share {
+                x: BigUint::from_u64(1),
+                y: BigUint::from_u64(10),
+            },
+            Share {
+                x: BigUint::from_u64(2),
+                y: BigUint::from_u64(13),
+            },
+            Share {
+                x: BigUint::from_u64(3),
+                y: BigUint::from_u64(16),
+            },
+            Share {
+                x: f.modulus().add_ref(&BigUint::from_u64(1)),
+                y: BigUint::from_u64(10),
+            },
+        ];
         assert!(reconstruct(&f, &shares, 3).is_none());
     }
 

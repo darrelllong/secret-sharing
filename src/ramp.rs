@@ -68,28 +68,36 @@ pub fn split(field: &PrimeField, secret: &[BigUint], n: usize) -> Vec<Share> {
 }
 
 /// Recover the full `k`-element secret from any `k` (or more) ramp
-/// shares. Returns `None` for empty input, duplicate `x` coordinates,
-/// or shares with `x` coordinates colliding with the secret slots
-/// `1..=k` (which would not happen for shares produced by [`split`]).
+/// shares. Returns `None` for empty input, duplicate `x` coordinates
+/// modulo `p`, or shares with `x` residues colliding with the secret
+/// slots `1..=k` (which would not happen for shares produced by
+/// [`split`]).
 #[must_use]
 pub fn reconstruct(field: &PrimeField, shares: &[Share], k: usize) -> Option<Vec<BigUint>> {
     if shares.is_empty() || k == 0 || shares.len() < k {
         return None;
     }
     // Labels `1..=k` are reserved for the secret slots (anchors). A
-    // share whose label collides with a secret slot would let the
+    // share whose residue collides with a secret slot would let the
     // caller force the output instead of reconstructing — refuse.
     let k_big = BigUint::from_u64(k as u64);
-    for s in shares {
-        let xr = field.reduce(&s.x);
-        if xr.is_zero() || xr <= k_big {
+    let xs: Vec<BigUint> = shares.iter().map(|s| field.reduce(&s.x)).collect();
+    for x in &xs {
+        if x.is_zero() || *x <= k_big {
             return None;
         }
     }
-    let pts: Vec<(BigUint, BigUint)> = shares
+    for i in 0..shares.len() {
+        for j in (i + 1)..shares.len() {
+            if xs[i] == xs[j] {
+                return None;
+            }
+        }
+    }
+    let pts: Vec<(BigUint, BigUint)> = xs[..k]
         .iter()
-        .take(k)
-        .map(|s| (s.x.clone(), s.y.clone()))
+        .zip(&shares[..k])
+        .map(|(x, s)| (x.clone(), s.y.clone()))
         .collect();
     let mut out = Vec::with_capacity(k);
     for j in 1..=k {
@@ -154,6 +162,30 @@ mod tests {
         // Force shares[0].x to land on a secret-anchor abscissa.
         shares[0].x = BigUint::from_u64(2);
         assert!(reconstruct(&f, &shares[..3], 3).is_none());
+    }
+
+    #[test]
+    fn ramp_rejects_duplicate_x_coordinate() {
+        // The API promises duplicate x coordinates return None, even for
+        // a duplicate outside the first k used for interpolation.
+        let f = small_field();
+        let secret: Vec<BigUint> = (1..=3).map(|i| BigUint::from_u64(20 + i)).collect();
+        let mut shares = split(&f, &secret, 5);
+        shares[3].x = shares[0].x.clone();
+        assert!(reconstruct(&f, &shares, 3).is_none());
+    }
+
+    #[test]
+    fn ramp_rejects_extra_duplicate_residue_with_matching_y() {
+        // An extra label x = p + 6 aliases the first share's residue 6
+        // with that share's matching y. Raw comparisons miss it and the
+        // extra share is otherwise ignored by reconstruction.
+        let f = small_field();
+        let secret: Vec<BigUint> = (1..=5).map(BigUint::from_u64).collect();
+        let mut shares = split(&f, &secret, 6);
+        shares[5].x = f.modulus().add_ref(&shares[0].x);
+        shares[5].y = shares[0].y.clone();
+        assert!(reconstruct(&f, &shares, 5).is_none());
     }
 
     #[test]
