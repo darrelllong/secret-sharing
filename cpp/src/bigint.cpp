@@ -1,9 +1,6 @@
 // Implementation of secret_sharing::big_uint.
 //
-// Algorithms are direct translations of the Rust BigUint at
-// `../../src/bigint.rs`. Every operation produces the same byte
-// stream when serialised via `to_be_bytes`, so callers on either
-// side of the FFI boundary can round-trip values bit-for-bit.
+// Uses the same limb representation and byte encoding as rump::BigUint.
 
 #include "secret_sharing/bigint.hpp"
 
@@ -18,10 +15,7 @@ namespace secret_sharing {
 
 namespace {
 
-// Karatsuba dispatch heuristic — same crossover as the Rust impl, where the
-// measurement note lives: schoolbook wins or ties through 96 limbs and the
-// recursive split only pays for itself from 128 limbs up (verified on both
-// an Apple M4 Pro and an AMD EPYC 7452).
+// Keep the existing crossover; field workloads do not measure it.
 constexpr std::size_t KARATSUBA_THRESHOLD_LIMBS = 128;
 constexpr std::size_t KARATSUBA_MAX_IMBALANCE = 2;
 
@@ -36,6 +30,66 @@ void volatile_zero_u64(std::uint64_t* p, std::size_t n) noexcept {
         *vp = 0U;
     }
     std::atomic_signal_fence(std::memory_order_seq_cst);
+}
+
+void wipe_vector(std::vector<std::uint64_t>& v) noexcept {
+    auto const cap = v.capacity();
+    if (cap > v.size()) {
+        v.resize(cap);
+    }
+    volatile_zero_u64(v.data(), cap);
+}
+
+// Scrub division scratch storage on both normal and exceptional exits.
+class wipe_on_exit {
+public:
+    explicit wipe_on_exit(std::vector<std::uint64_t>& value) noexcept : value_(value) {}
+    wipe_on_exit(wipe_on_exit const&) = delete;
+    wipe_on_exit& operator=(wipe_on_exit const&) = delete;
+    ~wipe_on_exit() { wipe_vector(value_); }
+
+private:
+    std::vector<std::uint64_t>& value_;
+};
+
+std::uint64_t low_u64(__uint128_t value) noexcept {
+    return static_cast<std::uint64_t>(value);
+}
+
+std::vector<std::uint64_t> shl_into(std::span<std::uint64_t const> value, std::uint32_t shift,
+                                   std::size_t len) {
+    assert(shift < 64U && len >= value.size());
+    std::vector<std::uint64_t> out(len, 0);
+    if (shift == 0) {
+        std::copy(value.begin(), value.end(), out.begin());
+        return out;
+    }
+    std::uint64_t carry = 0;
+    for (std::size_t i = 0; i < value.size(); ++i) {
+        auto const limb = value[i];
+        out[i] = (limb << shift) | carry;
+        carry = limb >> (64U - shift);
+    }
+    if (value.size() < len) {
+        out[value.size()] = carry;
+    }
+    return out;
+}
+
+std::vector<std::uint64_t> shr_limbs(std::span<std::uint64_t const> value, std::uint32_t shift) {
+    assert(shift < 64U);
+    std::vector<std::uint64_t> out(value.size(), 0);
+    if (shift == 0) {
+        std::copy(value.begin(), value.end(), out.begin());
+        return out;
+    }
+    for (std::size_t i = 0; i < value.size(); ++i) {
+        auto const high = (i + 1 < value.size())
+            ? static_cast<std::uint64_t>(value[i + 1] << (64U - shift))
+            : std::uint64_t{0};
+        out[i] = (value[i] >> shift) | high;
+    }
+    return out;
 }
 
 }  // namespace
@@ -53,10 +107,11 @@ big_uint big_uint::from_u128(__uint128_t v) {
     }
     auto lo = static_cast<std::uint64_t>(v);
     auto hi = static_cast<std::uint64_t>(v >> 64U);
-    if (hi == 0) {
-        out.limbs_.push_back(lo);
-    } else {
-        out.limbs_.push_back(lo);
+    // Reserve the final limb count so two-limb u128 values do not
+    // allocate a one-limb vector and then grow before returning.
+    out.limbs_.reserve(hi == 0 ? 1 : 2);
+    out.limbs_.push_back(lo);
+    if (hi != 0) {
         out.limbs_.push_back(hi);
     }
     return out;
@@ -215,7 +270,12 @@ void big_uint::add_assign_ref(big_uint const& other) {
 }
 
 big_uint big_uint::add_ref(big_uint const& other) const {
-    big_uint out = *this;
+    // Reserve the expected final size, not the worst case +1. The extra
+    // limb is rare for reduced field elements, and allocating an oversized
+    // vector makes the destructor wipe and allocator size class slower.
+    big_uint out;
+    out.limbs_.reserve(std::max(limbs_.size(), other.limbs_.size()));
+    out.limbs_.assign(limbs_.begin(), limbs_.end());
     out.add_assign_ref(other);
     return out;
 }
@@ -435,11 +495,7 @@ std::pair<big_uint, big_uint> big_uint::div_rem(big_uint const& divisor) const {
     if (*this < divisor) {
         return {zero(), *this};
     }
-    // A one-limb divisor admits grade-school short division: walk the
-    // limbs high to low, carrying the running remainder in a __uint128_t.
-    // O(limbs) instead of the O(bits) loop below, and it is the shape the
-    // extended-gcd tail (mod_inverse) settles into once its working
-    // values shrink, so most divisions in a reconstruction end up here.
+    // Short division carries the remainder in a 128-bit accumulator.
     if (divisor.limbs_.size() == 1) {
         __uint128_t const d = divisor.limbs_[0];
         big_uint quotient;
@@ -455,26 +511,83 @@ std::pair<big_uint, big_uint> big_uint::div_rem(big_uint const& divisor) const {
         quotient.normalise();
         return {std::move(quotient), big_uint{static_cast<std::uint64_t>(rem)}};
     }
-    // Multi-limb divisors take bit-by-bit long division: rebuild the
-    // dividend prefix in `remainder`, subtracting the divisor whenever
-    // the prefix grows large enough.
-    big_uint quotient;
-    big_uint remainder;
-    for (std::size_t bit_idx = bits(); bit_idx-- > 0;) {
-        remainder.shl1();
-        if (bit(bit_idx)) {
-            if (remainder.is_zero()) {
-                remainder.limbs_.push_back(1);
-            } else {
-                remainder.limbs_[0] |= 1U;
+    // Multi-limb divisors take Knuth's Algorithm D: each pass over the
+    // divisor produces a full 64-bit quotient digit, not one bit. This
+    // is the same shape as the pinned rump implementation.
+    auto const n = divisor.limbs_.size();
+    auto const m = limbs_.size() - n;
+
+    auto const shift = static_cast<std::uint32_t>(std::countl_zero(divisor.limbs_.back()));
+    auto scaled_divisor = shl_into(std::span<std::uint64_t const>{divisor.limbs_.data(), n}, shift, n);
+    wipe_on_exit divisor_guard(scaled_divisor);
+    auto rem = shl_into(std::span<std::uint64_t const>{limbs_.data(), limbs_.size()}, shift,
+                        limbs_.size() + 1);
+    wipe_on_exit remainder_guard(rem);
+    std::vector<std::uint64_t> quotient(m + 1, 0);
+    wipe_on_exit quotient_guard(quotient);
+
+    constexpr __uint128_t BASE = static_cast<__uint128_t>(1) << 64U;
+    auto const divisor_hi = static_cast<__uint128_t>(scaled_divisor[n - 1]);
+    auto const divisor_next = static_cast<__uint128_t>(scaled_divisor[n - 2]);
+
+    for (std::size_t j = m + 1; j-- > 0;) {
+        auto const numerator = (static_cast<__uint128_t>(rem[j + n]) << 64U)
+            | static_cast<__uint128_t>(rem[j + n - 1]);
+        auto q_hat = numerator / divisor_hi;
+        auto r_hat = numerator % divisor_hi;
+
+        while (q_hat >= BASE
+               || q_hat * divisor_next
+                   > ((r_hat << 64U) | static_cast<__uint128_t>(rem[j + n - 2]))) {
+            --q_hat;
+            r_hat += divisor_hi;
+            if (r_hat >= BASE) {
+                break;
             }
         }
-        if (!(remainder < divisor)) {
-            remainder.sub_assign_ref(divisor);
-            quotient.set_bit(bit_idx);
+
+        __uint128_t borrow = 0;
+        __uint128_t carry = 0;
+        for (std::size_t i = 0; i < n; ++i) {
+            auto const product = q_hat * static_cast<__uint128_t>(scaled_divisor[i]) + carry;
+            carry = product >> 64U;
+            auto const diff = BASE + static_cast<__uint128_t>(rem[i + j])
+                - static_cast<__uint128_t>(low_u64(product)) - borrow;
+            rem[i + j] = low_u64(diff);
+            borrow = 1 - (diff >> 64U);
         }
+
+        auto const top_diff = BASE + static_cast<__uint128_t>(rem[j + n])
+            - static_cast<__uint128_t>(carry) - borrow;
+        rem[j + n] = low_u64(top_diff);
+
+        if ((top_diff >> 64U) == 0) {
+            --q_hat;
+            carry = 0;
+            for (std::size_t i = 0; i < n; ++i) {
+                auto const sum = static_cast<__uint128_t>(rem[i + j])
+                    + static_cast<__uint128_t>(scaled_divisor[i]) + carry;
+                rem[i + j] = low_u64(sum);
+                carry = sum >> 64U;
+            }
+            rem[j + n] = static_cast<std::uint64_t>(
+                static_cast<__uint128_t>(rem[j + n]) + static_cast<__uint128_t>(low_u64(carry)));
+        }
+
+        quotient[j] = low_u64(q_hat);
     }
-    return {std::move(quotient), std::move(remainder)};
+
+    auto remainder_limbs = shr_limbs(std::span<std::uint64_t const>{rem.data(), n}, shift);
+
+    big_uint quotient_value;
+    quotient_value.limbs_ = std::move(quotient);
+    quotient_value.normalise();
+
+    big_uint remainder_value;
+    remainder_value.limbs_ = std::move(remainder_limbs);
+    remainder_value.normalise();
+
+    return {std::move(quotient_value), std::move(remainder_value)};
 }
 
 __uint128_t big_uint::low_u128() const noexcept {
@@ -483,35 +596,14 @@ __uint128_t big_uint::low_u128() const noexcept {
     return static_cast<__uint128_t>(lo) | (static_cast<__uint128_t>(hi) << 64U);
 }
 
-big_uint big_uint::mod_mul_plain(big_uint const& lhs, big_uint const& rhs,
-                                 big_uint const& modulus) {
-    if (lhs.is_zero() || rhs.is_zero()) {
-        return zero();
-    }
-    auto a = lhs.modulo(modulus);
-    auto b = rhs;
-    big_uint out;
-    while (!b.is_zero()) {
-        if (b.is_odd()) {
-            out = out.add_ref(a).modulo(modulus);
-        }
-        a = a.add_ref(a).modulo(modulus);
-        b.shr1();
-    }
-    return out;
-}
-
 big_uint big_uint::mod_mul(big_uint const& lhs, big_uint const& rhs, big_uint const& modulus) {
     if (modulus.is_zero()) {
         throw std::domain_error("modulus must be non-zero");
     }
-    if (modulus == one()) {
+    if (modulus.is_one()) {
         return zero();
     }
-    if (auto ctx = montgomery_ctx::make(modulus)) {
-        return ctx->mul(lhs, rhs);
-    }
-    return mod_mul_plain(lhs, rhs, modulus);
+    return lhs.mul_ref(rhs).modulo(modulus);
 }
 
 // ── montgomery_ctx ────────────────────────────────────────────────

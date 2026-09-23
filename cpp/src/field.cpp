@@ -50,6 +50,39 @@ big_uint mersenne127_mul(big_uint const& a, big_uint const& b, big_uint const& p
     return big_uint::from_u128(mul_mod_mersenne127(a128, b128));
 }
 
+__uint128_t mersenne127_mask() noexcept {
+    return (static_cast<__uint128_t>(1) << 127U) - 1;
+}
+
+// A value in this window is either the canonical residue or the sole
+// unreduced representative p = 2^127 - 1.
+bool fits_mersenne127_window(big_uint const& a) noexcept {
+    return a.bits() <= 127;
+}
+
+big_uint mersenne127_add(big_uint const& a, big_uint const& b) {
+    auto const mask = mersenne127_mask();
+    auto sum = a.low_u128() + b.low_u128();
+    auto folded = (sum & mask) + (sum >> 127U);
+    return big_uint::from_u128(folded >= mask ? folded - mask : folded);
+}
+
+big_uint mersenne127_sub(big_uint const& a, big_uint const& b) {
+    auto const mask = mersenne127_mask();
+    auto ar = a.low_u128();
+    auto br = b.low_u128();
+    if (ar == mask) {
+        ar = 0;
+    }
+    if (br == mask) {
+        br = 0;
+    }
+    if (ar >= br) {
+        return big_uint::from_u128(ar - br);
+    }
+    return big_uint::from_u128(mask - br + ar);
+}
+
 // ── Parametric pseudo-Mersenne / Solinas reducer ──────────────────
 
 bool reduction_fold_in_place(big_uint& t, detail::reduction_params const& params);
@@ -136,6 +169,12 @@ bool reduction_fold_in_place(big_uint& t, detail::reduction_params const& params
 
 // ── Catalogue ─────────────────────────────────────────────────────
 
+// Catalogue primes with known pseudo-Mersenne reductions. The table is
+// always validated, and the parametric reducer remains available as a
+// fallback/performance oracle, but `prefer_fast` is set from measured
+// `bench_field_mul` timings: after one-shot `mod_mul` switched to
+// multiply + Knuth reduction, the generic path is faster for all
+// registered primes except Mersenne-521.
 std::vector<std::shared_ptr<detail::reduction_params const>> const& known_reductions() {
     static std::once_flag once;
     static std::vector<std::shared_ptr<detail::reduction_params const>> table;
@@ -147,22 +186,22 @@ std::vector<std::shared_ptr<detail::reduction_params const>> const& known_reduct
             return std::make_shared<detail::reduction_params const>(std::move(params));
         };
         table.push_back(make(521, {{0, 1}}, mersenne521(), "mersenne521", true));
-        table.push_back(make(255, {{0, 19}}, curve25519_field(), "curve25519", true));
-        table.push_back(make(130, {{0, 5}}, poly1305_field(), "poly1305", true));
+        table.push_back(make(255, {{0, 19}}, curve25519_field(), "curve25519", false));
+        table.push_back(make(130, {{0, 5}}, poly1305_field(), "poly1305", false));
         table.push_back(
-            make(256, {{0, 977}, {32, 1}}, secp256k1_field(), "secp256k1", true));
+            make(256, {{0, 977}, {32, 1}}, secp256k1_field(), "secp256k1", false));
         table.push_back(
-            make(448, {{0, 1}, {224, 1}}, curve448_field(), "curve448", true));
+            make(448, {{0, 1}, {224, 1}}, curve448_field(), "curve448", false));
         table.push_back(
-            make(192, {{0, 1}, {64, 1}}, nist_p192_field(), "nist_p192", true));
+            make(192, {{0, 1}, {64, 1}}, nist_p192_field(), "nist_p192", false));
         table.push_back(
-            make(224, {{0, -1}, {96, 1}}, nist_p224_field(), "nist_p224", true));
+            make(224, {{0, -1}, {96, 1}}, nist_p224_field(), "nist_p224", false));
         table.push_back(
             make(256, {{0, 1}, {96, -1}, {192, -1}, {224, 1}}, nist_p256_field(),
                  "nist_p256", false));
         table.push_back(
             make(384, {{0, 1}, {32, -1}, {96, 1}, {128, 1}}, nist_p384_field(),
-                 "nist_p384", true));
+                 "nist_p384", false));
         // Validate every entry exactly once. Any constant-table
         // typo (zero coef, offset ≥ k, δ ≤ 0, δ ≠ 2^k − p) panics
         // here at first use.
@@ -328,6 +367,12 @@ prime_field::kind prime_field::detect(big_uint const& p,
 }
 
 big_uint prime_field::add(big_uint const& a, big_uint const& b) const {
+    // The Mersenne form turns reduction into one bit-fold plus a
+    // conditional subtract, avoiding intermediate big_uint allocations.
+    if (kind_ == kind::mersenne127 && fits_mersenne127_window(a)
+        && fits_mersenne127_window(b)) {
+        return mersenne127_add(a, b);
+    }
     // Reduced inputs sum to at most 2p − 2, so one conditional subtract
     // replaces the division-based modulo on the path every Horner step
     // and Lagrange accumulation takes. Unreduced inputs whose sum
@@ -343,6 +388,11 @@ big_uint prime_field::add(big_uint const& a, big_uint const& b) const {
 }
 
 big_uint prime_field::sub(big_uint const& a, big_uint const& b) const {
+    // Canonicalizing p to zero first makes the borrow fit in 127 bits.
+    if (kind_ == kind::mersenne127 && fits_mersenne127_window(a)
+        && fits_mersenne127_window(b)) {
+        return mersenne127_sub(a, b);
+    }
     auto ar = reduce(a);
     auto br = reduce(b);
     if (ar >= br) {

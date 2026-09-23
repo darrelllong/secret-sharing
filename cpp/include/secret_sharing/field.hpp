@@ -1,20 +1,16 @@
 // Bit-compatible prime-field arithmetic.
 //
-// `prime_field` mirrors the Rust `PrimeField`. At construction time it
-// recognises the standardised primes the Rust crate's catalogue covers
-// and dispatches to the same fast paths:
+// `prime_field` mirrors the Rust `PrimeField` public behaviour, while
+// using the C++ fast-path policy that current benchmarks favour:
 //
 // - `mersenne127`: hand-rolled `u128` 2 × 2 schoolbook + Mersenne fold.
-// - `mersenne521`, `curve25519`, `poly1305`, `secp256k1`, `curve448`,
-//   `nist_p192`, `nist_p224`, `nist_p384`: the parametric pseudo-
-//   Mersenne / Solinas reducer that uses `2^k ≡ δ (mod p)` to fold the
-//   high half of the product back into the low half.
-// - `nist_p256`: recognised but routed through generic Montgomery
-//   (its 4-term mixed-sign polynomial loses to Montgomery on this
-//   hardware); a `prefer_fast` flag in the catalogue records the
-//   decision so the parametric reducer is still validated under the
-//   per-prime fuzz harness.
-// - Anything else: generic Montgomery via `big_uint::mod_mul`.
+// - `mersenne521`: parametric pseudo-Mersenne reducer; still faster than
+//   one-shot multiply/reduce on the measured hosts.
+// - Other catalogue Solinas primes: validated against the parametric
+//   reducer in tests, but production `mul` uses the one-shot
+//   `big_uint::mod_mul` path because multiply + Knuth reduction wins
+//   once the one-shot path no longer rebuilds Montgomery contexts.
+// - Unknown primes: generic one-shot `big_uint::mod_mul`.
 #pragma once
 
 #include "secret_sharing/bigint.hpp"
@@ -52,9 +48,9 @@ struct reduction_term {
 
 // Parameters for a Solinas-form prime `p = 2^k − δ` where `δ` is a
 // small signed sum of powers of two. Mirrors the Rust
-// `ReductionParams` exactly, including the `prefer_fast` opt-out
+// `ReductionParams` shape, including the `prefer_fast` opt-out
 // flag for primes whose parametric reducer measurably loses to
-// Montgomery on the bench hardware.
+// one-shot multiply/reduce on the bench hardware.
 struct reduction_params {
     std::size_t k;
     std::vector<reduction_term> terms;  // owned, lifetime tied to params

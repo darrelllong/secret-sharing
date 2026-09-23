@@ -1,4 +1,4 @@
-// Bit-compatible C++ port of `secret_sharing::bigint`.
+// Multiprecision unsigned integers, byte-compatible with rump::BigUint.
 //
 // Storage and conventions match the Rust BigUint exactly:
 // - Little-endian limb vector of `std::uint64_t`.
@@ -49,7 +49,7 @@ public:
 
     [[nodiscard]] std::vector<std::uint8_t> to_be_bytes() const;
 
-    // Comparisons, all constant-in-limb-count to match the Rust impl.
+    // Value comparisons; these do not promise constant-time execution.
     friend bool operator==(big_uint const&, big_uint const&) noexcept;
     friend std::strong_ordering operator<=>(big_uint const&, big_uint const&) noexcept;
 
@@ -72,8 +72,9 @@ public:
         return div_rem(modulus).second;
     }
 
-    // (lhs · rhs) mod modulus. Dispatches to Montgomery for odd
-    // modulus, double-and-add fallback otherwise.
+    // One-shot (lhs · rhs) mod modulus. Matches the rump contract:
+    // multiply once, then reduce once. Callers that multiply repeatedly
+    // under a fixed odd modulus should reuse a `montgomery_ctx`.
     static big_uint mod_mul(big_uint const& lhs, big_uint const& rhs, big_uint const& modulus);
 
     // Low 128 bits as a u128. Used by the mersenne127 fast path.
@@ -98,12 +99,9 @@ private:
     [[nodiscard]] std::pair<big_uint, big_uint> split_at_limb(std::size_t split) const;
     static bool should_use_karatsuba(big_uint const& lhs, big_uint const& rhs) noexcept;
 
-    static big_uint mod_mul_plain(big_uint const& lhs, big_uint const& rhs,
-                                  big_uint const& modulus);
-
     // Montgomery multiplication step shared by `montgomery_ctx`.
-    // Private because callers should go through `mod_mul` or
-    // `montgomery_ctx`; the function operates on limb buffers and
+    // Private because callers should go through `montgomery_ctx`;
+    // the function operates on limb buffers and
     // assumes its inputs are already in Montgomery domain.
     static big_uint montgomery_mul_odd_with_workspace(
         big_uint const& lhs, big_uint const& rhs, big_uint const& modulus,
