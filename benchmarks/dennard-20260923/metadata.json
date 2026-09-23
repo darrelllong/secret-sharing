@@ -1,0 +1,88 @@
+{
+  "started_utc": "2026-09-23T17:02:57.882961+00:00",
+  "host": "dennard",
+  "platform": "Linux-6.8.0-136-generic-x86_64-with-glibc2.39",
+  "cpu_affinity": 4,
+  "preset": "normal",
+  "target_sample_ms": 20,
+  "pilot_commit": {
+    "command": [
+      "git",
+      "-C",
+      "/soe/darrell/pilot-bench",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "0f3cb4f5983f421a456b05fe2dca6e5eaa9f1846\n",
+    "stderr": ""
+  },
+  "source": {
+    "command": [
+      "git",
+      "-C",
+      "/soe/darrell/sparks-bench/20260923-bigint/secret-sharing",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "801276a0d5eb8180cd4b7a67270a58dcc86eaa23\n",
+    "stderr": ""
+  },
+  "rump": {
+    "command": [
+      "git",
+      "-C",
+      "/soe/darrell/sparks-bench/20260923-bigint/rump",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "01e1c1ebfb84dd9eb0faf9e6335a386d5870f572\n",
+    "stderr": ""
+  },
+  "rust": {
+    "command": [
+      "rustc",
+      "--version"
+    ],
+    "exit": 0,
+    "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+    "stderr": ""
+  },
+  "cpp": {
+    "command": [
+      "g++",
+      "--version"
+    ],
+    "exit": 0,
+    "stdout": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "stderr": ""
+  },
+  "cpu": {
+    "command": [
+      "lscpu"
+    ],
+    "exit": 0,
+    "stdout": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           43 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  128\nOn-line CPU(s) list:                     0-127\nVendor ID:                               AuthenticAMD\nModel name:                              AMD EPYC 7452 32-Core Processor\nCPU family:                              23\nModel:                                   49\nThread(s) per core:                      2\nCore(s) per socket:                      32\nSocket(s):                               2\nStepping:                                0\nBogoMIPS:                                4691.26\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca sev sev_es ibpb_exit_to_user\nVirtualization:                          AMD-V\nL1d cache:                               2 MiB (64 instances)\nL1i cache:                               2 MiB (64 instances)\nL2 cache:                                32 MiB (64 instances)\nL3 cache:                                256 MiB (16 instances)\nNUMA node(s):                            2\nNUMA node0 CPU(s):                       0-31,64-95\nNUMA node1 CPU(s):                       32-63,96-127\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Mitigation; untrained return thunk; SMT enabled with STIBP protection\nVulnerability Spec rstack overflow:      Mitigation; Safe RET\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; STIBP always-on; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB before exit to userspace\n",
+    "stderr": ""
+  },
+  "load": {
+    "command": [
+      "uptime"
+    ],
+    "exit": 0,
+    "stdout": " 10:02:58 up 33 days,  5:04,  2 users,  load average: 0.28, 0.35, 0.37\n",
+    "stderr": ""
+  },
+  "pilot": {
+    "command": [
+      "/soe/darrell/pilot-bench/build/cli/bench",
+      "--version"
+    ],
+    "exit": 2,
+    "stdout": "",
+    "stderr": "Error: Unknown command: --version\nPilot 0.14 (compiled by gcc-13.3.0 on Sep  5 2026)\nUsage: /soe/darrell/pilot-bench/build/cli/bench [command]\nAvailable commands:\n  analyze                 analyze existing data\n  run_program             run a benchmark program\n  detect_changepoint_edm  use EDM method to detect changepoints from an input file\nAdd --help after any command to see command specific help.\n\nTo understand the math behind Pilot or read tutorials, please read the\ndocumentation at https://docs.ascar.io/\n\n"
+  },
+  "finished_utc": "2026-09-23T17:07:23.368653+00:00"
+}

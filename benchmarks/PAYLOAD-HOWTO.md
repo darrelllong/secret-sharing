@@ -27,3 +27,5 @@ Both drivers use the same reproducible payload bytes `(73*i+41) mod 256` and Cha
 | Visual | Every input byte becomes eight pixels; 3-of-3 visual sharing, including stack/decode for reconstruction. |
 
 Different methods have different security guarantees and expansion. Their axis values describe these exact workloads, not interchangeable security services. Refresh, lost-share recovery and error correction are auxiliary protocols, not additional split/reconstruct methods in this payload sweep.
+
+Render saved results with `python3 scripts/chart_payload.py /path/to/results /path/to/charts` (requires NumPy and Matplotlib). The charts use blue for Rust and orange for C++, and keep unsupported cells missing. See the [dennard results](dennard-20260923/README.md) for a complete run.

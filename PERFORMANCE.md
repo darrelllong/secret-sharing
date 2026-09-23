@@ -1,5 +1,17 @@
 # PERFORMANCE — `secret-sharing`
 
+## Dennard payload comparison — September 23, 2026
+
+The [64-byte and 1 KiB payload report](benchmarks/dennard-20260923/README.md)
+contains 88 Pilot measurements, confidence intervals, radar charts and raw
+samples. It covers all 21 Rust sharing methods and C++ Shamir. C++ Shamir
+is 2.74–2.80× faster in the four shared workloads on dennard. Other C++
+methods are not implemented and are marked missing.
+
+The single-element and other-host measurements below are historical results
+from the earlier dispatcher; their workloads differ from the payload sweep.
+
+
 The authoritative measurement layer is
 [`pilot-bench`](https://github.com/darrelllong/pilot-bench): each
 operation is driven repeatedly until a 95 % confidence interval of
@@ -31,7 +43,7 @@ The `quick` preset is the right default for an at-a-glance comparison
 or development feedback. Use `normal` or `strict` for publication
 numbers; both will need many more rounds per operation.
 
-## Latest measurements
+## Earlier measurements
 
 The tables below mirror
 [`benchmarks/pilot_ss_latest.md`](benchmarks/pilot_ss_latest.md).
