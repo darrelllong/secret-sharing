@@ -85,6 +85,8 @@ if(SECRET_SHARING_BUILD_FUZZ)
 endif()
 
 if(SECRET_SHARING_BUILD_BENCH)
+    add_executable(pilot_payload_cpp src/pilot_payload.cpp)
+    target_link_libraries(pilot_payload_cpp PRIVATE secret_sharing)
     add_executable(pilot_ss_cpp src/pilot_ss.cpp)
     target_link_libraries(pilot_ss_cpp PRIVATE secret_sharing)
     add_executable(bench_field_mul_cpp src/bench_field_mul.cpp)
